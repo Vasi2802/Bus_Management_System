@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequestMapping("/driver")
@@ -61,5 +62,12 @@ public class DriverController {
 		}
 		return "Id does not exist";
 		
+	}
+	
+	@GetMapping("/routedetails")
+	public ModelAndView booking() {
+		System.out.println("Working");
+		ModelAndView modelAndView = new ModelAndView("route-details");
+		return modelAndView;
 	}
 }

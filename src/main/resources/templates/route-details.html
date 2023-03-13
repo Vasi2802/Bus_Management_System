@@ -29,16 +29,8 @@
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
     </script>
-	<script th:inline="javascript">
-        /*<![CDATA[*/
-        var phno = 'default';
-        var bus = 1;
-        var eid = 2;
-        /*]]>*/
 
-    </script>
-
-    <title>Employee Dashboard </title> 
+    <title>Route Details </title> 
 </head>
 <body>
                 <form th:action="@{/logout}" id="log" method="POST">
@@ -53,7 +45,7 @@
             <span class="logo_name">NRI Fintech</span>
         </div>
 
-        <div class="menu-items">
+         <div class="menu-items">
             <ul class="nav-links">
                 <li><a href="/driver" id="home">
                     <i class="uil uil-estate"></i>
@@ -111,8 +103,8 @@
         </div>
         
 <div style="margin-top:5%;">
-<span style="color:grey;" class="logout-mode"> >dashboard</span><hr>
-<h3 style="color:grey;text-align:center;">Driver Details</h3>
+<span style="color:grey;" class="logout-mode"> >route-details </span><hr>
+<h3 style="color:grey;text-align:center;">Route Details</h3>
 </div>
 <Br/>
 
@@ -123,25 +115,25 @@
 
                     <tbody>
                         <tr>
-                            <td>Name</td>
-                            <td th:text="${session.driver.getDriver().getDriverName()}"></td>
+                            <td>BookingId</td>
+                            <td th:text="${session.emp.getEmployee().getName()}"></td>
                         </tr>
                         <tr>
-                            <td>Phone No </td>
-                            <td th:text="${session.driver.getDriver().getDriverContactNo()}"></td>
+                            <td>Bus Number</td>
+                            <td th:text="${session.emp.getEmployee().getContactNo()}"></td>
                         </tr>
                         <tr>
-                            <td>Email </td>
-                            <td th:text="${session.driver.getUserName()}"></td>
+                            <td>Stop Name</td>
+                            <td th:text="${session.emp.getUserName()}"></td>
                         </tr>
                         <tr>
-                            <td>Bus Id </td>
+                            <td>Time of Bus Arrival</td>
                             <td id="bus-id-display"></td>
                             <!-- if in waitlist -->
                             <!-- employee/getStatus returns assigned, not applied, in waitlist -->
                         </tr>
                         <tr>
-                           <td>Trip status </td>
+                           <td>Bus Status </td>
                             <td id="bus-id-display"></td>
                         </tr>
                     </tbody>
