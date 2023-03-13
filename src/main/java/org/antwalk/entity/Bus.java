@@ -13,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name="bus")
 public class Bus {
@@ -31,6 +34,7 @@ public class Bus {
 	@Column(name="start_time")
 	private LocalTime startTime;
 	
+	@JsonBackReference
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "driver_id", referencedColumnName = "did")
 	private Driver d;

@@ -8,7 +8,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name="driver")
@@ -22,16 +26,26 @@ public class Driver {
 	@Column(name="driver_name")
 	private String driverName;
 	
-	@Column(name="driver_email")
-	private String driverEmail;
-	
 	@Column(name="driver_contact")
 	private String driverContactNo;
 
+	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "auth_id", referencedColumnName = "id")
 	private User user;
 	
+	@JsonManagedReference
+	@OneToOne(mappedBy = "d")
+	private Bus bus;
+	
+	public Bus getBus() {
+		return bus;
+	}
+
+	public void setBus(Bus bus) {
+		this.bus = bus;
+	}
+
 	public User getUser() {
 		return user;
 	}
@@ -56,14 +70,6 @@ public class Driver {
 		this.driverName = driverName;
 	}
 
-	public String getDriverEmail() {
-		return driverEmail;
-	}
-
-	public void setDriverEmail(String driverEmail) {
-		this.driverEmail = driverEmail;
-	}
-
 	public String getDriverContactNo() {
 		return driverContactNo;
 	}
@@ -76,7 +82,6 @@ public class Driver {
 		super();
 		this.did = did;
 		this.driverName = driverName;
-		this.driverEmail = driverEmail;
 		this.driverContactNo = driverContactNo;
 	}
 

@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "employee")
@@ -32,9 +33,9 @@ public class Employee {
 	@JoinColumn(name = "bus_id", referencedColumnName = "bid")
 	private Bus b;
 
+	@JsonBackReference
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "auth_id", referencedColumnName = "id")
-	@JsonBackReference
 	private User user;
 
 	public User getUser() {

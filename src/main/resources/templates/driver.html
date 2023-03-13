@@ -16,7 +16,7 @@
      
     <!----===== Iconscout CSS ===== -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-
+    
 
 	<!-- from other file -->
 	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
@@ -31,12 +31,30 @@
     </script>
 	<script th:inline="javascript">
         /*<![CDATA[*/
-        var phno = 'default';
-        var bus = 1;
-        var eid = 2;
+        var did = /*[[${session.driver.getDriver().getDid()}]]*/ 'default';
+        var bus='default';
         /*]]>*/
-
+        
+        $(document).ready(async () => {
+        	url = "/driver/getbyid/" + did;
+            await $.ajax({
+                type: "GET",
+                url: url,
+                success: function (response) {
+                    console.log("The employee is");
+                    console.log(response);
+                    employee = response;
+                    bus = employee?.b;
+                },
+                error: function (response) {
+                    alert('Error occured ', response.statusText);
+                }
+            });
+	$("#bus-id-display").append(`${bus? bus.bid : "NA"}`);
+	
+        });
     </script>
+    
 
     <title>Employee Dashboard </title> 
 </head>
@@ -53,7 +71,7 @@
             <span class="logo_name">NRI Fintech</span>
         </div>
 
-        <div class="menu-items">
+        <div class="menu-items ">
             <ul class="nav-links">
                 <li><a href="/driver" id="home">
                     <i class="uil uil-estate"></i>
@@ -109,14 +127,15 @@
             <img src="/images/profile.jpg" alt="">
            
         </div>
-        
+ 
+
 <div style="margin-top:5%;">
 <span style="color:grey;" class="logout-mode"> >dashboard</span><hr>
 <h3 style="color:grey;text-align:center;">Driver Details</h3>
 </div>
 <Br/>
 
-        <div class="card text-white ">
+        <div class="card text-white">
 
             <div class="table-responsive table table-striped table-light">
                 <table class="table text-black">
@@ -148,9 +167,14 @@
                 </table>
             </div>
         </div>
+         <h2>Basic Progress Bar</h2>
+  <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width:70%">
+      <span class="sr-only">70% Complete</span>
+    </div>
+  </div>
     </div>
 
-    
     <!-- Book Bus -->
    
 
