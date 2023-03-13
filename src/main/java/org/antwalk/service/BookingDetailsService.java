@@ -92,7 +92,7 @@ public class BookingDetailsService {
 			nameAndFreq.add(freq);
 			monthFreq.add(nameAndFreq);
 		}
-		System.out.println(monthFreq.toString());
+		// System.out.println(monthFreq.toString());
 
 		return monthFreq;
 	}
