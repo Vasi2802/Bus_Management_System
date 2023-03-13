@@ -80,10 +80,9 @@ public class AdminController {
 
 	@Autowired
 	private BusService busService;
-	
+
 	@Autowired
 	private BookingDetailsService bookingDetailsService;
-
 
 	@PostMapping("/insert")
 	public Admin insert(@RequestBody Admin a) {
@@ -128,8 +127,20 @@ public class AdminController {
 		return modelAndView;
 	}
 
-	@GetMapping("/getalldrivers")
+	@GetMapping("/analytics")
+	public ModelAndView getAllWaitingAnalytics() {
+		ModelAndView modelAndView = new ModelAndView("analytics");
+		return modelAndView;
+	}
+
+	@GetMapping("/get-all-drivers")
 	public List<Driver> getAllDrivers() {
+		List<Driver> drivers = driverRepo.findAll();
+		return drivers;
+	}
+
+	@GetMapping("/get-available-drivers")
+	public List<Driver> getAllAvailableDrivers() {
 		List<Driver> drivers = driverRepo.findAll();
 		List<Driver> availableDrivers = new ArrayList<>();
 		for (Driver driver : drivers) {
@@ -139,15 +150,10 @@ public class AdminController {
 		return availableDrivers;
 	}
 
-	@GetMapping("/analytics")
-	public ModelAndView getAllWaitingAnalytics() {
-		ModelAndView modelAndView = new ModelAndView("analytics");
-		return modelAndView;
-	}
-
-	// Analytics
+	// ------------------------ Analytics --------------------------------------
 
 	// GET ALL WAITLIST BY ROUTE ID
+
 	@GetMapping("/analytics/waiting-by-routeid/{routeId}")
 	public List<WaitingList> getWaitingListByRoute(@PathVariable Long routeId) {
 		Route route = routeRepo.findById(routeId).get();
@@ -157,6 +163,7 @@ public class AdminController {
 	}
 
 	// GET COUNT OF WAITLIST BY ROUTEID
+
 	@GetMapping("/analytics/count-waiting-by-routeid/{routeId}")
 	public long getCountWaitingListByRoute(@PathVariable Long routeId) {
 		Route route = routeRepo.findById(routeId).get();
@@ -165,12 +172,14 @@ public class AdminController {
 	}
 
 	// GET TOTAL COUNT WAITLIST
+
 	@GetMapping("/analytics/total-count-waiting")
 	public long getTotalCountWaitingList() {
 		return waitingListRepo.count();
 	}
 
 	// GET COUNT FOR ALL ROUTES IN WAITLIST
+
 	@GetMapping("/analytics/count-waiting-each-route")
 	public Map<String, Long> getCountAllWaitingList() {
 		List<WaitingList> waitingLists = waitingListRepo.findAll();
@@ -194,20 +203,43 @@ public class AdminController {
 	}
 
 	// PASSENGER COUNT FOR EACH BUS
+
 	@GetMapping("/analytics/passenger-count-per-bus")
 	public Map<String, Integer> passengerCoutntPerBus() {
 		Map<Bus, Integer> busFreq = busService.getPassesngersPerBus();
 		Map<String, Integer> busFreqWithDesc = new HashMap<>();
 		for (Bus bus : busFreq.keySet()) {
-			busFreqWithDesc.put("BUS"+ bus.getBid() + " on " + arrivalTimeService.getRouteDescription(bus.getR().getRid()),
+			busFreqWithDesc.put(
+					"BUS" + bus.getBid() + " on " + arrivalTimeService.getRouteDescription(bus.getR().getRid()),
 					busFreq.get(bus));
 		}
 		return busFreqWithDesc;
 	}
 
+	// GET TOTAL BOOKING PER MONTH FOR CURRENT YEAR
+
 	@GetMapping("/analytics/booking-per-month")
 	public List<List<Object>> bookingPerMonth() {
 		return bookingDetailsService.getBookingPerMonth();
+	}
+
+	// GET NUMBER STATISTICS
+	/*
+	 * TOTAL EMPLOYEES
+	 * TOTAL BUSES
+	 * TOTAL BOOKED SEATS
+	 * TOTAL SEATS IN ALL BUSES
+	 */
+
+	@GetMapping("/analytics/get-stats")
+	public Map<String, Integer> getTotalEmployees() {
+		Map<String, Integer> statistics = new HashMap<>();
+		statistics.put("totalEmployees", employeeService.getAllEmployees().size());
+		statistics.put("totalBuses", busService.getAllBus().size());
+		statistics.put("totalSeats", busService.getTotalSeatsOfAll());
+		statistics.put("totalSeatsBooked", busService.getTotalBookedSeats());
+
+		return statistics;
 	}
 
 }

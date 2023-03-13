@@ -159,6 +159,29 @@
             barchart.draw(busData, barchart_options);
 
 
+            // ---------------------------- STATS ----------------------------------
+
+            var stats;
+            await $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "GET",
+                url: "/admin/analytics/get-stats",
+                dataType: "json",
+                contentType: "application/json", //imp
+                success: function (response) {
+                    stats = response;
+                    document.getElementById("totalEmployees").innerHTML = `${stats?.totalEmployees}`;
+                    document.getElementById("totalBuses").innerText = `${stats?.totalBuses}`;
+                    document.getElementById('bookingRatio').innerText = `${stats?.totalSeatsBooked}/${stats.totalSeats}`;
+                },
+                error: function () {
+                    alert('Error occured in getting stats');
+                }
+            });
+            // --------------------- STATS ENDS --------------------------------
+
         }
     </script>
 
@@ -184,30 +207,37 @@
 
         <div class="menu-items">
             <ul class="nav-links">
-                <li><a href="/employee" id="home">
+                <li>
+                    <a href="" id="home">
                         <i class="uil uil-estate"></i>
                         <span class="link-name">Dashboard</span>
-                    </a></li>
-                <li><a href="/employee/book" id="bookbus">
-                        <i class="uil uil-files-landscapes"></i>
-                        <span class="link-name">Book Bus</span>
-                    </a></li>
-                <li><a href="/employee/trackbus">
+                    </a>
+                </li>
+                <li>
+                    <a href="/employee/book" id="bookbus">
+                        <i class="uil uil-tachometer-fast-alt"></i>
+                        <span class="link-name">Analytics</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/employee/trackbus">
                         <i class="uil uil-chart"></i>
                         <span class="link-name">Track Bus</span>
-                    </a></li>
-                <li><a href="/employee/showbookingdetails">
+                    </a>
+                </li>
+                <li>
+                    <a href="/employee/showbookingdetails">
                         <i class="uil uil-thumbs-up"></i>
                         <span class="link-name">Booking Details</span>
-                    </a></li>
-                <li><a href="#">
+                    </a>
+                </li>
+
+                <li>
+                    <a href="/admin/analytics/downlaod-report">
                         <i class="uil uil-comments"></i>
-                        <span class="link-name">SOS</span>
-                    </a></li>
-                <!--                <li><a href="#">
-                    <i class="uil uil-share"></i>
-                    <span class="link-name">Share</span>
-                </a></li> -->
+                        <span class="link-name">Generate Report in XLSX</span>
+                    </a>
+                </li>
             </ul>
 
             <ul class="logout-mode">
@@ -234,6 +264,8 @@
 
     <!-- RIGHT AREA-->
     <section class="dashboard">
+
+        <!-- NAVBAR -->
         <div class="top">
             <i class="uil uil-bars sidebar-toggle"></i>
 
@@ -241,45 +273,46 @@
                 <i class="uil uil-search"></i>
                 <input type="text" placeholder="Search here...">
             </div>
-            
+
             <img src="images/profile.jpg" alt="">
         </div>
-        
+
+        <!-- PAGE HEADING -->
         <div class="dash-content">
-            <div class="overview">
-                <div class="title">
+            <div class="overview justify-content-between flex-row">
+                <h1 class="pb-2 mt-4 mb-2 border-bottom">
                     <i class="uil uil-tachometer-fast-alt"></i>
                     <span class="text">Analytics</span>
-                </div>
+                </h1>
+
             </div>
-            
+
             <!-- MAIN AREA -->
 
-            <hr style="margin: 2rem;">
             <!-- row 1 -->
             <div style="display: flex; justify-content: space-between; width: 100%;">
                 <div id="booking-line-chart" style="border: 1px solid #ccc; width: 60%;"></div>
                 <div class="boxes" style="display: flex; flex-direction: column; width:40vw;">
                     <div class="box box1">
-                        <i class="uil uil-thumbs-up"></i>
-                        <span class="text">Total Buses</span>
-                        <span class="number">50,120</span>
+                        <!-- <i class="uil uil-thumbs-up"></i> -->
+                        <span class="text">Total Employees</span>
+                        <span class="number" id="totalEmployees"></span>
                     </div>
                     <div class="box box2">
-                        <i class="uil uil-comments"></i>
-                        <span class="text">Employees</span>
-                        <span class="number">20,120</span>
+                        <!-- <i class="uil uil-comments"></i> -->
+                        <span class="text">Total Buses</span>
+                        <span class="number" id="totalBuses"></span>
                     </div>
                     <div class="box box3">
-                        <i class="uil uil-share"></i>
-                        <span class="text">Total Routes</span>
-                        <span class="number">10,120</span>
+                        <!-- <i class="uil uil-share"></i> -->
+                        <span class="text">Booked/ Seats</span>
+                        <span class="number" id="bookingRatio"></span>
                     </div>
                 </div>
             </div>
 
             <hr style="margin: 2rem;">
-            
+
             <!-- row 2 -->
             <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
                 <div id="route-piechart-div" style="border: 1px solid #ccc;"></div>
@@ -302,10 +335,10 @@
                     </div>
                 </div>
             </div>
-            
+
 
             <hr style="margin: 2rem;">
-            
+
             <!-- row 3 -->
             <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
                 <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
