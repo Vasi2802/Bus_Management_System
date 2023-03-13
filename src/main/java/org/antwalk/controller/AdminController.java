@@ -23,11 +23,13 @@ import org.antwalk.repository.RouteRepo;
 import org.antwalk.repository.StopRepo;
 import org.antwalk.repository.UserRepo;
 import org.antwalk.repository.WaitingListRepo;
+import org.antwalk.service.AdminService;
 import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
 import org.antwalk.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -83,6 +85,9 @@ public class AdminController {
 
 	@Autowired
 	private BookingDetailsService bookingDetailsService;
+	
+	@Autowired
+	private AdminService adminService;
 
 	@PostMapping("/insert")
 	public Admin insert(@RequestBody Admin a) {
@@ -241,5 +246,12 @@ public class AdminController {
 
 		return statistics;
 	}
+
+	// GENERATE REPORT
+	@GetMapping("/analytics/downlaod-report")
+	public ResponseEntity<byte[]> downloadReport(){
+		return adminService.generateReport();
+	}
+
 
 }
