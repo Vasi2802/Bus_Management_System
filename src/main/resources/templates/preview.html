@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<title>Bus Management System NRIFT</title>
+</head>
+
+<body>
+	<h2>Bus Management System NRIFT DRIVER</h2>
+	<hr>
+	
+	<p>
+	Bus Management System NRIFT DRIVER
+	</p>
+	
+	<hr>
+	
+	<div>
+	User: <span sec:authentication="name"></span>
+		<br><br>
+		Role(s): <span sec:authentication="principal.authorities"></span>
+		<br><br>
+		
+		<div th:if="${session.user}" >
+			<p th:text="'First name: ' + ${session.user.getEmployee().getName()}"></p>
+		</div>	
+			</div>
+	<!-- display user name and role -->
+	
+<!-- 	<div>
+		User: <span sec:authentication="name"></span>
+		<br><br>
+		Role(s): <span sec:authentication="principal.authorities"></span>
+		<br><br>
+																
+		<div th:if="${session.user}" >
+			<p th:text="'First name: ' + ${session.user.firstName} + ', Last name: ' + ${session.user.lastName} + ', Email: ' + ${session.user.email}"></p>
+		</div>		
+	</div> -->
+	
+	<!-- Add a logout button -->
+	<form th:action="@{/logout}" 
+			   method="POST">
+	
+		<input type="submit" value="Logout" />
+	
+	</form>	
+			
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+

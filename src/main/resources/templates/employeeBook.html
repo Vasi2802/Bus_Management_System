@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+  crossorigin=""></script>
+    <!----======== CSS ======== -->
+    <link rel="stylesheet" href="/css/home_style.css">
+     
+    <!----===== Iconscout CSS ===== -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+	<!-- from other file -->
+	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+    </script>
+
+    
+
+    <script th:inline="javascript">
+
+        /*<![CDATA[*/
+
+        var eid = /*[[${session.emp.getEmployee().getEid()}]]*/ 'default';
+
+        /*]]>*/
+
+        function getBuses(routeId) {
+            // console.log(event.target.getAttribute("routeid"));
+            // var routeId = event.target.getAttribute("routeid");
+            // console.log("clicked" + routeId);
+            const busTable = $('#bus-table').get(0);
+            busTable.innerHTML = `<tr>
+                            <th class="col-sm-auto">Select a bus</th>
+                            <th class="col-sm-auto">Bus ID</th>
+                            <th class="col-sm-auto">Total Seats</th>
+                            <th class="col-sm-auto">Available Seats</th>
+                        </tr>`;
+            let buses = [];
+            $.ajax({
+                type: "GET",
+                url: "/bus/getByRouteId/" + routeId,
+                data: null,
+                async: false,
+                success: function (response) {
+                    buses = response;
+                    return response;
+                },
+                error: function () {
+                    alert('Buses could not be fetched');
+                }
+            });
+
+            // console.log("Buses fetched = ", buses);
+            // if(buses){
+            //     $('#bus-table-container').append($('<h5>Buses on this route are</h5>'));
+            // }
+            // else{
+            //     $('#bus-table-container').append($('<h5>Bus unavilable on this route</h5>'));
+            // }
+
+            buses.forEach(bus => {
+                busTable.innerHTML += `<tr>
+                                    <td class="col-sm-auto">
+                                        <a class="btn btn-primary" onclick="bookBus(${bus.bid})">
+                                            ${bus.availableSeats > 0 ? "Book This Bus" : "Add to waitlist"}
+                                        </a>
+                                    </td>
+                                    <td class="col-sm-auto">`+ bus.bid + `</td>
+                                    <td class="col-sm-auto">`+ bus.totalSeats + `</td>
+                                    <td class="col-sm-auto">`+ bus.availableSeats + `</td>
+                                </tr>`;
+            });
+
+
+        }
+        const bookBus = (busId) => {
+            url = "/employee/bookABusByBusId/" + busId;
+            console.log("the bus Id selected = ", busId);
+            console.log("the eid Id selected = ", eid);
+            $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "POST",
+                url: url,
+                data: JSON.stringify(eid), // imp
+                contentType: "application/json", //imp
+                dataType: "text",
+                async: false,
+                success: function (response) {
+                    alert(response);
+                },
+                error: function (response) {
+                    console.log(response.statusText);
+                    alert('Error occured in booking bus');
+                }
+            });
+            window.location.href = "/employee/";
+        }
+    </script>
+
+    <!-- script to add onchange function and create routes table -->
+    <script>
+        $(document).ready(() => {
+            console.log("on change function added to select");
+            $('#list-select-stop').on('change', function () {
+                var stopId = $('#list-select-stop option:selected').attr("value");
+                console.log("select stop id = " + stopId);
+
+                var routesMap;
+                $.ajax({
+                    type: "GET",
+                    url: "/arrivaltime/viewroutesas2stops/?stopId=" + stopId + "&shift=morning", //getallroutes/{stopId}
+                    data: null,
+                    async: false,
+                    success: function (response) {
+                        routesMap = response;
+                        return response;
+                    },
+                    error: function () {
+                        alert('Error occured in fetching routes');
+                    }
+                });
+                console.log(routesMap);
+                // let [startWithTime, endWithTime] = Object.values(routesMap)[0];
+                // // console.log(startWithTime);
+                // // var homeStop = startWithTime?.routeStop?.stop.name;
+                // // var officeStop = endWithTime?.routeStop?.stop.name;
+                document.getElementById('routes-table').innerHTML = `<tr>
+                                                                        <th></th>
+                                                                        <th>Home Stop</th>
+                                                                        <th>Office Stop</th>
+                                                                    </tr>`;
+                document.getElementById('bus-table').innerHTML = "";
+                Object.keys(routesMap).forEach((routeId) => {
+                    let [startWithTime, endWithTime] = routesMap[routeId];
+                    // console.log(routeId, startWithTime, endWithTime);
+                    document.
+                        getElementById('routes-table').
+                        innerHTML += `<tr>
+                                        <td><a class="btn btn-primary" onclick="getBuses(${routeId})" routeid=` + routeId + `>View Buses On this Route</a></td>
+                                        <td>
+                                            Morning Pickup: ${startWithTime?.morningArrivalTime} <br>
+                                            Evening Drop-off: ${startWithTime?.eveningArrivalTime}
+                                        </td>
+                                        <td>Morning Drop-off: ${endWithTime?.morningArrivalTime} <br>
+                                            Evening Pickup: ${endWithTime?.eveningArrivalTime}
+                                        </td>
+                                    </tr>`;
+                });
+
+            })
+
+
+        });
+
+        const removeBooking = () => {
+            console.log("the eid Id selected = ", eid);
+            // $(function () {
+            //     var token = $("meta[name='_csrf']").attr("content");
+            //     var header = $("meta[name='_csrf_header']").attr("content");
+            //     $(document).ajaxSend(function (e, xhr, options) {
+            //         xhr.setRequestHeader(header, token);
+            //     });
+            // });
+            $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "POST",
+                url: "/employee/removebooking",
+                data: JSON.stringify(eid), // imp
+                dataType: "text",
+                contentType: "application/json", //imp
+                async: false,
+                success: function (response) {
+                    alert(response);
+                },
+                error: function (response) {
+
+                }
+            });
+        };
+    </script>
+
+
+</head>
+
+<body>
+    <form th:action="@{/logout}" id="log" method="POST">
+
+    </form>
+    <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+                <img src="/images/logo.png" alt="">
+            </div>
+
+            <span class="logo_name">NRI Fintech</span>
+        </div>
+
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li><a href="/employee" id="home">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dashboard</span>
+                </a></li>
+                <li><a href="/employee/book" id="bookbus">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name" >Book Bus</span>
+                </a></li>
+                <li><a href="/employee/trackbus">
+                    <i class="uil uil-chart"></i>
+                    <span class="link-name">Track Bus</span>
+                </a></li>
+                <li><a href="/employee/showbookingdetails">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Booking Details</span>
+                </a></li>
+                <li><a href="#">
+                    <i class="uil uil-comments"></i>
+                    <span class="link-name">SOS</span>
+                </a></li>
+ <!--                <li><a href="#">
+                    <i class="uil uil-share"></i>
+                    <span class="link-name">Share</span>
+                </a></li> -->
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="#" onclick="document.getElementById('log').submit()">
+                    <i class="uil uil-signout"></i>
+    
+                     <span class="link-name">Logout</span> 
+                </a></li>
+
+                <li class="mode">
+                    <a href="#">
+                        <i class="uil uil-moon"></i>
+                    <span class="link-name">Dark Mode</span>
+                </a>
+
+                <div class="mode-toggle">
+                  <span class="switch"></span>
+                </div>
+            </li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+
+    <!-- Employee Dashboard-->
+    <div class="dashboard" id="homeContent" >
+        <div class="top">
+            <i class="uil uil-bars sidebar-toggle"></i>
+
+
+            <img src="/images/profile.jpg" alt="">
+        </div>
+        <div style="margin-top:5%;">
+            <span style="color:grey;" class="logout-mode"> >bookbus </span><hr>
+            <h3 style="color:grey;text-align:center;">Bus Book Form</h3>
+            </div>
+        <div class="align-items-center justify-content-center d-flex p-5">
+
+            <!--Card-->
+            <div class="card shadow mb-5 bg-white rounded w-75">
+
+                <!--Card-Body-->
+                <div class="card-body">
+
+                    <!--Card-Title-->
+
+                    <hr>
+                    <br />
+                    <p class="searchText "><strong>Select your pickup stop</strong></p>
+                    <!-- <div class="col-sm-6"> -->
+                    <select class="browser-default custom-select mb-4" id="list-select-stop">
+                        <option value="" disabled="" selected="">Select stop</option>
+                        <option th:each="stop : ${stops}" th:value="${stop.getSid()}" th:text="${stop.getName()}">
+                        </option>
+                    </select>
+
+                    <!--Second Row to display list of routes on selected stop -->
+                    <div class="pt-5 d-flex align-content-center justify-content-center w-100">
+                        <table id="routes-table" class=" justify-content-center w-100">
+                        </table>
+                    </div>
+
+                    <!--Third Row to display list of buses on selected route -->
+                    <div class="pt-5 d-flex align-content-center justify-content-center w-100" id="bus-table-container">
+                        <table id="bus-table" class="justify-content-center w-100">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Book Bus -->
+
+
+        <script src="/script/home_script.js"></script>
+        <!--    <script src="/script/navigation.js"></script> -->
+</body>
+
+</html>
+
+
+
+
+</html>

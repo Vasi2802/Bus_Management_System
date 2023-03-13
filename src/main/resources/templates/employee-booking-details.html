@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+  crossorigin=""></script>
+    <!----======== CSS ======== -->
+    <link rel="stylesheet" href="/css/home_style.css">
+     
+    <!----===== Iconscout CSS ===== -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+	<!-- from other file -->
+	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+    </script>
+	<script th:inline="javascript">
+        /*<![CDATA[*/
+        var phno = /*[[${session.emp.getEmployee().getName()}]]*/ 'default';
+        var bus = /*[[${session.emp.getEmployee().getB()}]]*/ 'default';
+        var eid = /*[[${session.emp.getEmployee().getEid()}]]*/ 'default';
+        /*]]>*/
+
+    </script>
+
+    <script>
+        console.log(eid);
+        var employee;
+        var bus;
+        $(document).ready(async () => {
+            url = "/employee/getbyid/" + eid;
+            await $.ajax({
+                type: "GET",
+                url: url,
+                success: function (response) {
+                    console.log("The employee is");
+                    console.log(response);
+                    employee = response;
+                    bus = employee?.b;
+                },
+                error: function (response) {
+                    alert('Error occured ', response.statusText);
+                }
+            });
+            $("#bus-id-display").append(`${bus? bus.bid : "NA"}`);
+        });
+
+        const removeBooking = () => {
+            console.log("the eid Id selected = ", eid);
+            // $(function () {
+            //     var token = $("meta[name='_csrf']").attr("content");
+            //     var header = $("meta[name='_csrf_header']").attr("content");
+            //     $(document).ajaxSend(function (e, xhr, options) {
+            //         xhr.setRequestHeader(header, token);
+            //     });
+            // });
+            $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "POST",
+                url: "/employee/removebooking",
+                data: JSON.stringify(eid), // imp
+                dataType: "json",
+                contentType: "application/json", //imp
+                async: false,
+                success: function (response) {
+                    alert("hello");
+                },
+                error: function (response) {
+                    // console.log(response.getResponseHeader(""));
+                    // alert('Error occured in cancelling booking ', response);
+                }
+            });
+            // window.location.href = "/employee/dashboard";
+        }
+    </script>
+    <title>Employee Dashboard </title> 
+</head>
+<body>
+                <form th:action="@{/logout}" id="log" method="POST">
+						
+</form>
+<nav>
+    <div class="logo-name">
+        <div class="logo-image">
+            <img src="/images/logo.png" alt="">
+        </div>
+
+        <span class="logo_name">NRI Fintech</span>
+    </div>
+
+    <div class="menu-items">
+        <ul class="nav-links">
+            <li><a href="/employee" id="home">
+                <i class="uil uil-estate"></i>
+                <span class="link-name">Dashboard</span>
+            </a></li>
+            <li><a href="/employee/book" id="bookbus">
+                <i class="uil uil-files-landscapes"></i>
+                <span class="link-name" >Book Bus</span>
+            </a></li>
+            <li><a href="/employee/trackbus">
+                <i class="uil uil-chart"></i>
+                <span class="link-name">Track Bus</span>
+            </a></li>
+            <li><a href="/employee/showbookingdetails">
+                <i class="uil uil-thumbs-up"></i>
+                <span class="link-name">Booking Details</span>
+            </a></li>
+            <li><a href="#">
+                <i class="uil uil-comments"></i>
+                <span class="link-name">SOS</span>
+            </a></li>
+<!--                <li><a href="#">
+                <i class="uil uil-share"></i>
+                <span class="link-name">Share</span>
+            </a></li> -->
+        </ul>
+        
+        <ul class="logout-mode">
+            <li><a href="#" onclick="document.getElementById('log').submit()">
+                <i class="uil uil-signout"></i>
+
+                 <span class="link-name">Logout</span> 
+            </a></li>
+
+            <li class="mode">
+                <a href="#">
+                    <i class="uil uil-moon"></i>
+                <span class="link-name">Dark Mode</span>
+            </a>
+
+            <div class="mode-toggle">
+              <span class="switch"></span>
+            </div>
+        </li>
+        </ul>
+    </div>
+</nav>
+
+
+
+
+<!-- Employee Dashboard-->
+    <div class="dashboard" id="homeContent">
+        <div class="top">
+        
+            <i class="uil uil-bars sidebar-toggle"></i>
+			
+            <!-- <div class="search-box">
+                <i class="uil uil-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div> -->
+            	
+            	
+            <img src="/images/profile.jpg" alt="">
+           
+        </div>
+        
+<div style="margin-top:5%;">
+<span style="color:grey;" class="logout-mode"> >booking-details </span><hr>
+<h3 style="color:grey;text-align:center;">Booking Details</h3>
+</div>
+<Br/>
+
+        <div class="card text-white ">
+
+            <div class="table-responsive table table-striped table-light">
+                <table class="table text-black">
+
+                    <tbody>
+                        <tr>
+                            <td>BookingId</td>
+                            <td th:text="${session.emp.getEmployee().getName()}"></td>
+                        </tr>
+                        <tr>
+                            <td>Bus Number</td>
+                            <td th:text="${session.emp.getEmployee().getContactNo()}"></td>
+                        </tr>
+                        <tr>
+                            <td>Stop Name</td>
+                            <td th:text="${session.emp.getUserName()}"></td>
+                        </tr>
+                        <tr>
+                            <td>Time of Bus Arrival</td>
+                            <td id="bus-id-display"></td>
+                            <!-- if in waitlist -->
+                            <!-- employee/getStatus returns assigned, not applied, in waitlist -->
+                        </tr>
+                        <tr>
+                           <td>Bus Status </td>
+                            <td id="bus-id-display"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Book Bus -->
+   
+
+    <script src="/script/home_script.js"></script>
+ <!--    <script src="/script/navigation.js"></script> -->
+</body>
+</html>
