@@ -176,7 +176,6 @@ public class EmployeeController {
 	    	List<ArrivalTimeTable> aAndS = timeserv.getAllStopsWithTimeByRouteId(rid, "evening");
 	    
 	    	modelAndView.addObject("arrTime", aAndS);
-
 	    	modelAndView.addObject("start", "NRIFINTECH");
 	    	modelAndView.addObject("allStops", stops);
 	    }

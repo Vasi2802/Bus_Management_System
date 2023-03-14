@@ -162,7 +162,7 @@ width: 100%;
         	  
         	  $('#clock').text(time);
         	  
-        	  console.log(cutoffTimes);
+  
       	    var ids = ["#pipe1","#pipe2","#pipe3","#pipe4","#pipe5","#pipe6","#pipe7","#pipe8","#pipefinal"]; // list of IDs
       	    var threshold = new Date(); // create a new Date object for the cutoff time
       	    threshold.setHours(12);
@@ -377,14 +377,11 @@ width: 100%;
 
              <div class="d-flex flex-row justify-content-between align-items-center align-content-center">
 
-             <!-- Start -->
-             <!--  <span th:if="${start}" class="dot"></span>
-              <hr th:if="${start}" class="flex-fill ">  -->
-             
-             
-     
-    
+
+              
     			<!-- Stop 2 -->
+
+              
     			<span th:if="${#lists.size(allStops) > 1}" class="dot"></span>
               <hr th:if="${#lists.size(allStops) > 1}" id="pipe2" class="flex-fill">
               
@@ -415,7 +412,7 @@ width: 100%;
               
               
               <!-- Final -->
-             <span th:if="${end}"
+              <span
                 id="pipefinal" class="d-flex justify-content-center align-items-center big-dot dot">
                 
                 
@@ -434,36 +431,36 @@ width: 100%;
               
 				<!-- Stop 1 -->
               <div th:if="${#lists.size(allStops) > 0}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[0].name}"></span><span  th:text="${arrTime[0].getMorningArrivalTime()}"> </span>
+              <span th:text="${allStops[0].name}"></span><span  th:text="${arrTime[0].getEveningArrivalTime()}"> </span>
               </div>
 
-				<!-- Stop 2 -->
+			<!-- Stop 2 -->
 			<div th:if="${#lists.size(allStops) > 1}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[1].name}"></span><span  th:text="${arrTime[1].getMorningArrivalTime()}"> </span>
+              <span th:text="${allStops[1].name}"></span><span  th:text="${arrTime[1].getEveningArrivalTime()}"> </span>
               </div>
             
              <!-- Stop 3 -->
             <div th:if="${#lists.size(allStops) > 2}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[2].name}"></span><span  th:text="${arrTime[2].getMorningArrivalTime()}"> </span>
+              <span th:text="${allStops[2].name}"></span><span  th:text="${arrTime[2].getEveningArrivalTime()}"> </span>
               </div>
               
               <!-- Stop 4 -->
             <div th:if="${#lists.size(allStops) > 3}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[3].name}"></span><span  th:text="${arrTime[3].getMorningArrivalTime()}"> </span>
+              <span th:text="${allStops[3].name}"></span><span  th:text="${arrTime[3].getEveningArrivalTime()}"> </span>
               </div>
                  
                <!-- Extra -->
             <div th:if="${#lists.size(allStops) > 4}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[4].name}"></span><span  th:text="${arrTime[4].getMorningArrivalTime()}"> </span>
+              <span th:text="${allStops[4].name}"></span><span  th:text="${arrTime[4].getEveningArrivalTime()}"> </span>
               </div>
               
               <!-- Extra -->
             <div th:if="${#lists.size(allStops) > 5}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[5].name}"></span><span  th:text="${arrTime[5].getMorningArrivalTime()}"> </span>
+              <span th:text="${allStops[5].name}"></span><span  th:text="${arrTime[5].getEveningArrivalTime()}"> </span>
               </div>
               <!-- Extra -->
             <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getMorningArrivalTime()}"> </span>
+              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getEveningArrivalTime()}"> </span>
               </div>
 
               
