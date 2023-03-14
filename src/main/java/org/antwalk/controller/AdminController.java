@@ -29,6 +29,7 @@ import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
 import org.antwalk.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -249,7 +250,7 @@ public class AdminController {
 
 	// GENERATE REPORT
 	@GetMapping("/analytics/downlaod-report")
-	public ResponseEntity<byte[]> downloadReport(){
+	public ResponseEntity<Resource> downloadReport(){
 		return adminService.generateReport();
 	}
 

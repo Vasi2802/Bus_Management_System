@@ -1,5 +1,6 @@
 package org.antwalk.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -76,7 +78,7 @@ public class AdminService {
 
 	}
 
-	public ResponseEntity<byte[]> generateReport() {
+	public ResponseEntity<Resource> generateReport() {
 
 		LocalDate today = LocalDate.now();
 
@@ -86,99 +88,102 @@ public class AdminService {
 		Workbook workbook = new XSSFWorkbook();
 
 		Sheet sheet = workbook.createSheet("Bookings_in_" + today.getMonth().name());
-		sheet.setColumnWidth(0, 6000);
+		sheet.setColumnWidth(0, 4000);
 		sheet.setColumnWidth(1, 4000);
+		sheet.setColumnWidth(2, 10000);
+		sheet.setColumnWidth(3, 2000);
+		sheet.setColumnWidth(4, 10000);
 
-		// Header Creation
+		// =================================== Header Creation =======================================
 
 		{
 			Row header = sheet.createRow(0);
 
-			// CellStyle headerStyle = workbook.createCellStyle();
-			// headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+			CellStyle headerStyle = workbook.createCellStyle();
+			// headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());	
 			// headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setWrapText(true);
 
-			// XSSFFont font = ((XSSFWorkbook) workbook).createFont();
-			// font.setFontName("Arial");
-			// font.setFontHeightInPoints((short) 16);
-			// font.setBold(true);
-			// headerStyle.setFont(font);
+			XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+			font.setFontName("Arial");
+			font.setFontHeightInPoints((short) 12);
+			font.setBold(true);
+			headerStyle.setFont(font);
 
 			Cell headerCell = header.createCell(0);
 			headerCell.setCellValue("Booking ID");
-			// headerCell.setCellStyle(headerStyle);
+			headerCell.setCellStyle(headerStyle);
 
 			headerCell = header.createCell(1);
 			headerCell.setCellValue("Employee ID");
-			// headerCell.setCellStyle(headerStyle);
+			headerCell.setCellStyle(headerStyle);
 
 			headerCell = header.createCell(2);
 			headerCell.setCellValue("Employee Name");
-			// headerCell.setCellStyle(headerStyle);
+			headerCell.setCellStyle(headerStyle);
 
 			headerCell = header.createCell(3);
 			headerCell.setCellValue("Bus ID");
-			// headerCell.setCellStyle(headerStyle);
+			headerCell.setCellStyle(headerStyle);
 
 			headerCell = header.createCell(4);
 			headerCell.setCellValue("Booking Date");
-			// headerCell.setCellStyle(headerStyle);
+			headerCell.setCellStyle(headerStyle);
 		}
 
-		// Table CReation
+		// ======================= TABLE CREATION ================================
 
 		int rowNum = 2;
 		for (BookingDetails bookingDetails : bookingDetailsList) {
 			CellStyle style = workbook.createCellStyle();
-			style.setWrapText(true);
+			style.setWrapText(false);
 
 			Row row = sheet.createRow(rowNum);
 
 			Cell cell = row.createCell(0);
 			cell.setCellValue(bookingDetails.getBookingId());
-			// cell.setCellStyle(style);
+			cell.setCellStyle(style);
 
 			cell = row.createCell(1);
 			cell.setCellValue(bookingDetails.getE().getEid());
-			// cell.setCellStyle(style);
+			cell.setCellStyle(style);
 
 			cell = row.createCell(2);
 			cell.setCellValue(bookingDetails.getE().getName());
-			// cell.setCellStyle(style);
+			cell.setCellStyle(style);
 
 			cell = row.createCell(3);
 			cell.setCellValue(bookingDetails.getB().getBid());
-			// cell.setCellStyle(style);
+			cell.setCellStyle(style);
 
 			cell = row.createCell(4);
 			cell.setCellValue(bookingDetails.getBookingForMonth().toString());
-			// cell.setCellStyle(style);
+			cell.setCellStyle(style);
 
 			rowNum += 1;
 		}
 
-		File file = new File("files\\reports" + "trial1.xlsx");
-
-		HttpHeaders header = new HttpHeaders();
-		header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=trial1.xlsx");
-		// header.add("Cache-Control", "no-cache, no-store, must-revalidate");
-		// header.add("Pragma", "no-cache");
-		// header.add("Expires", "0");
+		String fileName = "Bookings_in_" + today.getMonth().name() + ".xlsx";
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
 			workbook.write(outputStream);
-			outputStream.close();
 			workbook.close();
 		} catch (IOException e) {
 			System.out.println("IO EXCEPTION");
 		}
 
-		return ResponseEntity.ok()
-				.headers(header)
-				.contentLength(file.length())
-				.contentType(MediaType.APPLICATION_OCTET_STREAM)
-				.body(outputStream.toByteArray());
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
 
+		InputStreamResource file = new InputStreamResource(inputStream);
+
+
+		
+		return ResponseEntity.ok()
+		.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+		// .contentLength(file.length())
+		.contentType(MediaType.APPLICATION_OCTET_STREAM)
+		.body(file);
+		
 	}
 }
