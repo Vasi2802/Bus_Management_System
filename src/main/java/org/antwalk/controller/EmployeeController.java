@@ -141,10 +141,7 @@ public class EmployeeController {
 	    	modelAndView = new ModelAndView("error-booking-details");
 	    	return modelAndView;
 	    }	
-	    
-	    emp.getEmployee().getB().getD().getDriverName();
-	    emp.getEmployee().getB().getD().getDriverContactNo();
-//	    bookingDetailsRepo.find
+
 	    
 		return modelAndView;
 	}
