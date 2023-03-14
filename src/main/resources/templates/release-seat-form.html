@@ -21,15 +21,17 @@
 	<!-- from other file -->
 	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-    </script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
     </script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
     </script>
-	<script th:inline="javascript">
+    
+    <script th:inline="javascript">
         /*<![CDATA[*/
         var phno = /*[[${session.emp.getEmployee().getName()}]]*/ 'default';
         var bus = /*[[${session.emp.getEmployee().getB()}]]*/ 'default';
@@ -37,8 +39,8 @@
         /*]]>*/
 
     </script>
-
-    <script>
+    
+	<script>
         console.log(eid);
         var employee;
         var bus;
@@ -65,13 +67,6 @@
 
         const removeBooking = () => {
             console.log("the eid Id selected = ", eid);
-            // $(function () {
-            //     var token = $("meta[name='_csrf']").attr("content");
-            //     var header = $("meta[name='_csrf_header']").attr("content");
-            //     $(document).ajaxSend(function (e, xhr, options) {
-            //         xhr.setRequestHeader(header, token);
-            //     });
-            // });
             $.ajax({
                 headers: {
                     Accept: 'application/json', //imp
@@ -92,6 +87,28 @@
             window.location.href = "/employee";
         }
     </script>
+
+
+
+    <script>
+        setInterval(() => {
+        	  // Get the current time
+        	  const now = new Date();
+
+        	  // Format the time as hh:mm:ss
+        	  const hours = now.getHours().toString().padStart(2, '0');
+        	  const minutes = now.getMinutes().toString().padStart(2, '0');
+        	  const seconds = now.getSeconds().toString().padStart(2, '0');
+        	  const time = `${hours}:${minutes}:${seconds}`;
+        	  
+        	  $('#clock').text(time);
+        	  
+        	 
+        	}, 1000);
+        
+    </script>
+    
+    
     <title>Employee Dashboard </title> 
 </head>
 <body>
@@ -115,9 +132,9 @@
                 </a></li>
                 <li><a href="/employee/book" id="bookbus">
                     <i class="uil uil-files-landscapes"></i>
-                    <span class="link-name" >Book Bus</span>
+                    <span class="link-name">Book Bus</span>
                 </a></li>
-                <li><a href="/employee/trackbus">
+                <li><a href="#" id="track-bus-link">
                     <i class="uil uil-chart"></i>
                     <span class="link-name">Track Bus</span>
                 </a></li>
@@ -165,62 +182,75 @@
         
             <i class="uil uil-bars sidebar-toggle"></i>
 			
-            <!-- <div class="search-box">
-                <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div> -->
+             
+                <div class="row">
+    <span id="clock" class="col-12 col-md-6 col-lg-4"  style="font-size: 30px;"></span>
+  </div>
+                
+                    
+            
             	
-            	
+
             <img src="/images/profile.jpg" alt="">
            
         </div>
         
 <div style="margin-top:5%;">
-<span style="color:grey;" class="logout-mode"> >dashboard</span><hr>
-<h3 style="color:grey;text-align:center;">Employee Details</h3>
+<span style="color:grey;" class="logout-mode">> release-seat</span><hr>
+<h3 style="color:grey;text-align:center;" id="test">Release seat</h3>
+
 </div>
 <Br/>
 
-        <div class="card text-white ">
+<div>
+<!-- <div class="progress-bar">
+  <ul id="progress-bar-points">
+    <li id="point-1" class="active"></li>
+    <li id="point-2"></li>
+    <li id="point-3"></li>
+    <li id="point-4"></li>
+    <li id="point-5"></li>
+  </ul>
+  <div class="lines"></div>
+</div>
+            </div> -->
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col">
+        <div class="card card-stepper" style="border-radius: 10px;">
+          <div class="card-body p-4">
 
-            <div class="table-responsive table table-striped table-light">
-                <table class="table text-black">
-
-                    <tbody>
-                        <tr>
-                            <td>Name</td>
-                            <td th:text="${session.emp.getEmployee().getName()}"></td>
-                        </tr>
-                        <tr>
-                            <td>Phone No </td>
-                            <td th:text="${session.emp.getEmployee().getContactNo()}"></td>
-                        </tr>
-                        <tr>
-                            <td>Email </td>
-                            <td th:text="${session.emp.getUserName()}"></td>
-                        </tr>
-                        <tr>
-                            <td>Bus Id </td>
-                            <td id="bus-id-display"></td>
-                            <!-- if in waitlist -->
-                            <!-- employee/getStatus returns assigned, not applied, in waitlist -->
-                        </tr>
-                        <tr>
-                           <td>Booking Status </td>
-                            <td id="bus-id-display"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex flex-column">
+                <span class="lead fw-normal">Warning</span>
+              
+              </div>
+          
             </div>
-            <a href="#" onclick="removeBooking();">Remove Booking</a>
+            <hr class="my-4">
+ 					
+ 						Are you sure you want to release your seat, you cannot revert your choice. 
+ 						Since you have booked the seat for this month the specific amout will still be deducted.
+ 						<Br/><br/>
+ 						<input type="button" onclick="removeBooking();" class="btn btn-danger" value="Yes Release Seat">
+ 						<input type="button" onclick="window.location.href='/employee'" class="btn btn-info" value="Cancel">
+
+
+          </div>
         </div>
+      </div>
+      
     </div>
+     <ul>
+    <li th:each="object : ${allStops}">
+        <span th:text="${object.name}" style="color:red;"></span>
 
-    
-    <!-- Book Bus -->
-   
+    </li>
+</ul>
+   </div>
+</div>
 
-    <script src="/script/home_script.js"></script>
- <!--    <script src="/script/navigation.js"></script> -->
+
+
 </body>
 </html>

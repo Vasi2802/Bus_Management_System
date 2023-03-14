@@ -29,67 +29,8 @@
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
     </script>
-	<script th:inline="javascript">
-        /*<![CDATA[*/
-        var phno = /*[[${session.emp.getEmployee().getName()}]]*/ 'default';
-        var bus = /*[[${session.emp.getEmployee().getB()}]]*/ 'default';
-        var eid = /*[[${session.emp.getEmployee().getEid()}]]*/ 'default';
-        /*]]>*/
 
-    </script>
-
-    <script>
-        console.log(eid);
-        var employee;
-        var bus;
-        $(document).ready(async () => {
-            url = "/employee/getbyid/" + eid;
-            await $.ajax({
-                type: "GET",
-                url: url,
-                success: function (response) {
-                    console.log("The employee is");
-                    console.log(response);
-                    employee = response;
-                    bus = employee?.b;
-                },
-                error: function (response) {
-                    alert('Error occured ', response.statusText);
-                }
-            });
-            $("#bus-id-display").append(`${bus? bus.bid : "NA"}`);
-        });
-
-        const removeBooking = () => {
-            console.log("the eid Id selected = ", eid);
-            // $(function () {
-            //     var token = $("meta[name='_csrf']").attr("content");
-            //     var header = $("meta[name='_csrf_header']").attr("content");
-            //     $(document).ajaxSend(function (e, xhr, options) {
-            //         xhr.setRequestHeader(header, token);
-            //     });
-            // });
-            $.ajax({
-                headers: {
-                    Accept: 'application/json', //imp
-                },
-                type: "POST",
-                url: "/employee/removebooking",
-                data: JSON.stringify(eid), // imp
-                dataType: "json",
-                contentType: "application/json", //imp
-                async: false,
-                success: function (response) {
-                    alert("hello");
-                },
-                error: function (response) {
-                    // console.log(response.getResponseHeader(""));
-                    // alert('Error occured in cancelling booking ', response);
-                }
-            });
-            // window.location.href = "/employee/dashboard";
-        }
-    </script>
+ 
     <title>Employee Dashboard </title> 
 </head>
 <body>
@@ -123,9 +64,9 @@
                 <i class="uil uil-thumbs-up"></i>
                 <span class="link-name">Booking Details</span>
             </a></li>
-            <li><a href="/employee/releaseseat">
-                <i class="uil uil-chart-down"></i>
-                <span class="link-name">Release Seat</span>
+            <li><a href="#">
+                <i class="uil uil-comments"></i>
+                <span class="link-name">SOS</span>
             </a></li>
 <!--                <li><a href="#">
                 <i class="uil uil-share"></i>
@@ -182,34 +123,10 @@
         <div class="card text-white ">
 
             <div class="table-responsive table table-striped table-light">
-                <table class="table text-black">
-
-                    <tbody>
-                    	
-                    	<tr>
-                            <td>Booking Id</td>
-                            <td>13</td>
-                        </tr>
-                        
-                        <tr>
-                            <td>Bus Number</td>
-                            <td th:text="${session.emp.getEmployee().getB().getBid()}"></td>
-                        </tr>
-                        <tr>
-                            <td>Driver Name</td>
-                            <td th:text="${session.emp.getEmployee().getB().getD().getDriverName()}"></td>
-                        </tr>
-                        <tr>
-                            <td>Driver Contact Number</td>
-                            <td th:text="${session.emp.getEmployee().getB().getD().getDriverContactNo()}"></td>
-                        </tr>
-                        
-                        <tr>
-                           <td>Bus Status </td>
-                            <td>Inactive</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div
+					class="alert alert-danger col-xs-offset-1 col-xs-10">
+											You need to book a bus first
+						</div>
             </div>
         </div>
     </div>
@@ -218,7 +135,6 @@
     <!-- Book Bus -->
    
 
-    <script src="/script/home_script.js"></script>
  <!--    <script src="/script/navigation.js"></script> -->
 </body>
 </html>

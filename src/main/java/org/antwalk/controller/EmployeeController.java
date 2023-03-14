@@ -4,11 +4,15 @@ import java.io.IOException;
 import java.security.Principal;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
@@ -18,9 +22,11 @@ import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.BookingDetailsRepo;
 import org.antwalk.repository.BusRepo;
 import org.antwalk.repository.EmployeeRepo;
+import org.antwalk.repository.RouteRepo;
 import org.antwalk.repository.StopRepo;
 import org.antwalk.repository.UserRepo;
 import org.antwalk.repository.WaitingListRepo;
+import org.antwalk.service.ArrivalTimeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +45,12 @@ public class EmployeeController {
 	@Autowired
 	EmployeeRepo empRepo;
 
+	@Autowired
+	RouteRepo routeRepo;
+	
+	@Autowired
+	ArrivalTimeService timeserv;
+	
 	@Autowired
 	BusRepo busRepo;
 
@@ -105,20 +117,77 @@ public class EmployeeController {
 		return modelAndView;
 	}
 
+	@GetMapping("/releaseseat")
+	public ModelAndView releaseseat(HttpServletRequest request) {
+		ModelAndView modelAndView = new ModelAndView("release-seat-form");
+		HttpSession session = request.getSession();
+	    User emp = (User)session.getAttribute("emp");
+	    if(emp.getEmployee().getB()==null) {
+	    	modelAndView = new ModelAndView("error-seat-form");
+	    	return modelAndView;
+	    }	
+	    
+
+		return modelAndView;
+	}
+
 	@GetMapping("/showbookingdetails")
-	public ModelAndView booking() {
-		System.out.println("Working");
+	public ModelAndView booking(HttpServletRequest request) {
+		
 		ModelAndView modelAndView = new ModelAndView("employee-booking-details");
+		HttpSession session = request.getSession();
+	    User emp = (User)session.getAttribute("emp");
+	    if(emp.getEmployee().getB()==null) {
+	    	modelAndView = new ModelAndView("error-booking-details");
+	    	return modelAndView;
+	    }	
+	    
+	    emp.getEmployee().getB().getD().getDriverName();
+	    emp.getEmployee().getB().getD().getDriverContactNo();
+//	    bookingDetailsRepo.find
+	    
 		return modelAndView;
 	}
 	
 	@GetMapping("/trackbus")
-	public ModelAndView trackbus() {
-		System.out.println("Working");
+	public ModelAndView trackbus(HttpServletRequest request) {
+		
 		ModelAndView modelAndView = new ModelAndView("employee-track-bus");
+		HttpSession session = request.getSession();
+	    User emp = (User)session.getAttribute("emp");
+	    if(emp.getEmployee().getB()==null) {
+	    	modelAndView = new ModelAndView("error-track-bus");
+	    	return modelAndView;
+	    }
+	    
+	    Long rid = emp.getEmployee().getB().getR().getRid();
+	    
+	    LocalTime currentTime = LocalTime.now(); // get the current time
+	    LocalTime noon = LocalTime.of(12, 0); // set noon time to 12:00 PM
+	    
+		
+		  if (currentTime.isBefore(noon)) { List<Stop> stops=
+		  timeserv.getStopsByRouteId(rid, "morning"); List<ArrivalTimeTable> aAndS =
+		  timeserv.getAllStopsWithTimeByRouteId(rid, "morning");
+		  
+		  modelAndView.addObject("arrTime", aAndS);
+		  
+		  modelAndView.addObject("end", "NRIFINTECH");
+		  modelAndView.addObject("allStops", stops); } else {
+		 
+	    	List<Stop> stops= timeserv.getStopsByRouteId(rid, "evening");
+	    	List<ArrivalTimeTable> aAndS = timeserv.getAllStopsWithTimeByRouteId(rid, "evening");
+	    
+	    	modelAndView.addObject("arrTime", aAndS);
+
+	    	modelAndView.addObject("start", "NRIFINTECH");
+	    	modelAndView.addObject("allStops", stops);
+	    }
+	    
 		return modelAndView;
 	}
-
+//	Route route = routeRepo.getById(id);
+//	List<Stop> stops = route.ge
 
 	@GetMapping("/book")
 	public ModelAndView book() {
@@ -171,7 +240,7 @@ public class EmployeeController {
 	}
 
 	@PostMapping(value = "/bookABusByBusId/{busId}")
-	public String bookABusByBusId(@RequestBody Long eid, @PathVariable long busId) {
+	public String bookABusByBusId(@RequestBody Long eid, @PathVariable long busId,HttpServletRequest request) {
 
 		System.out.println("Booking Bus For ==============");
 		System.out.println("bus id =" + busId + "  empId = " + eid + "=============");
@@ -219,6 +288,14 @@ public class EmployeeController {
 		System.out.println("======================================");
 		System.out.println(employee + " has booked the bus");
 		empRepo.save(employee);
+		
+		
+		HttpSession session = request.getSession();
+		
+	    User emp = (User)session.getAttribute("emp");
+	    emp.getEmployee().setB(bus);
+	    session.setAttribute("emp", emp);
+	    
 		return String.format("Hi %s!\nYou have successfully booked Bus with id=%d", employee.getName(), bus.getBid());
 
 	}
@@ -265,7 +342,7 @@ public class EmployeeController {
 				// get the employee
 				Employee topEmployee = waitingList.getE();
 
-				String messageForBooking = bookABusByBusId(topEmployee.getEid(), bus.getBid());
+				String messageForBooking = bookABusByBusId(topEmployee.getEid(), bus.getBid(), null);
 
 				System.out.println(messageForBooking);
 

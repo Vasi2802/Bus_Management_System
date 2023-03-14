@@ -21,8 +21,9 @@
 	<!-- from other file -->
 	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-    </script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
     </script>
@@ -38,7 +39,7 @@
 
     </script>
 	<style>
-.track-line {
+.hellotrack {
 height: 2px !important;
 background-color: #488978;
 opacity: 1;
@@ -73,13 +74,126 @@ font-size: 12px;
 .card-stepper {
 z-index: 0
 }
+#clock{
+font-size:30px;
+color:lightgreen;
+}
+@media (max-width: 767px) {
+  span {
+    font-size: 10px;
+  }
+  #clock{
+  font-size: 25px;
+  }
+  }
+
+@media (max-width: 427px) {
+  span {
+    font-size: 7px;
+  }
+  }
+  
+@font-face{
+    font-family: 'Digital-7';
+    src:  url('fonts/digital-7.ttf') format('woff2'),   b ,g,mdrx
+    url('digital-7.woff') format('woff');
+}
+.clockdate-wrapper {
+    background: #141E30;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    padding:3px;
+    padding-left:50px;
+    padding-right:50px;
+    width:100%;
+    text-align:center;
+    border-radius:5px;
+    margin:0 auto;
+  
+}
+#clock{
+    font-family: Digital-7, 'sans-serif';
+    text-shadow:0px 0px 1px #fff;
+    color:#fff;
+}
+#clock span {
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow:0px 0px 1px #333;
+    font-size:15px;
+    position:relative;
+}
 </style>
+<script type="text/javascript">
+
+
+$(document).ready(function(){
+
+	 
+});
+
+</script>
+
     <script>
     //getroutebylistofstops
+           
         console.log(eid);
         var employee;
         var bus;
+        setInterval(() => {
+        	  // Get the current time
+        	  const now = new Date();
+
+        	  // Format the time as hh:mm:ss
+        	  const hours = now.getHours().toString().padStart(2, '0');
+        	  const minutes = now.getMinutes().toString().padStart(2, '0');
+        	  const seconds = now.getSeconds().toString().padStart(2, '0');
+        	  const time = `${hours}:${minutes}:${seconds}`;
+        	  
+        	  $('#clock').text(time);
+        	  
+        	  var cutoffTimes = /*[[${arrTime}]]*/ []; 
+      	    var ids = ["#pipe1","#pipe2","#pipe3","#pipe4","#pipe5","#pipe6","#pipe7","#pipe8","#pipefinal"]; // list of IDs
+      	    var threshold = new Date(); // create a new Date object for the cutoff time
+      	    threshold.setHours(12);
+
+      	    var currentTime = new Date(); // get the current time
+      	    for (var i = 0; i < cutoffTimes.length; i++) {
+      	        var cutoffTime = new Date(); // create a new Date object for the cutoff time
+      	        var cutoffTimeParts = cutoffTimes[i].split(':');
+      	        var hours1 = parseInt(cutoffTimeParts[0]);
+      	        var minutes1 = parseInt(cutoffTimeParts[1]);
+      	        if (hours1 < 12) {
+      	            cutoffTime.setHours(hours1);
+      	            cutoffTime.setMinutes(minutes1);
+      	            cutoffTime.setSeconds(0);
+      	            cutoffTime.setMilliseconds(0);
+      	            if (currentTime.getTime() >= cutoffTime.getTime()) {
+      	            	console.log("Way past time 2 "+ids[i]);
+      	                 $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
+      	            } else if(currentTime.getTime()>threshold.getTime()) {
+      	            	console.log("Remove past time");
+      	            	$(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
+      	            }
+      	        } else {
+      	            cutoffTime.setHours(hours1 - 12);
+      	            cutoffTime.setMinutes(minutes1);
+      	            cutoffTime.setSeconds(0);
+      	            cutoffTime.setMilliseconds(0);
+      	            cutoffTime.setTime(cutoffTime.getTime() + 12 * 60 * 60 * 1000); // add 12 hours for PM time
+      	            if (currentTime.getTime() >= cutoffTime.getTime()) {
+      	            	console.log("Way past time 2 "+ids[i]);
+      	            	$(ids[i]).addClass('track-line'); // add 'after-cutoff' class if current time is after the cutoff time
+      	            } 
+      	            else if (currentTime.getTime()>threshold.getTime()) {
+      	            	console.log("Remove past time");
+      	            	$(ids[i]).removeClass('track-line'); // add 'before-cutoff' class if current time is before the cutoff time
+      	            }
+      	        }
+      	    }
+        	}, 1000);
+        
         $(document).ready(async () => {
+        	
             url = "/employee/getbyid/" + eid;
             await $.ajax({
                 type: "GET",
@@ -97,6 +211,7 @@ z-index: 0
             $("#bus-id-display").append(`${bus? bus.bid : "NA"}`);
         });
 
+      
         const removeBooking = () => {
             console.log("the eid Id selected = ", eid);
             // $(function () {
@@ -150,9 +265,9 @@ z-index: 0
                 </a></li>
                 <li><a href="/employee/book" id="bookbus">
                     <i class="uil uil-files-landscapes"></i>
-                    <span class="link-name" >Book Bus</span>
+                    <span class="link-name">Book Bus</span>
                 </a></li>
-                <li><a href="#">
+                <li><a href="#" id="track-bus-link">
                     <i class="uil uil-chart"></i>
                     <span class="link-name">Track Bus</span>
                 </a></li>
@@ -200,19 +315,28 @@ z-index: 0
         
             <i class="uil uil-bars sidebar-toggle"></i>
 			
-            <!-- <div class="search-box">
-                <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div> -->
+             
+                <!-- <div class="row">
+    <span id="clock" class="col-12 col-md-6 col-lg-4"></span>
+  </div> -->
+                
+                   <div id="clockdate">
+  <div class="clockdate-wrapper">
+    <div id="clock"></div>
+    <div id="date"></div>
+  </div>
+</div> 
+            
             	
-            	
+
             <img src="/images/profile.jpg" alt="">
            
         </div>
         
 <div style="margin-top:5%;">
-<span style="color:grey;" class="logout-mode"> >trackBus</span><hr>
-<h3 style="color:grey;text-align:center;">Bus Details</h3>
+<span style="color:grey;" class="logout-mode">> trackBus</span><hr>
+	
+
 </div>
 <Br/>
 
@@ -242,37 +366,123 @@ z-index: 0
           
             </div>
             <hr class="my-4">
+            
 
-            <div class="d-flex flex-row justify-content-between align-items-center align-content-center">
-              <span class="dot"></span>
-              <hr class="flex-fill track-line"><span class="dot"></span>
-              <hr class="flex-fill "><span class="dot"></span>
-              <hr class="flex-fill "><span class="dot"></span>
-              <hr class="flex-fill "><span
-                class="d-flex justify-content-center align-items-center big-dot dot">
+             <div class="d-flex flex-row justify-content-between align-items-center align-content-center">
+
+             <!-- Start -->
+              <span th:if="${start}" class="dot"></span>
+              <hr th:if="${start}" class="flex-fill "> 
+             
+             
+             <!-- Stop 1 -->
+              <span th:if="${#lists.size(allStops) > 0}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 0}" id="pipe1" class="flex-fill">
+    
+    			<!-- Stop 2 -->
+    			<span th:if="${#lists.size(allStops) > 1}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 1}" id="pipe2" class="flex-fill">
+              
+              <!-- Stop 3 -->
+    			<span th:if="${#lists.size(allStops) > 2}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 2}" id="pipe3" class="flex-fill ">
+              
+               <!-- Stop 4 -->
+    			<span th:if="${#lists.size(allStops) > 3}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 3}" id="pipe4" class="flex-fill ">
+              
+               
+               <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 4}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 4}" id="pipe5" class="flex-fill ">
+                       
+              <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 5}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 5}" id="pipe6" class="flex-fill ">
+             
+             <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 6}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 6}" id="pipe7" class="flex-fill ">
+              
+              <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 7}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 7}" id="pipe8" class="flex-fill ">
+              
+              
+              <!-- Final -->
+              <span th:if="${end}"
+                id="pipefinal" class="d-flex justify-content-center align-items-center big-dot dot">
+                
+                
                 <i class="fa fa-check text-white"></i></span>
+                
             </div>
 
+
+
             <div class="d-flex flex-row justify-content-between align-items-center">
-              <div class="d-flex flex-column align-items-start"><span>Stop 1</span><span>Location 1</span>
+              
+              <!-- Start -->
+              <div th:if="${start}" class="d-flex flex-column align-items-start">
+              <span th:text="${start}"></span>
               </div>
-              <div class="d-flex flex-column justify-content-center"><span>Stop 2</span><span>Location 2</span>
+              
+				<!-- Stop 1 -->
+              <div th:if="${#lists.size(allStops) > 0}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[0].name}"></span><span  th:text="${arrTime[0].getMorningArrivalTime()}"> </span>
               </div>
-              <div class="d-flex flex-column justify-content-center align-items-center"><span>Stop 3</span><span>Location 3</span></div>
-              <div class="d-flex flex-column align-items-center"><span>Stop 4</span><span>Location 4</span></div>
-              <div class="d-flex flex-column align-items-end"><span>NRIFINTECH</span></div>
+
+				<!-- Stop 2 -->
+			<div th:if="${#lists.size(allStops) > 1}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[1].name}"></span><span  th:text="${arrTime[1].getMorningArrivalTime()}"> </span>
+              </div>
+            
+             <!-- Stop 3 -->
+            <div th:if="${#lists.size(allStops) > 2}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[2].name}"></span><span  th:text="${arrTime[2].getMorningArrivalTime()}"> </span>
+              </div>
+              
+              <!-- Stop 4 -->
+            <div th:if="${#lists.size(allStops) > 3}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[3].name}"></span><span  th:text="${arrTime[3].getMorningArrivalTime()}"> </span>
+              </div>
+                 
+               <!-- Extra -->
+            <div th:if="${#lists.size(allStops) > 4}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[4].name}"></span><span  th:text="${arrTime[4].getMorningArrivalTime()}"> </span>
+              </div>
+              
+              <!-- Extra -->
+            <div th:if="${#lists.size(allStops) > 5}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[5].name}"></span><span  th:text="${arrTime[5].getMorningArrivalTime()}"> </span>
+              </div>
+              <!-- Extra -->
+            <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getMorningArrivalTime()}"> </span>
+              </div>
+
+              
+              <!-- Final -->
+              <div class="d-flex flex-column align-items-end">
+               <span th:text="${end}"></span>
+              </div>
+              
+              
             </div>
 
           </div>
         </div>
       </div>
+      
     </div>
+    
   </div>
+   
     </div> 
 
     </div>
     <!-- Book Bus -->
-   
+ 
 
     <script src="/script/home_script.js"></script>
  <!--    <script src="/script/navigation.js"></script> -->
