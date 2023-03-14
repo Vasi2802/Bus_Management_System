@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
   integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
@@ -11,6 +12,12 @@
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
   integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
   crossorigin=""></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js" ></script>
+<script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-database.js" ></script>
+
+  <style>
+
+  </style>
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="/css/home_style.css">
      
@@ -40,6 +47,13 @@
 
     </script>
 	<style>
+	#map{
+	margin: auto;;
+	 width: 50%;
+       border: 2px solid black;
+  padding: 10px;
+     height:500px;
+	}
 .hellotrack {
 height: 2px !important;
 background-color: #488978;
@@ -86,6 +100,10 @@ color:lightgreen;
   #clock{
   font-size: 25px;
   }
+  #map{
+width: 100%;
+     height:300px;
+	}
   }
 
 @media (max-width: 427px) {
@@ -124,15 +142,7 @@ color:lightgreen;
     position:relative;
 }
 </style>
-<script type="text/javascript">
 
-
-$(document).ready(function(){
-
-	 
-});
-
-</script>
 
     <script>
     //getroutebylistofstops
@@ -256,13 +266,7 @@ $(document).ready(function(){
 						
 </form>
     <nav>
-        <div class="logo-name">
-            <div class="logo-image">
-                <img src="/images/logo.png" alt="">
-            </div>
-
-            <span class="logo_name">NRI Fintech</span>
-        </div>
+        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
 
         <div class="menu-items">
             <ul class="nav-links">
@@ -274,7 +278,7 @@ $(document).ready(function(){
                     <i class="uil uil-files-landscapes"></i>
                     <span class="link-name">Book Bus</span>
                 </a></li>
-                <li><a href="#" id="track-bus-link">
+                <li><a href="/employee/trackbus" id="track-bus-link">
                     <i class="uil uil-chart"></i>
                     <span class="link-name">Track Bus</span>
                 </a></li>
@@ -282,10 +286,10 @@ $(document).ready(function(){
                     <i class="uil uil-thumbs-up"></i>
                     <span class="link-name">Booking Details</span>
                 </a></li>
-                <li><a href="#">
-                    <i class="uil uil-comments"></i>
-                    <span class="link-name">SOS</span>
-                </a></li>
+                <li><a href="/employee/releaseseat">
+                <i class="uil uil-chart-down"></i>
+                <span class="link-name">Release Seat</span>
+            </a></li>
  <!--                <li><a href="#">
                     <i class="uil uil-share"></i>
                     <span class="link-name">Share</span>
@@ -321,11 +325,7 @@ $(document).ready(function(){
         <div class="top">
         
             <i class="uil uil-bars sidebar-toggle"></i>
-			
-             
-                <!-- <div class="row">
-    <span id="clock" class="col-12 col-md-6 col-lg-4"></span>
-  </div> -->
+
                 
                    <div id="clockdate">
   <div class="clockdate-wrapper">
@@ -482,7 +482,111 @@ $(document).ready(function(){
     </div>
     
   </div>
-   
+   <div id="map"></div>
+
+  <script>
+// Import the functions you need from the SDKs you nee
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCgQrfTj937itS7bZBmz0gApPpirBv-FYY",
+    authDomain: "location-track-5a2ef.firebaseapp.com",
+    databaseURL: "https://location-track-5a2ef-default-rtdb.firebaseio.com",
+    projectId: "location-track-5a2ef",
+    storageBucket: "location-track-5a2ef.appspot.com",
+    messagingSenderId: "457511529084",
+    appId: "1:457511529084:web:7e413431c9c4776797f7f9",
+    measurementId: "G-NR6VSVJGJ9"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const initialCenter = [0, 0];
+      const initialZoom = 30;
+  var global_lati;
+  var global_long;
+
+  var busIcon = L.icon({
+    iconUrl: '/images/bus-icon.png',
+    iconSize: [21.57, 59],
+});
+
+
+            var map = L.map('map').setView(initialCenter, initialZoom);// Set the initial center and zoom level
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+var marker = L.marker([0, 0],{icon:busIcon}).addTo(map);
+var mylocation = L.marker([0, 0]).addTo(map);
+
+map.on('zoomend', function() {
+  var currentZoom = map.getZoom();
+  var iconSize;
+
+  // Decrease icon size for zoom levels below 14
+  if (currentZoom < 18) {
+    iconSize = [15, 33.3];
+  }
+ 
+  // Use default icon size for zoom level 14
+  else {
+    iconSize = [21.57, 59];
+  }
+
+  // Update marker icon size
+  marker.setIcon(L.icon({
+    iconUrl: '/images/bus-icon.png',
+    iconSize: iconSize,
+    iconAnchor: [iconSize[0] / 2, iconSize[1] / 2]
+  }));
+});
+const locationRef = firebase.database()
+            .ref('location');
+      locationRef.on('value', (snapshot) => {
+        const location = snapshot.val();
+
+        global_lati = location.latitude;
+        global_long =  location.longitude;
+        
+
+      map.setView([global_lati, global_long], initialZoom);
+      marker.setLatLng([global_lati, global_long]);
+      
+      
+
+  // marker.bindPopup("Latitude: " + marker.getLatLng().lat + "<br>Longitude: " + marker.getLatLng().lng).openPopup(); // Add a popup with the latitude and longitude
+      });
+      function showPosition(position) {
+
+        mylocation.setLatLng([position.coords.latitude, position.coords.longitude]);
+      
+
+      }
+
+      function showError(error) {
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            alert("User denied the request for Geolocation.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert("Location information is unavailable.");
+            break;
+          case error.TIMEOUT:
+            alert("The request to get user location timed out.");
+            break;
+          case error.UNKNOWN_ERROR:
+            alert("An unknown error occurred.");
+            break;
+        }
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(showPosition, showError);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+</script>
     </div> 
 
     </div>

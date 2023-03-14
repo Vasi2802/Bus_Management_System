@@ -1,4 +1,4 @@
-const body = document.querySelector("body"),
+const body = document.querySelector("body");
       modeToggle = body.querySelector(".mode-toggle");
       sidebar = body.querySelector("nav");
       sidebarToggle = body.querySelector(".sidebar-toggle");
@@ -6,11 +6,6 @@ const body = document.querySelector("body"),
 let getMode = localStorage.getItem("mode");
 if(getMode && getMode ==="dark"){
     body.classList.toggle("dark");
-}
-
-let getStatus = localStorage.getItem("status");
-if(getStatus && getStatus ==="close"){
-    sidebar.classList.toggle("close");
 }
 
 modeToggle.addEventListener("click", () =>{
@@ -21,6 +16,14 @@ modeToggle.addEventListener("click", () =>{
         localStorage.setItem("mode", "light");
     }
 });
+
+
+/*FOR SIDEBAR*/
+let getStatus = localStorage.getItem("status");
+if(getStatus && getStatus ==="close"){
+    sidebar.classList.toggle("close");
+}
+
 
 sidebarToggle.addEventListener("click", () => {
     sidebar.classList.toggle("close");

@@ -38,62 +38,56 @@
 						
 </form>
 <nav>
-    <div class="logo-name">
-        <div class="logo-image">
-            <img src="/images/logo.png" alt="">
+   <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
+
+     <div class="menu-items">
+            <ul class="nav-links">
+                <li><a href="/employee" id="home">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dashboard</span>
+                </a></li>
+                <li><a href="/employee/book" id="bookbus">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Book Bus</span>
+                </a></li>
+                <li><a href="/employee/trackbus" id="track-bus-link">
+                    <i class="uil uil-chart"></i>
+                    <span class="link-name">Track Bus</span>
+                </a></li>
+                <li><a href="/employee/showbookingdetails">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Booking Details</span>
+                </a></li>
+                <li><a href="/employee/releaseseat">
+                <i class="uil uil-chart-down"></i>
+                <span class="link-name">Release Seat</span>
+            </a></li>
+ <!--                <li><a href="#">
+                    <i class="uil uil-share"></i>
+                    <span class="link-name">Share</span>
+                </a></li> -->
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="#" onclick="document.getElementById('log').submit()">
+                    <i class="uil uil-signout"></i>
+    
+                     <span class="link-name">Logout</span> 
+                </a></li>
+
+                <li class="mode">
+                    <a href="#">
+                        <i class="uil uil-moon"></i>
+                    <span class="link-name">Dark Mode</span>
+                </a>
+
+                <div class="mode-toggle">
+                  <span class="switch"></span>
+                </div>
+            </li>
+            </ul>
         </div>
-
-        <span class="logo_name">NRI Fintech</span>
-    </div>
-
-    <div class="menu-items">
-        <ul class="nav-links">
-            <li><a href="/employee" id="home">
-                <i class="uil uil-estate"></i>
-                <span class="link-name">Dashboard</span>
-            </a></li>
-            <li><a href="/employee/book" id="bookbus">
-                <i class="uil uil-files-landscapes"></i>
-                <span class="link-name" >Book Bus</span>
-            </a></li>
-            <li><a href="/employee/trackbus">
-                <i class="uil uil-chart"></i>
-                <span class="link-name">Track Bus</span>
-            </a></li>
-            <li><a href="/employee/showbookingdetails">
-                <i class="uil uil-thumbs-up"></i>
-                <span class="link-name">Booking Details</span>
-            </a></li>
-            <li><a href="#">
-                <i class="uil uil-comments"></i>
-                <span class="link-name">SOS</span>
-            </a></li>
-<!--                <li><a href="#">
-                <i class="uil uil-share"></i>
-                <span class="link-name">Share</span>
-            </a></li> -->
-        </ul>
-        
-        <ul class="logout-mode">
-            <li><a href="#" onclick="document.getElementById('log').submit()">
-                <i class="uil uil-signout"></i>
-
-                 <span class="link-name">Logout</span> 
-            </a></li>
-
-            <li class="mode">
-                <a href="#">
-                    <i class="uil uil-moon"></i>
-                <span class="link-name">Dark Mode</span>
-            </a>
-
-            <div class="mode-toggle">
-              <span class="switch"></span>
-            </div>
-        </li>
-        </ul>
-    </div>
-</nav>
+    </nav>
 
 
 
@@ -103,12 +97,14 @@
         <div class="top">
         
             <i class="uil uil-bars sidebar-toggle"></i>
-			
-            <!-- <div class="search-box">
-                <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div> -->
-            	
+
+                
+                   <div id="clockdate">
+  <div class="clockdate-wrapper">
+    <div id="clock"></div>
+    <div id="date"></div>
+  </div>
+</div> 	
             	
             <img src="/images/profile.jpg" alt="">
            

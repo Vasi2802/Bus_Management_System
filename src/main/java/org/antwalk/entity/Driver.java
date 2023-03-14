@@ -37,7 +37,7 @@ public class Driver {
 	@JsonManagedReference
 	@OneToOne(mappedBy = "d")
 	private Bus bus;
-
+	
 	public Bus getBus() {
 		return bus;
 	}

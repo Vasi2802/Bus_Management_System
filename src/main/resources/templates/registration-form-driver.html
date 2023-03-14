@@ -178,22 +178,19 @@
 							<ul>
 							  <li th:each="err : ${#fields.errors('email')}" th:text="'Email ' + ${err}" />
 							</ul>						
-						</div><br/>
-                            <div class="form-group">
-                                <label for="pass"><i class="zmdi zmdi-lock"></i></label>
+						</div>
+                        
                                 <input type="hidden"  th:field="*{password}" placeholder="Password (*)" th:errorclass="fieldError" >
-                            </div>
+                            
                             <div th:if="${#fields.hasErrors('password')}"
 							style="margin-bottom: 25px" class="text-danger">
 							<ul>
 							  <li th:each="err : ${#fields.errors('password')}" th:text="'Password ' + ${err}" />
 							</ul>						
-						</div><br/>
-                            <div class="form-group">
-                                <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
+						</div>
+                            
                                 <input type="hidden"  th:field="*{matchingPassword}" placeholder="Confirm password (*)" th:errorclass="fieldError" />
 						
-                            </div>
                             <div th:if="${#fields.hasErrors('matchingPassword')}"
 							style="margin-bottom: 25px" class="text-danger">
 							<ul>

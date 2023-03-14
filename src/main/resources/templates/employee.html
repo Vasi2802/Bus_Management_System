@@ -37,11 +37,116 @@
         /*]]>*/
 
     </script>
+	<style>
+@media (max-width: 767px) {
+  span {
+    font-size: 10px;
+  }
+  #clock{
+  font-size: 25px;
+  }
+  }
+
+@media (max-width: 427px) {
+  span {
+    font-size: 7px;
+  }
+  }
+  
+@font-face{
+    font-family: 'Digital-7';
+    src:  url('fonts/digital-7.ttf') format('woff2'),   b ,g,mdrx
+    url('digital-7.woff') format('woff');
+}
+.clockdate-wrapper {
+    background: #141E30;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    padding:3px;
+    padding-left:50px;
+    padding-right:50px;
+    width:100%;
+    text-align:center;
+    border-radius:5px;
+    margin:0 auto;
+  
+}
+#clock{
+font-size:30px;
+    font-family: Digital-7, 'sans-serif';
+    text-shadow:0px 0px 1px #fff;
+    color:#fff;
+}
+#clock span {
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow:0px 0px 1px #333;
+    font-size:15px;
+    position:relative;
+}
+</style>
 
     <script>
         console.log(eid);
         var employee;
         var bus;
+        setInterval(() => {
+      	  // Get the current time
+      	  const now = new Date();
+
+      	  // Format the time as hh:mm:ss
+      	  const hours = now.getHours().toString().padStart(2, '0');
+      	  const minutes = now.getMinutes().toString().padStart(2, '0');
+      	  const seconds = now.getSeconds().toString().padStart(2, '0');
+      	  const time = `${hours}:${minutes}:${seconds}`;
+      	  
+      	  $('#clock').text(time);
+      	  
+    	    var ids = ["#pipe1","#pipe2","#pipe3","#pipe4","#pipe5","#pipe6","#pipe7","#pipe8","#pipefinal"]; // list of IDs
+    	    var threshold = new Date(); // create a new Date object for the cutoff time
+    	    threshold.setHours(12);
+
+    	    var currentTime = new Date(); // get the current time
+    	    for (var i = 0; i < cutoffTimes.length; i++) {
+    	        var cutoffTime = new Date(); // create a new Date object for the cutoff time
+
+    	        if (currentTime.getTime()<=threshold.getTime()) {
+        	        var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
+        	      .split(':');
+        	            	        var hours1 = parseInt(cutoffTimeParts[0]);
+        	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
+    	            cutoffTime.setHours(hours1);
+    	            cutoffTime.setMinutes(minutes1);
+    	            cutoffTime.setSeconds(0);
+    	            cutoffTime.setMilliseconds(0);
+    	            if (currentTime.getTime() >= cutoffTime.getTime()) {
+    	            	console.log(currentTime.getTime()+" "+cutoffTime.getTime());	
+    	                 $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
+    	            } else if(currentTime.getTime()>threshold.getTime()) {
+    	            	console.log("Remove past time");
+    	            	$(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
+    	            }
+    	        } else {
+    	        	var cutoffTimeParts = cutoffTimes[i].eveningArrivalTime
+          	      .split(':');
+          	            	        var hours1 = parseInt(cutoffTimeParts[0]);
+          	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
+    	            cutoffTime.setHours(hours1 - 12);
+    	            cutoffTime.setMinutes(minutes1);
+    	            cutoffTime.setSeconds(0);
+    	            cutoffTime.setMilliseconds(0);
+    	            cutoffTime.setTime(cutoffTime.getTime() + 12 * 60 * 60 * 1000); // add 12 hours for PM time
+    	            if (currentTime.getTime() >= cutoffTime.getTime()) {
+    	            	console.log("Way past time 2 "+ids[i]);
+    	            	$(ids[i]).addClass('track-line'); // add 'after-cutoff' class if current time is after the cutoff time
+    	            } 
+    	            else if (currentTime.getTime()>threshold.getTime()) {
+    	            	console.log("Remove past time");
+    	            	$(ids[i]).removeClass('track-line'); // add 'before-cutoff' class if current time is before the cutoff time
+    	            }
+    	        }
+    	    }
+      	}, 1000);
+        
         $(document).ready(async () => {
             url = "/employee/getbyid/" + eid;
             await $.ajax({
@@ -99,15 +204,15 @@
 						
 </form>
     <nav>
-        <div class="logo-name">
+       <!--  <div class="logo-name">
             <div class="logo-image">
                 <img src="/images/logo.png" alt="">
-            </div>
-
-            <span class="logo_name">NRI Fintech</span>
-        </div>
-
-        <div class="menu-items">
+            </div> -->
+<img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
+            
+           
+          <div class="menu-items">
+          
             <ul class="nav-links">
                 <li><a href="/employee" id="home">
                     <i class="uil uil-estate"></i>
@@ -115,9 +220,9 @@
                 </a></li>
                 <li><a href="/employee/book" id="bookbus">
                     <i class="uil uil-files-landscapes"></i>
-                    <span class="link-name" >Book Bus</span>
+                    <span class="link-name">Book Bus</span>
                 </a></li>
-                <li><a href="/employee/trackbus">
+                <li><a href="/employee/trackbus" id="track-bus-link">
                     <i class="uil uil-chart"></i>
                     <span class="link-name">Track Bus</span>
                 </a></li>
@@ -125,10 +230,10 @@
                     <i class="uil uil-thumbs-up"></i>
                     <span class="link-name">Booking Details</span>
                 </a></li>
-                <li><a href="#">
-                    <i class="uil uil-comments"></i>
-                    <span class="link-name">SOS</span>
-                </a></li>
+                <li><a href="/employee/releaseseat">
+                <i class="uil uil-chart-down"></i>
+                <span class="link-name">Release Seat</span>
+            </a></li>
  <!--                <li><a href="#">
                     <i class="uil uil-share"></i>
                     <span class="link-name">Share</span>
@@ -164,13 +269,16 @@
         <div class="top">
         
             <i class="uil uil-bars sidebar-toggle"></i>
-			
-            <!-- <div class="search-box">
-                <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div> -->
-            	
-            	
+
+                
+                   <div id="clockdate">
+  <div class="clockdate-wrapper">
+    <div id="clock"></div>
+    <div id="date"></div>
+  </div>
+</div> 
+            
+          
             <img src="/images/profile.jpg" alt="">
            
         </div>
@@ -212,7 +320,7 @@
                     </tbody>
                 </table>
             </div>
-            <a href="#" onclick="removeBooking();">Remove Booking</a>
+     
         </div>
     </div>
 

@@ -310,11 +310,18 @@ public class EmployeeController {
 	 * the waiting list
 	 */
 	@PostMapping("/removebooking")
-	public String removeBooking(@RequestBody Long employeeId) {
+	public String removeBooking(@RequestBody Long employeeId,HttpServletRequest request ) {
+		
+		HttpSession session = request.getSession();
+	    User emp = (User)session.getAttribute("emp");
+	    emp.getEmployee().setB(null);
+	    
 		String message = "";
 		Employee employee = empRepo.findById(employeeId).get(); // to fetched from session data ( __INCOMPLETE__ )
 
 		// if employee has a bus ID, remove it
+		
+		
 		if (employee.getB() != null) {
 			Bus bus = busRepo.getById(employee.getB().getBid());
 			message += String.format("Removed busId=%d from employee=%s\n", employee.getB().getBid(),
@@ -375,6 +382,7 @@ public class EmployeeController {
 			waitingListRepo.deleteById(waitingList.getWid());
 		}
 
+		
 		return message;
 
 	}
