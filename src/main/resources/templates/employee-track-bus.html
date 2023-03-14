@@ -35,6 +35,7 @@
         var phno = /*[[${session.emp.getEmployee().getName()}]]*/ 'default';
         var bus = /*[[${session.emp.getEmployee().getB()}]]*/ 'default';
         var eid = /*[[${session.emp.getEmployee().getEid()}]]*/ 'default';
+  	  	var cutoffTimes = /*[[${arrTime}]]*/ []; 
         /*]]>*/
 
     </script>
@@ -151,7 +152,7 @@ $(document).ready(function(){
         	  
         	  $('#clock').text(time);
         	  
-        	  var cutoffTimes = /*[[${arrTime}]]*/ []; 
+        	  console.log(cutoffTimes);
       	    var ids = ["#pipe1","#pipe2","#pipe3","#pipe4","#pipe5","#pipe6","#pipe7","#pipe8","#pipefinal"]; // list of IDs
       	    var threshold = new Date(); // create a new Date object for the cutoff time
       	    threshold.setHours(12);
@@ -159,22 +160,28 @@ $(document).ready(function(){
       	    var currentTime = new Date(); // get the current time
       	    for (var i = 0; i < cutoffTimes.length; i++) {
       	        var cutoffTime = new Date(); // create a new Date object for the cutoff time
-      	        var cutoffTimeParts = cutoffTimes[i].split(':');
-      	        var hours1 = parseInt(cutoffTimeParts[0]);
-      	        var minutes1 = parseInt(cutoffTimeParts[1]);
-      	        if (hours1 < 12) {
+
+      	        if (currentTime.getTime()<=threshold.getTime()) {
+          	        var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
+          	      .split(':');
+          	            	        var hours1 = parseInt(cutoffTimeParts[0]);
+          	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
       	            cutoffTime.setHours(hours1);
       	            cutoffTime.setMinutes(minutes1);
       	            cutoffTime.setSeconds(0);
       	            cutoffTime.setMilliseconds(0);
       	            if (currentTime.getTime() >= cutoffTime.getTime()) {
-      	            	console.log("Way past time 2 "+ids[i]);
+      	            	console.log(currentTime.getTime()+" "+cutoffTime.getTime());	
       	                 $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
       	            } else if(currentTime.getTime()>threshold.getTime()) {
       	            	console.log("Remove past time");
       	            	$(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
       	            }
       	        } else {
+      	        	var cutoffTimeParts = cutoffTimes[i].eveningArrivalTime
+            	      .split(':');
+            	            	        var hours1 = parseInt(cutoffTimeParts[0]);
+            	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
       	            cutoffTime.setHours(hours1 - 12);
       	            cutoffTime.setMinutes(minutes1);
       	            cutoffTime.setSeconds(0);
@@ -371,13 +378,11 @@ $(document).ready(function(){
              <div class="d-flex flex-row justify-content-between align-items-center align-content-center">
 
              <!-- Start -->
-              <span th:if="${start}" class="dot"></span>
-              <hr th:if="${start}" class="flex-fill "> 
+             <!--  <span th:if="${start}" class="dot"></span>
+              <hr th:if="${start}" class="flex-fill ">  -->
              
              
-             <!-- Stop 1 -->
-              <span th:if="${#lists.size(allStops) > 0}" class="dot"></span>
-              <hr th:if="${#lists.size(allStops) > 0}" id="pipe1" class="flex-fill">
+     
     
     			<!-- Stop 2 -->
     			<span th:if="${#lists.size(allStops) > 1}" class="dot"></span>
@@ -410,11 +415,11 @@ $(document).ready(function(){
               
               
               <!-- Final -->
-              <span th:if="${end}"
+             <span th:if="${end}"
                 id="pipefinal" class="d-flex justify-content-center align-items-center big-dot dot">
                 
                 
-                <i class="fa fa-check text-white"></i></span>
+                <i class="fa fa-check text-white"></i></span> 
                 
             </div>
 
@@ -423,9 +428,9 @@ $(document).ready(function(){
             <div class="d-flex flex-row justify-content-between align-items-center">
               
               <!-- Start -->
-              <div th:if="${start}" class="d-flex flex-column align-items-start">
+            <!--   <div th:if="${start}" class="d-flex flex-column align-items-start">
               <span th:text="${start}"></span>
-              </div>
+              </div> -->
               
 				<!-- Stop 1 -->
               <div th:if="${#lists.size(allStops) > 0}" class="d-flex flex-column align-items-start">
@@ -463,10 +468,10 @@ $(document).ready(function(){
 
               
               <!-- Final -->
-              <div class="d-flex flex-column align-items-end">
+            <!--   <div class="d-flex flex-column align-items-end">
                <span th:text="${end}"></span>
               </div>
-              
+               -->
               
             </div>
 
