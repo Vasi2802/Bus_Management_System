@@ -92,8 +92,21 @@ public class BookingDetailsService {
 			nameAndFreq.add(freq);
 			monthFreq.add(nameAndFreq);
 		}
-		System.out.println(monthFreq.toString());
+		// System.out.println(monthFreq.toString());
 
 		return monthFreq;
 	}
+
+    public List<BookingDetails> getAllBookingDetailsForPeriod(LocalDate firstDate, LocalDate lastdate) {
+		firstDate = firstDate.minusDays(1);
+		lastdate = lastdate.plusDays(1);
+		List<BookingDetails> bookingDetailsList = new ArrayList<>();
+		for(BookingDetails bookingDetails: getAllBookingDetails()){
+			if(bookingDetails.getBookingForMonth().after(Date.valueOf(firstDate)) && 
+			bookingDetails.getBookingForMonth().before(Date.valueOf(lastdate))){
+				bookingDetailsList.add(bookingDetails);
+			}
+		}
+		return bookingDetailsList;
+    }
 }

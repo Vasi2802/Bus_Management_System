@@ -110,7 +110,7 @@ public class RegistrationController {
 		
 		theModel.addAttribute("crmUser", new CrmUser());
 		
-		return "registration-form";
+		return "registration-form.html";
 	}
 
 	@GetMapping("/resetpassword")
@@ -160,7 +160,7 @@ public class RegistrationController {
 		
 		// form validation
 		 if (theBindingResult.hasErrors()){
-			 return "registration-form";
+			 return "registration-form.html";
 	        }
 
 		// check the database if user already exists

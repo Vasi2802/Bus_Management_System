@@ -54,6 +54,14 @@ public class BusService {
 		
 	}
 
+	// GET TOTAL NO. OF PASSENGERS PER BUS
+	/*
+	 * Returns Map<Bus, PassengersCount> as Map<Bus, Integer>
+	 * 
+	 * Arguments
+	 * None
+	 */
+
 	public Map<Bus, Integer> getPassesngersPerBus() {
 		Map<Bus, Integer> passengerFreq = new HashMap<>();
 		List<Bus> buses = busRepo.findAll();
@@ -62,6 +70,27 @@ public class BusService {
 		}
 		return passengerFreq;
 	}
+
+	public int getTotalSeatsOfAll(){
+		List<Bus> buses = busRepo.findAll();
+		int total = 0;
+		for(Bus bus:buses){
+			total += bus.getTotalSeats();
+		}
+		return total;
+	}
+
+	public int getTotalBookedSeats() {
+		List<Bus> buses = busRepo.findAll();
+		int booked = 0;
+		for(Bus bus:buses){
+			booked += bus.getTotalSeats() - bus.getAvailableSeats();
+		}
+		return booked;
+	}
+
+
+
 	
 	
 }
