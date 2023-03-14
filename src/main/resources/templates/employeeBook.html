@@ -153,7 +153,7 @@ font-size:30px;
                             <th class="col-sm-auto">Bus ID</th>
                             <th class="col-sm-auto">Total Seats</th>
                             <th class="col-sm-auto">Available Seats</th>
-                        </tr>`;
+                        </tr><br>`;
             let buses = [];
             $.ajax({
                 type: "GET",
@@ -187,7 +187,7 @@ font-size:30px;
                                     <td class="col-sm-auto">`+ bus.bid + `</td>
                                     <td class="col-sm-auto">`+ bus.totalSeats + `</td>
                                     <td class="col-sm-auto">`+ bus.availableSeats + `</td>
-                                </tr>`;
+                                </tr><br>`;
             });
 
 
@@ -265,7 +265,7 @@ font-size:30px;
                                         <td>Morning Drop-off: ${endWithTime?.morningArrivalTime} <br>
                                             Evening Pickup: ${endWithTime?.eveningArrivalTime}
                                         </td>
-                                    </tr>`;
+                                    </tr><br><br>`;
                 });
 
             })
