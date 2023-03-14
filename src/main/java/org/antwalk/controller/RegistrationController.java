@@ -1,11 +1,14 @@
 package org.antwalk.controller;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
+import org.antwalk.entity.GlobalDb;
 import org.antwalk.entity.Otp;
 import org.antwalk.entity.User;
+import org.antwalk.service.GlobalDbService;
 import org.antwalk.service.OtpService;
 import org.antwalk.service.UserService;
 import org.antwalk.user.CrmUser;
@@ -32,6 +35,9 @@ public class RegistrationController {
 	
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private GlobalDbService gb;
 	
     @Autowired
     private OtpService otpService;
@@ -173,21 +179,31 @@ public class RegistrationController {
 			logger.warning("User name already exists.");
         	return "registration-form";
         }
-		/*
-		 * String userEmail = theCrmUser.getEmail(); System.out.println(userEmail); User
-		 * existing1 = userService.findByEmail(userEmail);
-		 * 
-		 * if (existing1 != null){ theModel.addAttribute("crmUser", new CrmUser());
-		 * theModel.addAttribute("registrationError", "Email already exists.");
-		 * 
-		 * logger.warning("Email already exists."); return "registration-form"; }
-		 */
-        // create user account        						
-        userService.save(theCrmUser);
+		
+      
+        
         
         logger.info("Successfully created user: " + userName);
         
+        
+        List<GlobalDb>  all= gb.getAllAdmin();
+        
+        Boolean exist =false;
+        for(GlobalDb gb : all) {
+        	if(gb.getEmail().equals(userName)) {
+        		exist = true;
+        		break;
+        	}
+        		
+        }
+        if(exist==true) {
+        	theModel.addAttribute("notauser", "Invalid email");
+
+        	return "registration-form";
+        }
         theModel.addAttribute("confirmregister","Successfully Registered");
-        return "login";		
+        userService.save(theCrmUser);
+        return "login";
+       
 	}
 }
