@@ -5,21 +5,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-  crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-  crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="/css/home_style.css">
-     
+
     <!----===== Iconscout CSS ===== -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
 
-	<!-- from other file -->
-	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <!-- from other file -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
     </script>
@@ -29,7 +27,7 @@
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
     </script>
-	<script th:inline="javascript">
+    <script th:inline="javascript">
         /*<![CDATA[*/
         var phno = /*[[${session.emp.getEmployee().getName()}]]*/ 'default';
         var bus = /*[[${session.emp.getEmployee().getB()}]]*/ 'default';
@@ -37,133 +35,143 @@
         /*]]>*/
 
     </script>
-	<style>
-@media (max-width: 767px) {
-  span {
-    font-size: 10px;
-  }
-  #clock{
-  font-size: 25px;
-  }
-  }
+    <style>
+        @media (max-width: 767px) {
+            span {
+                font-size: 10px;
+            }
 
-@media (max-width: 427px) {
-  span {
-    font-size: 7px;
-  }
-  }
-  
-@font-face{
-    font-family: 'Digital-7';
-    src:  url('fonts/digital-7.ttf') format('woff2'),   b ,g,mdrx
-    url('digital-7.woff') format('woff');
-}
-.clockdate-wrapper {
-    background: #141E30;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    padding:3px;
-    padding-left:50px;
-    padding-right:50px;
-    width:100%;
-    text-align:center;
-    border-radius:5px;
-    margin:0 auto;
-  
-}
-#clock{
-font-size:30px;
-    font-family: Digital-7, 'sans-serif';
-    text-shadow:0px 0px 1px #fff;
-    color:#fff;
-}
-#clock span {
-    color: rgba(255, 255, 255, 0.8);
-    text-shadow:0px 0px 1px #333;
-    font-size:15px;
-    position:relative;
-}
-</style>
+            #clock {
+                font-size: 25px;
+            }
+        }
+
+        @media (max-width: 427px) {
+            span {
+                font-size: 7px;
+            }
+        }
+
+        @font-face {
+            font-family: 'Digital-7';
+            src: url('fonts/digital-7.ttf') format('woff2'), b, g, mdrx url('digital-7.woff') format('woff');
+        }
+
+        .clockdate-wrapper {
+            background: #141E30;
+            /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #243B55, #141E30);
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #243B55, #141E30);
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            padding: 3px;
+            padding-left: 50px;
+            padding-right: 50px;
+            width: 100%;
+            text-align: center;
+            border-radius: 5px;
+            margin: 0 auto;
+
+        }
+
+        #clock {
+            font-size: 30px;
+            font-family: Digital-7, 'sans-serif';
+            text-shadow: 0px 0px 1px #fff;
+            color: #fff;
+        }
+
+        #clock span {
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0px 0px 1px #333;
+            font-size: 15px;
+            position: relative;
+        }
+    </style>
     <script>
         console.log(eid);
         var employee;
         var bus;
-        
-        setInterval(() => {
-        	  // Get the current time
-        	  const now = new Date();
 
-        	  // Format the time as hh:mm:ss
-        	  const hours = now.getHours().toString().padStart(2, '0');
-        	  const minutes = now.getMinutes().toString().padStart(2, '0');
-        	  const seconds = now.getSeconds().toString().padStart(2, '0');
-        	  const time = `${hours}:${minutes}:${seconds}`;
-        	  
-        	  $('#clock').text(time);
-        	  
-        	  console.log(cutoffTimes);
-      	    var ids = ["#pipe1","#pipe2","#pipe3","#pipe4","#pipe5","#pipe6","#pipe7","#pipe8","#pipefinal"]; // list of IDs
-      	    var threshold = new Date(); // create a new Date object for the cutoff time
-      	    threshold.setHours(12);
+        // setInterval(() => {
+        //     // Get the current time
+        //     const now = new Date();
 
-      	    var currentTime = new Date(); // get the current time
-      	    for (var i = 0; i < cutoffTimes.length; i++) {
-      	        var cutoffTime = new Date(); // create a new Date object for the cutoff time
+        //     // Format the time as hh:mm:ss
+        //     const hours = now.getHours().toString().padStart(2, '0');
+        //     const minutes = now.getMinutes().toString().padStart(2, '0');
+        //     const seconds = now.getSeconds().toString().padStart(2, '0');
+        //     const time = `${hours}:${minutes}:${seconds}`;
 
-      	        if (currentTime.getTime()<=threshold.getTime()) {
-          	        var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
-          	      .split(':');
-          	            	        var hours1 = parseInt(cutoffTimeParts[0]);
-          	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
-      	            cutoffTime.setHours(hours1);
-      	            cutoffTime.setMinutes(minutes1);
-      	            cutoffTime.setSeconds(0);
-      	            cutoffTime.setMilliseconds(0);
-      	            if (currentTime.getTime() >= cutoffTime.getTime()) {
-      	            	console.log(currentTime.getTime()+" "+cutoffTime.getTime());	
-      	                 $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
-      	            } else if(currentTime.getTime()>threshold.getTime()) {
-      	            	console.log("Remove past time");
-      	            	$(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
-      	            }
-      	        } else {
-      	        	var cutoffTimeParts = cutoffTimes[i].eveningArrivalTime
-            	      .split(':');
-            	            	        var hours1 = parseInt(cutoffTimeParts[0]);
-            	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
-      	            cutoffTime.setHours(hours1 - 12);
-      	            cutoffTime.setMinutes(minutes1);
-      	            cutoffTime.setSeconds(0);
-      	            cutoffTime.setMilliseconds(0);
-      	            cutoffTime.setTime(cutoffTime.getTime() + 12 * 60 * 60 * 1000); // add 12 hours for PM time
-      	            if (currentTime.getTime() >= cutoffTime.getTime()) {
-      	            	console.log("Way past time 2 "+ids[i]);
-      	            	$(ids[i]).addClass('track-line'); // add 'after-cutoff' class if current time is after the cutoff time
-      	            } 
-      	            else if (currentTime.getTime()>threshold.getTime()) {
-      	            	console.log("Remove past time");
-      	            	$(ids[i]).removeClass('track-line'); // add 'before-cutoff' class if current time is before the cutoff time
-      	            }
-      	        }
-      	    }
-        	}, 1000);
-        
+        //     $('#clock').text(time);
+
+        //     console.log(cutoffTimes);
+        //     var ids = ["#pipe1", "#pipe2", "#pipe3", "#pipe4", "#pipe5", "#pipe6", "#pipe7", "#pipe8", "#pipefinal"]; // list of IDs
+        //     var threshold = new Date(); // create a new Date object for the cutoff time
+        //     threshold.setHours(12);
+
+        //     var currentTime = new Date(); // get the current time
+        //     for (var i = 0; i < cutoffTimes.length; i++) {
+        //         var cutoffTime = new Date(); // create a new Date object for the cutoff time
+
+        //         if (currentTime.getTime() <= threshold.getTime()) {
+        //             var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
+        //                 .split(':');
+        //             var hours1 = parseInt(cutoffTimeParts[0]);
+        //             var minutes1 = parseInt(cutoffTimeParts[1]);
+        //             cutoffTime.setHours(hours1);
+        //             cutoffTime.setMinutes(minutes1);
+        //             cutoffTime.setSeconds(0);
+        //             cutoffTime.setMilliseconds(0);
+        //             if (currentTime.getTime() >= cutoffTime.getTime()) {
+        //                 console.log(currentTime.getTime() + " " + cutoffTime.getTime());
+        //                 $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
+        //             } else if (currentTime.getTime() > threshold.getTime()) {
+        //                 console.log("Remove past time");
+        //                 $(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
+        //             }
+        //         } else {
+        //             var cutoffTimeParts = cutoffTimes[i].eveningArrivalTime
+        //                 .split(':');
+        //             var hours1 = parseInt(cutoffTimeParts[0]);
+        //             var minutes1 = parseInt(cutoffTimeParts[1]);
+        //             cutoffTime.setHours(hours1 - 12);
+        //             cutoffTime.setMinutes(minutes1);
+        //             cutoffTime.setSeconds(0);
+        //             cutoffTime.setMilliseconds(0);
+        //             cutoffTime.setTime(cutoffTime.getTime() + 12 * 60 * 60 * 1000); // add 12 hours for PM time
+        //             if (currentTime.getTime() >= cutoffTime.getTime()) {
+        //                 console.log("Way past time 2 " + ids[i]);
+        //                 $(ids[i]).addClass('track-line'); // add 'after-cutoff' class if current time is after the cutoff time
+        //             }
+        //             else if (currentTime.getTime() > threshold.getTime()) {
+        //                 console.log("Remove past time");
+        //                 $(ids[i]).removeClass('track-line'); // add 'before-cutoff' class if current time is before the cutoff time
+        //             }
+        //         }
+        //     }
+        // }, 1000);
+        var employeeBookingDetails;
         $(document).ready(async () => {
-            url = "/employee/getbyid/" + eid;
+            url = "/employee//get-booking-details/" + eid;
             await $.ajax({
                 type: "GET",
                 url: url,
                 success: function (response) {
-                    console.log("The employee is");
                     console.log(response);
-                    employee = response;
+                    employeeBookingDetails = response;
                     bus = employee?.b;
+                    document.getElementById("bookingId").innerText = employeeBookingDetails?.bookingId;
+                    document.getElementById("busNo").innerText = employeeBookingDetails?.busNo;
+                    document.getElementById("driverName").innerText = employeeBookingDetails?.driverName;
+                    document.getElementById("driverContactNo").innerText = employeeBookingDetails?.busContactNo;
+                    document.getElementById("busStatus").innerText = employeeBookingDetails?.busStatus;
                 },
                 error: function (response) {
                     alert('Error occured ', response.statusText);
                 }
             });
-            $("#bus-id-display").append(`${bus? bus.bid : "NA"}`);
+            $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
         });
 
         const removeBooking = () => {
@@ -196,60 +204,61 @@ font-size:30px;
             // window.location.href = "/employee/dashboard";
         }
     </script>
-    <title>Employee Dashboard </title> 
+    <title>Employee Dashboard </title>
 </head>
-<body>
-                <form th:action="@{/logout}" id="log" method="POST">
-						
-</form>
-<nav>
-    <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
 
-   <div class="menu-items">
+<body>
+    <form th:action="@{/logout}" id="log" method="POST">
+
+    </form>
+    <nav>
+        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" />
+
+        <div class="menu-items">
             <ul class="nav-links">
                 <li><a href="/employee" id="home">
-                    <i class="uil uil-estate"></i>
-                    <span class="link-name">Dashboard</span>
-                </a></li>
+                        <i class="uil uil-estate"></i>
+                        <span class="link-name">Dashboard</span>
+                    </a></li>
                 <li><a href="/employee/book" id="bookbus">
-                    <i class="uil uil-files-landscapes"></i>
-                    <span class="link-name">Book Bus</span>
-                </a></li>
+                        <i class="uil uil-files-landscapes"></i>
+                        <span class="link-name">Book Bus</span>
+                    </a></li>
                 <li><a href="/employee/trackbus" id="track-bus-link">
-                    <i class="uil uil-chart"></i>
-                    <span class="link-name">Track Bus</span>
-                </a></li>
+                        <i class="uil uil-chart"></i>
+                        <span class="link-name">Track Bus</span>
+                    </a></li>
                 <li><a href="/employee/showbookingdetails">
-                    <i class="uil uil-thumbs-up"></i>
-                    <span class="link-name">Booking Details</span>
-                </a></li>
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="link-name">Booking Details</span>
+                    </a></li>
                 <li><a href="/employee/releaseseat">
-                <i class="uil uil-chart-down"></i>
-                <span class="link-name">Release Seat</span>
-            </a></li>
- <!--                <li><a href="#">
+                        <i class="uil uil-chart-down"></i>
+                        <span class="link-name">Release Seat</span>
+                    </a></li>
+                <!--                <li><a href="#">
                     <i class="uil uil-share"></i>
                     <span class="link-name">Share</span>
                 </a></li> -->
             </ul>
-            
+
             <ul class="logout-mode">
                 <li><a href="#" onclick="document.getElementById('log').submit()">
-                    <i class="uil uil-signout"></i>
-    
-                     <span class="link-name">Logout</span> 
-                </a></li>
+                        <i class="uil uil-signout"></i>
+
+                        <span class="link-name">Logout</span>
+                    </a></li>
 
                 <li class="mode">
                     <a href="#">
                         <i class="uil uil-moon"></i>
-                    <span class="link-name">Dark Mode</span>
-                </a>
+                        <span class="link-name">Dark Mode</span>
+                    </a>
 
-                <div class="mode-toggle">
-                  <span class="switch"></span>
-                </div>
-            </li>
+                    <div class="mode-toggle">
+                        <span class="switch"></span>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -257,28 +266,29 @@ font-size:30px;
 
 
 
-<!-- Employee Dashboard-->
+    <!-- Employee Dashboard-->
     <div class="dashboard" id="homeContent">
         <div class="top">
-        
+
             <i class="uil uil-bars sidebar-toggle"></i>
 
-                
-                   <div id="clockdate">
-  <div class="clockdate-wrapper">
-    <div id="clock"></div>
-    <div id="date"></div>
-  </div>
-</div> 
+
+            <div id="clockdate">
+                <div class="clockdate-wrapper">
+                    <div id="clock"></div>
+                    <div id="date"></div>
+                </div>
+            </div>
             <img src="/images/profile.jpg" alt="">
-           
+
         </div>
-        
-<div style="margin-top:5%;">
-<span style="color:grey;" class="logout-mode"> >booking-details </span><hr>
-<h3 style="color:grey;text-align:center;">Booking Details</h3>
-</div>
-<Br/>
+
+        <div style="margin-top:5%;">
+            <span style="color:grey;" class="logout-mode"> >booking-details </span>
+            <hr>
+            <h3 style="color:grey;text-align:center;">Booking Details</h3>
+        </div>
+        <Br />
 
         <div class="card text-white ">
 
@@ -286,29 +296,29 @@ font-size:30px;
                 <table class="table text-black">
 
                     <tbody>
-                    	
-                    	<tr>
+
+                        <tr>
                             <td>Booking Id</td>
-                            <td>13</td>
+                            <td id="bookingId">13</td>
                         </tr>
-                        
+
                         <tr>
                             <td>Bus Number</td>
-                            <td th:text="${session.emp.getEmployee().getB().getBid()}"></td>
+                            <td id="busNo"></td>
                         </tr>
                         <tr>
-                        
+
                             <td>Driver Name</td>
-                            <td th:text="${session.emp.getEmployee().getB().getD().getDriverName()}"></td>
+                            <td id="driverName"></td>
                         </tr>
                         <tr>
                             <td>Driver Contact Number</td>
-                            <td th:text="${session.emp.getEmployee().getB().getD().getDriverContactNo()}"></td>
+                            <td id="driverContactNo"></td>
                         </tr>
-                        
+
                         <tr>
-                           <td>Bus Status </td>
-                            <td>Inactive</td>
+                            <td>Bus Status </td>
+                            <td id="busStatus"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -316,11 +326,12 @@ font-size:30px;
         </div>
     </div>
 
-    
+
     <!-- Book Bus -->
-   
+
 
     <script src="/script/home_script.js"></script>
- <!--    <script src="/script/navigation.js"></script> -->
+    <!--    <script src="/script/navigation.js"></script> -->
 </body>
+
 </html>

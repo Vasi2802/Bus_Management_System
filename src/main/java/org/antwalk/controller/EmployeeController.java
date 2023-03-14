@@ -5,7 +5,9 @@ import java.security.Principal;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
+import org.antwalk.entity.Driver;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.Stop;
 import org.antwalk.entity.User;
@@ -27,6 +30,9 @@ import org.antwalk.repository.StopRepo;
 import org.antwalk.repository.UserRepo;
 import org.antwalk.repository.WaitingListRepo;
 import org.antwalk.service.ArrivalTimeService;
+import org.antwalk.service.BookingDetailsService;
+import org.antwalk.service.EmployeeService;
+import org.antwalk.service.WaitingListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,6 +71,15 @@ public class EmployeeController {
 
 	@Autowired
 	WaitingListRepo waitingListRepo;
+
+	@Autowired
+	EmployeeService employeeService;
+	
+	@Autowired
+	WaitingListService waitingListService;
+
+	@Autowired
+	BookingDetailsService bookingDetailsService;
 
 	@PostMapping("/insert")
 	public Employee insert(@RequestBody Employee e) {
@@ -139,7 +154,7 @@ public class EmployeeController {
 	    User emp = (User)session.getAttribute("emp");
 	    if(emp.getEmployee().getB()==null) {
 	    	modelAndView = new ModelAndView("error-booking-details");
-	    	return modelAndView;
+	    return modelAndView;
 	    }	
 
 	    
@@ -381,5 +396,62 @@ public class EmployeeController {
 		
 		return message;
 
+	}
+
+	@GetMapping("get-employee-dashboard-details/{eid}")
+	public Map<String, String> getEmployeeDashboardDetails(@PathVariable long eid) {
+		Map<String, String> employeeDashboardDetails = new HashMap<>();
+		Employee employee = employeeService.getEmployeeById(eid);
+		employeeDashboardDetails.put("name", employee.getName());
+		employeeDashboardDetails.put("phoneNo", employee.getContactNo());
+		employeeDashboardDetails.put("email",  employee.getUser().getUserName());
+		if(employee.getB()!=null){
+			employeeDashboardDetails.put("busId", ""+employee.getB().getBid());
+			employeeDashboardDetails.put("bookingStatus", "Bus Seat Reserved");
+		}
+		else{
+			employeeDashboardDetails.put("busId", "NA");
+			Optional<WaitingList> waitList = waitingListRepo.findByE(employee);
+			if(waitList.isPresent()){
+				employeeDashboardDetails.put("bookingStatus", "In Waitlist");
+			}
+			else{
+				employeeDashboardDetails.put("bookingStatus", "Not booked");	
+			}
+		}
+		return employeeDashboardDetails;
+	}
+
+	@GetMapping("/get-booking-details/{eid}")
+	public Map<String, String> getBookingDetailsDetails(@PathVariable long eid) {
+		Map<String, String> employeeBookingDetails = new HashMap<>();
+		Employee employee = employeeService.getEmployeeById(eid);
+		String bookingId = "NA";
+		String busNo = "NA";
+		String driverName = "NA";
+		String driverContactNo = "NA";
+		String busStatus = "NA";
+		
+		if(employee.getB()!=null){
+			Bus bus = employee.getB();
+			busNo = "" +bus.getBid();
+			Driver driver = bus.getD();
+			busStatus= bus.getStartTime().toString();
+			if(driver!=null){
+				driverName = driver.getDriverName();
+				driverContactNo = driver.getDriverContactNo();
+			}
+			BookingDetails bookingDetails = bookingDetailsService.findMostRecentBooking(employee, bus);
+			if(bookingDetails!=null){
+				bookingId = "" + bookingDetails.getBookingId();
+			}
+		}
+
+		employeeBookingDetails.put("bookingId", bookingId);
+		employeeBookingDetails.put("busNo", busNo);
+		employeeBookingDetails.put("driverName", driverName);
+		employeeBookingDetails.put("driverContactNo", driverContactNo);
+		employeeBookingDetails.put("busStatus", busStatus);
+		return employeeBookingDetails;		
 	}
 }

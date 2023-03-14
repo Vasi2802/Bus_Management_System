@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.antwalk.entity.BookingDetails;
+import org.antwalk.entity.Bus;
+import org.antwalk.entity.Employee;
 import org.antwalk.repository.BookingDetailsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -109,4 +111,14 @@ public class BookingDetailsService {
 		}
 		return bookingDetailsList;
     }
+
+    public BookingDetails findMostRecentBooking(Employee employee, Bus bus) {
+        List<BookingDetails> bookingDetailsList = bookingRepo.findByEAndBOrderByBookingForMonthDesc(employee, bus);
+		if(bookingDetailsList.size()>0)
+			return bookingDetailsList.get(0);
+		else
+			return null;
+    }
+
+
 }

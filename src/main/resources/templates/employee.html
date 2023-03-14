@@ -98,7 +98,7 @@ font-size:30px;
       	  const minutes = now.getMinutes().toString().padStart(2, '0');
       	  const seconds = now.getSeconds().toString().padStart(2, '0');
       	  const time = `${hours}:${minutes}:${seconds}`;
-      	  
+            
       	  $('#clock').text(time);
       	  
     	    var ids = ["#pipe1","#pipe2","#pipe3","#pipe4","#pipe5","#pipe6","#pipe7","#pipe8","#pipefinal"]; // list of IDs
@@ -146,26 +146,26 @@ font-size:30px;
     	        }
     	    }
       	}, 1000);
-        
+        var employeeDashboardDetails;
         $(document).ready(async () => {
-            url = "/employee/getbyid/" + eid;
+            url = "/employee/get-employee-dashboard-details/" + eid;
             await $.ajax({
                 type: "GET",
                 url: url,
                 success: function (response) {
                     console.log("The employee is");
                     console.log(response);
-                    employee = response;
-                    bus = employee?.b;
+                    employeeDashboardDetails = response;
+                    document.getElementById("name").innerText = employeeDashboardDetails?.name;
+                    document.getElementById("phoneNo").innerText = employeeDashboardDetails?.phoneNo;
+                    document.getElementById("email").innerText = employeeDashboardDetails?.email;
+                    document.getElementById("busId").innerText = employeeDashboardDetails?.busId;
+                    document.getElementById("bookingStatus").innerText = employeeDashboardDetails?.bookingStatus;
                 },
                 error: function (response) {
                     alert('Error occured ', response.statusText);
                 }
             });
-            $("#bus-id-display").append(`${bus? bus.bid : "NA"}`);
-            
-
-          
         });
 
         const removeBooking = () => {
@@ -297,25 +297,23 @@ font-size:30px;
                     <tbody>
                         <tr>
                             <td>Name</td>
-                            <td th:text="${session.emp.getEmployee().getName()}"></td>
+                            <td id="name"></td>
                         </tr>
                         <tr>
                             <td>Phone No </td>
-                            <td th:text="${session.emp.getEmployee().getContactNo()}"></td>
+                            <td id="phoneNo"></td>
                         </tr>
                         <tr>
                             <td>Email </td>
-                            <td th:text="${session.emp.getUserName()}"></td>
+                            <td id="email"></td>
                         </tr>
                         <tr>
                             <td>Bus Id </td>
-                            <td id="bus-id-display"></td>
-                            <!-- if in waitlist -->
-                            <!-- employee/getStatus returns assigned, not applied, in waitlist -->
+                            <td id="busId"></td>
                         </tr>
                         <tr>
                            <td>Booking Status </td>
-                            <td id="bus-id-display"></td>
+                            <td id="bookingStatus"></td>
                         </tr>
                     </tbody>
                 </table>
