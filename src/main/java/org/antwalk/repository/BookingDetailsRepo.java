@@ -19,6 +19,8 @@ public interface BookingDetailsRepo extends JpaRepository<BookingDetails, Long>{
     
     public Optional<BookingDetails> findByEAndBookingForMonth(Employee employee, Date date);
 
-    public List<BookingDetails> findByEAndBOrderByBookingForMonthDesc(Employee employee, Bus bus);
+    public List<BookingDetails> findByEAndBOrderByBookingForMonthAsc(Employee employee, Bus bus);
+
+	public List<BookingDetails> findByEAndBOrderByBookingIdDesc(Employee employee, Bus bus);
     
 }

@@ -97,51 +97,7 @@ font-size:30px;
       	  
       	  $('#clock').text(time);
       	  
-      	  console.log(cutoffTimes);
-    	    var ids = ["#pipe1","#pipe2","#pipe3","#pipe4","#pipe5","#pipe6","#pipe7","#pipe8","#pipefinal"]; // list of IDs
-    	    var threshold = new Date(); // create a new Date object for the cutoff time
-    	    threshold.setHours(12);
-
-    	    var currentTime = new Date(); // get the current time
-    	    for (var i = 0; i < cutoffTimes.length; i++) {
-    	        var cutoffTime = new Date(); // create a new Date object for the cutoff time
-
-    	        if (currentTime.getTime()<=threshold.getTime()) {
-        	        var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
-        	      .split(':');
-        	            	        var hours1 = parseInt(cutoffTimeParts[0]);
-        	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
-    	            cutoffTime.setHours(hours1);
-    	            cutoffTime.setMinutes(minutes1);
-    	            cutoffTime.setSeconds(0);
-    	            cutoffTime.setMilliseconds(0);
-    	            if (currentTime.getTime() >= cutoffTime.getTime()) {
-    	            	console.log(currentTime.getTime()+" "+cutoffTime.getTime());	
-    	                 $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
-    	            } else if(currentTime.getTime()>threshold.getTime()) {
-    	            	console.log("Remove past time");
-    	            	$(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
-    	            }
-    	        } else {
-    	        	var cutoffTimeParts = cutoffTimes[i].eveningArrivalTime
-          	      .split(':');
-          	            	        var hours1 = parseInt(cutoffTimeParts[0]);
-          	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
-    	            cutoffTime.setHours(hours1 - 12);
-    	            cutoffTime.setMinutes(minutes1);
-    	            cutoffTime.setSeconds(0);
-    	            cutoffTime.setMilliseconds(0);
-    	            cutoffTime.setTime(cutoffTime.getTime() + 12 * 60 * 60 * 1000); // add 12 hours for PM time
-    	            if (currentTime.getTime() >= cutoffTime.getTime()) {
-    	            	console.log("Way past time 2 "+ids[i]);
-    	            	$(ids[i]).addClass('track-line'); // add 'after-cutoff' class if current time is after the cutoff time
-    	            } 
-    	            else if (currentTime.getTime()>threshold.getTime()) {
-    	            	console.log("Remove past time");
-    	            	$(ids[i]).removeClass('track-line'); // add 'before-cutoff' class if current time is before the cutoff time
-    	            }
-    	        }
-    	    }
+      	
       	}, 1000);
         function getBuses(routeId) {
             // console.log(event.target.getAttribute("routeid"));
