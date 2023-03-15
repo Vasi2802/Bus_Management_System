@@ -1,21 +1,27 @@
 package org.antwalk.service;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.antwalk.entity.Admin;
 import org.antwalk.entity.BookingDetails;
+import org.antwalk.entity.Bus;
+import org.antwalk.entity.Employee;
+import org.antwalk.entity.Route;
+import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.AdminRepo;
+import org.antwalk.repository.ArrivalTimeRepo;
+import org.antwalk.repository.BookingDetailsRepo;
+import org.antwalk.repository.BusRepo;
+import org.antwalk.repository.EmployeeRepo;
+import org.antwalk.repository.RouteRepo;
+import org.antwalk.repository.UserRepo;
+import org.antwalk.repository.WaitingListRepo;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -30,8 +36,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class AdminService {
@@ -42,7 +46,30 @@ public class AdminService {
 	@Autowired
 	private BookingDetailsService bookingDetailsService;
 
-	public Admin insertAdmin(Admin a) {
+
+	@Autowired
+	private EmployeeService employeeService;
+
+	@Autowired
+	private BusRepo busRepo;
+	
+	@Autowired
+	private WaitingListRepo waitingListRepo;
+
+	@Autowired
+	private RouteRepo routeRepo;
+
+	@Autowired
+	private ArrivalTimeRepo arrivalTimeRepo;
+
+	@Autowired
+	private BookingDetailsRepo bookingDetailsRepo;
+
+	@Autowired
+	private UserRepo userRepo;
+
+	@Autowired
+	private EmployeeRepo employeeRepo;public Admin insertAdmin(Admin a) {
 		return adminRepo.save(a);
 	}
 
@@ -186,4 +213,79 @@ public class AdminService {
 		.body(file);
 		
 	}
+
+	public String deleteEmployee(long employeeId){
+		String message= "";
+		Optional<Employee> employeeOptional = employeeRepo.findById(employeeId);
+		if(employeeOptional.isPresent()){
+			Employee employee = employeeOptional.get();
+			
+			// removes booking or waiting
+			employeeService.removeBooking(employee.getEid()); 
+			message += "Booking/Waiting removed";
+
+			// delete booking details associated with this employee
+			bookingDetailsRepo.deleteAllbyE(employee);
+
+			// delete user associated with this employee
+			userRepo.delete(employee.getUser());
+
+			// delete employee 
+			employeeRepo.deleteById(employee.getEid());
+			message += "employee deleted";
+
+		}
+		else
+			message = "employee not found";
+		return message;
+	}
+
+    public String deleteBus(long busId) {
+		Optional<Bus> busOptional = busRepo.findById(busId);
+		String message = "";
+		if(busOptional.isPresent()){
+			Bus bus = busOptional.get();
+			
+			// Remove all waitingList Entry associated with this bus
+			waitingListRepo.deleteAllByB(bus);
+			message += "waitLists Removed\n";
+			
+			// Remove All Employee's booking associated with this bus
+			List<Employee> employees = employeeRepo.findAllByB(bus);
+			for(Employee employee: employees){
+				employeeService.removeBooking(employee.getEid());
+			}
+			message += "employees' bus removed \n";
+
+			// Remove Booking Details associated with this bus
+			bookingDetailsRepo.deleteAllByB(bus);
+			message += "booking details associated with this bus deleted\n";
+
+		}
+		else{
+			message = "bus does not exist";
+		}
+        return message;
+    }
+
+    public String deleteRoute(long routeId) {
+		String message="";
+		Optional<Route> routeOptional = routeRepo.findById(routeId);
+		if(routeOptional.isPresent()){
+			Route route = routeOptional.get();
+			
+			// remove buses associated with the route
+			busRepo.deleteAllByR(route);
+			message += "buses removed += \n";
+
+			// remove time table entries associated with this route
+			arrivalTimeRepo.deleteAllByRouteStopId_Route(route);
+			message += "time table associated deleted";
+
+		}
+		else{
+			message = "Route Id Invalid";
+		}
+        return message;
+    }
 }

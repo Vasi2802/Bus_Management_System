@@ -20,5 +20,9 @@ public interface BookingDetailsRepo extends JpaRepository<BookingDetails, Long>{
     public Optional<BookingDetails> findByEAndBookingForMonth(Employee employee, Date date);
 
     public List<BookingDetails> findByEAndBOrderByBookingForMonthDesc(Employee employee, Bus bus);
+
+    public void deleteAllByB(Bus bus);
+
+    public void deleteAllbyE(Employee employee);
     
 }

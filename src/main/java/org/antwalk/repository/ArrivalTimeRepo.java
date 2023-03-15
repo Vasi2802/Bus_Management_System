@@ -13,7 +13,11 @@ public interface ArrivalTimeRepo extends JpaRepository<ArrivalTimeTable, RouteSt
     public List<ArrivalTimeTable> findAllByRouteStopId_Stop(Stop stop);
     
     public List<ArrivalTimeTable> findAllByRouteStopId_RouteOrderByMorningArrivalTime(Route route);
-
+    
     public List<ArrivalTimeTable> findAllByRouteStopId_RouteOrderByEveningArrivalTime(Route route);
+    
+    public void deleteAllByRouteStopId_RouteOrderByMorningArrivalTime(Route route);
+
+    public void deleteAllByRouteStopId_Route(Route route);
 
 }
