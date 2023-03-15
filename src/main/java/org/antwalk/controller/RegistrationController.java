@@ -194,8 +194,8 @@ public class RegistrationController {
         		exist = true;
         		break;
         	}
-        		
         }
+        
         if(exist==true) {
         	theModel.addAttribute("notauser", "Invalid email");
 

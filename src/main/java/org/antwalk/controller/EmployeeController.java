@@ -130,7 +130,24 @@ public class EmployeeController {
 
 		return modelAndView;
 	}
-
+	
+	
+	@GetMapping("/editprofile")
+	public ModelAndView edit(HttpServletRequest request) {
+		
+		ModelAndView modelAndView = new ModelAndView("edit-employee-profile");
+		HttpSession session = request.getSession();
+	    User emp = (User)session.getAttribute("emp");
+	    
+	    Employee empinfo = empRepo.getById(emp.getEmployee().getEid());
+	    User userinfo = userRepo.getById(emp.getId());
+	    
+    	modelAndView.addObject("empinfo", empinfo);
+    	modelAndView.addObject("userinfo", userinfo);
+	    
+		return modelAndView;
+	}
+	
 	@GetMapping("/showbookingdetails")
 	public ModelAndView booking(HttpServletRequest request) {
 		

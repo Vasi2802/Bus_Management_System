@@ -1,5 +1,6 @@
 package org.antwalk.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.antwalk.entity.User;
@@ -22,6 +23,8 @@ public class DemoController {
 		
 		@Autowired
 		private BCryptPasswordEncoder passwordEncoder;
+		
+		
 		
 	@GetMapping("/")
 	public String showLogin() {
@@ -50,6 +53,7 @@ public class DemoController {
 		
 		return "admin";
 	}
+
 	
 	@GetMapping("/admin/adddriver")
 	public String adddriver(Model model) {
@@ -86,17 +90,7 @@ public class DemoController {
 
 //		logger.warning("User name already exists.");
     	return "registration-form-driver";
-    }
-	/*
-	 * String userEmail = theCrmUser.getEmail(); System.out.println(userEmail); User
-	 * existing1 = userService.findByEmail(userEmail);
-	 * 
-	 * if (existing1 != null){ theModel.addAttribute("crmUser", new CrmUser());
-	 * theModel.addAttribute("registrationError", "Email already exists.");
-	 * 
-	 * logger.warning("Email already exists."); return "registration-form"; }
-	 */
-    // create user account        						
+    }     						
     userService.savedriver(theCrmUser);
     
 //    logger.info("Successfully created user: " + userName);

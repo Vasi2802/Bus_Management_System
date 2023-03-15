@@ -21,6 +21,7 @@ public class Employee {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "eid")
+	
 	private long eid;
 
 	@Column(name = "name")
