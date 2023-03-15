@@ -132,6 +132,14 @@ public class EmployeeService {
 			}
 
 		}
+		Optional optionalWaitingList = waitingListRepo.findByE(employee);
+		if (optionalWaitingList.isPresent()) {
+			WaitingList waitingList = (WaitingList) optionalWaitingList.get();
+			message += String.format("Removed waitingList entry with WID=%d", waitingList.getWid());
+			waitingListRepo.deleteById(waitingList.getWid());
+		}
+
+		
 		return message;
 	}
 
