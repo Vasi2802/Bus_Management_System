@@ -20,7 +20,7 @@ public class Stop {
 	
 	@Column(name="name")
 	private String name;
-	
+
 	
 	public long getSid() {
 		return sid;

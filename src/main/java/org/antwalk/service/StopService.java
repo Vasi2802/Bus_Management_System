@@ -54,13 +54,8 @@ public class StopService {
 		List<Stop> stopList = stopRepo.findAll();
 		for(Stop obj:stopList) {
 			if(obj.getName().equals(name)) {
-//				if(s.getName().equals(name)) {
-					stopRepo.save(s);
-					return "Stop Updated";
-//				}
-//				else {
-//					return "Stop exists but your input name does not match with the existing stop name";
-//				}
+				stopRepo.save(s);
+				return "Stop Updated";			
 			}
 		}
 		return "Stop does not exist";
