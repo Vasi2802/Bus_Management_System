@@ -1,11 +1,16 @@
 package org.antwalk.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.antwalk.entity.Employee;
 import org.antwalk.entity.User;
+import org.antwalk.repository.UserRepo;
+import org.antwalk.service.EmployeeService;
 import org.antwalk.service.UserService;
 import org.antwalk.user.CrmUser;
+import org.antwalk.user.UpdateProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -24,7 +29,12 @@ public class DemoController {
 		@Autowired
 		private BCryptPasswordEncoder passwordEncoder;
 		
+		@Autowired
+		EmployeeService empRepo;
 		
+
+		@Autowired
+		UserRepo userRepo;
 		
 	@GetMapping("/")
 	public String showLogin() {
@@ -105,8 +115,50 @@ public class DemoController {
 		return "preview";
 	}
 	
+	@GetMapping("/employee/editprofile")
+	public String edit(HttpServletRequest request,Model model) {
+		
 
+		HttpSession session = request.getSession();
+	    User emp = (User)session.getAttribute("emp");
+	    UpdateProfile updateProfile = new UpdateProfile();
+	    
+	    Employee empinfo = empRepo.getEmployeeById(emp.getEmployee().getEid());
+	    User userinfo = userRepo.getById(emp.getId());
+	    
+	    updateProfile.setFullName(empinfo.getName());
+	    updateProfile.setContactNo(empinfo.getContactNo());
 
+    	model.addAttribute("updateProfile",updateProfile);
+		return "edit-employee-profile";
+	}
+	
+	@PostMapping("/employee/editprofileprocess")
+	public String editconfirm(HttpServletRequest request,@ModelAttribute("updateProfile") UpdateProfile user,Model model) {
+			
+			
+			  System.out.println(user.getContactNo());
+			  System.out.println(user.getFullName());
+			  System.out.println(user.getPassword()); HttpSession session =
+			  request.getSession(); User emp = (User)session.getAttribute("emp");
+			  
+			  User userv = userService.findByUserName(emp.getUserName()); Employee empp =
+			  empRepo.getEmployeeById(emp.getEmployee().getEid());
+			  
+			  if(!user.getPassword().equals("")) { 
+			  userService.findByUserName(emp.getUserName()).setPassword(passwordEncoder.
+			  encode(user.getPassword()));
+			  
+			  }
+		 
+			  
+		empRepo.updateEmployeeById(emp.getEmployee().getEid(),user.getContactNo(),user.getFullName());
+		
+		System.out.println(empRepo.getEmployeeById(1L).getName());
+		
+		model.addAttribute("success","Successfully Updated");
+		return "edit-employee-profile";
+	}
 }
 
 
