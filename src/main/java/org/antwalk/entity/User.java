@@ -44,7 +44,18 @@ public class User {
 	@OneToOne(mappedBy = "user")
 	private Driver driver;
 	
+	@JsonManagedReference
+	@OneToOne(mappedBy = "user")
+	private Admin admin;
 	
+	public Admin getAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(Admin admin) {
+		this.admin = admin;
+	}
+
 	public Driver getDriver() {
 		return driver;
 	}

@@ -18,7 +18,8 @@
     <!----===== Iconscout CSS ===== -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
-
+	
+	 <link rel="stylesheet" href="/fonts/material-icon/css/material-design-iconic-font.min.css">
 	<!-- from other file -->
 	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
@@ -218,11 +219,16 @@ font-size:30px;
 <Br/>
 
 <div class="container">
+<div th:if="${success}"
+											class="alert alert-success col-xs-offset-1 col-xs-10">
+											Successfully Updated
+										</div>
+										
 				<div style="color:red;">Update your profile using the following form note that you cannot change your email.
 				Only Admin is authorized to change the email.</div><br>
 				
-                 <form th:action="@{/register/processRegistrationForm}" 
-						  	   th:object="${emp}" method="POST" class="register-form" id="register-form">
+                 <form th:action="@{/employee/editprofileprocess}" 
+						  	   th:object="${updateProfile}" method="POST" class="register-form" id="register-form">
 						  	   
 						  	   <!-- Place for messages: error, alert etc ... -->	
 					    <div class="form-group">
@@ -230,21 +236,27 @@ font-size:30px;
 					            
 					        </div>
 					    </div>
-                            <div class="form-group">
-                                <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" name="name" placeholder="Full Name (*)"/>
+                            <div class="form-group">Full Name
+                                <label for="name"><br/><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="text" th:field="*{fullName}" name="fullName" required="true" placeholder="Change Full Name (*)"/>
                                 	
                             </div>
                             <br/>
 							<br/>
-							 <div class="form-group">
-                                <label for="contact"><i class="zmdi zmdi-smartphone-iphone"></i></label>
-                                <input type="text" name="contactNo" placeholder="Contact No (*)" />
+							 <div class="form-group">Contact Number
+                                <label for="contact"><Br/><i class="zmdi zmdi-smartphone-iphone"></i></label>
+                                <input type="text" th:field="*{contactNo}" name="contactNo" required="true" placeholder="Change Contact No (*)" />
                             </div>
                             
+                             <br/>
+							<br/>
+							 <div class="form-group">Password
+                                <label for="contact"><br/><i class="zmdi zmdi-smartphone-iphone"></i></label>
+                                <input type="password" th:field="*{password}" name="password" placeholder="Change Password (*)" />
+                            </div>
                             
                             <div class="form-group form-button">
-                                <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                                <input type="submit" name="signup" id="signup" class="form-submit" value="Update"/>
                             </div>
                             
                         </form>

@@ -33,9 +33,12 @@ import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.EmployeeService;
 import org.antwalk.service.WaitingListService;
+import org.antwalk.user.CrmUser;
+import org.antwalk.user.UpdateProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -149,21 +152,9 @@ public class EmployeeController {
 	}
 	
 	
-	@GetMapping("/editprofile")
-	public ModelAndView edit(HttpServletRequest request) {
-		
-		ModelAndView modelAndView = new ModelAndView("edit-employee-profile");
-		HttpSession session = request.getSession();
-	    User emp = (User)session.getAttribute("emp");
-	    
-	    Employee empinfo = empRepo.getById(emp.getEmployee().getEid());
-	    User userinfo = userRepo.getById(emp.getId());
-	    
-    	modelAndView.addObject("empinfo", empinfo);
-    	modelAndView.addObject("userinfo", userinfo);
-	    
-		return modelAndView;
-	}
+
+	
+
 	
 	@GetMapping("/showbookingdetails")
 	public ModelAndView booking(HttpServletRequest request) {
@@ -236,7 +227,12 @@ public class EmployeeController {
 		// stops.add(new Stop(4, "Stop4"));
 		// stops.add(new Stop(5, "Stop5"));
 	}
-
+	
+	@GetMapping("/sos")
+	public ModelAndView sos() {
+		ModelAndView modelAndView = new ModelAndView("viewsos");
+		return modelAndView;
+	}
 	@GetMapping("/edit")
 	public ModelAndView employeeEditForm() {
 		ModelAndView modelAndView = new ModelAndView("employeeEdit");
