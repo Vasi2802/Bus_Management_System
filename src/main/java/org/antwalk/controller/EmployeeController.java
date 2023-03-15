@@ -136,8 +136,10 @@ public class EmployeeController {
 	public ModelAndView releaseseat(HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView("release-seat-form");
 		HttpSession session = request.getSession();
-	    User emp = (User)session.getAttribute("emp");
-	    if(emp.getEmployee().getB()==null) {
+	    User user = (User)session.getAttribute("emp");
+		Employee employee = employeeService.getEmployeeById(user.getEmployee().getEid());
+		Optional<WaitingList> waitingListOptional = waitingListRepo.findByE(employee);
+	    if(employee.getB()==null && waitingListOptional.isEmpty()) {
 	    	modelAndView = new ModelAndView("error-seat-form");
 	    	return modelAndView;
 	    }	
@@ -151,8 +153,9 @@ public class EmployeeController {
 		
 		ModelAndView modelAndView = new ModelAndView("employee-booking-details");
 		HttpSession session = request.getSession();
-	    User emp = (User)session.getAttribute("emp");
-	    if(emp.getEmployee().getB()==null) {
+	    User user = (User)session.getAttribute("emp");
+		Employee employee = employeeService.getEmployeeById(user.getEmployee().getEid());
+	    if(employee.getB()==null) {
 	    	modelAndView = new ModelAndView("error-booking-details");
 	    return modelAndView;
 	    }	
@@ -166,13 +169,14 @@ public class EmployeeController {
 		
 		ModelAndView modelAndView = new ModelAndView("employee-track-bus");
 		HttpSession session = request.getSession();
-	    User emp = (User)session.getAttribute("emp");
-	    if(emp.getEmployee().getB()==null) {
+	    User user = (User)session.getAttribute("emp");
+		Employee employee = employeeService.getEmployeeById(user.getEmployee().getEid());
+	    if(employee.getB()==null) {
 	    	modelAndView = new ModelAndView("error-track-bus");
 	    	return modelAndView;
 	    }
 	    
-	    Long rid = emp.getEmployee().getB().getR().getRid();
+	    Long rid = employee.getB().getR().getRid();
 	    
 	    LocalTime currentTime = LocalTime.now(); // get the current time
 	    LocalTime noon = LocalTime.of(12, 0); // set noon time to 12:00 PM
@@ -301,11 +305,11 @@ public class EmployeeController {
 		empRepo.save(employee);
 		
 		
-		HttpSession session = request.getSession();
+		// HttpSession session = request.getSession();
 		
-	    User emp = (User)session.getAttribute("emp");
-	    emp.getEmployee().setB(bus);
-	    session.setAttribute("emp", emp);
+	    // User emp = (User)session.getAttribute("emp");
+	    // emp.getEmployee().setB(bus);
+	    // session.setAttribute("emp", emp);
 	    
 		return String.format("Hi %s!\nYou have successfully booked Bus with id=%d", employee.getName(), bus.getBid());
 
@@ -423,7 +427,7 @@ public class EmployeeController {
 	}
 
 	@GetMapping("/get-booking-details/{eid}")
-	public Map<String, String> getBookingDetailsDetails(@PathVariable long eid) {
+	public Map<String, String> getBookingDetails(@PathVariable long eid) {
 		Map<String, String> employeeBookingDetails = new HashMap<>();
 		Employee employee = employeeService.getEmployeeById(eid);
 		String bookingId = "NA";
@@ -436,7 +440,7 @@ public class EmployeeController {
 			Bus bus = employee.getB();
 			busNo = "" +bus.getBid();
 			Driver driver = bus.getD();
-			busStatus= bus.getStartTime().toString();
+			busStatus= bus.getStartTime()!=null? bus.getStartTime().toString():"Journey Not started";
 			if(driver!=null){
 				driverName = driver.getDriverName();
 				driverContactNo = driver.getDriverContactNo();
