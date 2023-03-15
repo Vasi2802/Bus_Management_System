@@ -18,10 +18,9 @@ class StopRepoTest {
 	@Test
 	void testFindByName() {
 		
-		String stopName = "test stop";
+		String stopName = "test stop for repo";
 		
-		Stop expected = new Stop();
-		expected.setName(stopName);
+		Stop expected = new Stop(stopName);
 		stopRepo.save(expected);
 		
 		Stop actual = stopRepo.findByName(stopName);

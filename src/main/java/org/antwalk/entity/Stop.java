@@ -43,6 +43,13 @@ public class Stop {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	public Stop(String name) {
+		super();
+		this.name = name;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, sid);

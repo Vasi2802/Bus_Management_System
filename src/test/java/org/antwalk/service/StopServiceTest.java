@@ -17,17 +17,20 @@ class StopServiceTest {
 
 	@Test
 	void testInsertStop() {
-		Stop expected = new Stop(2, "testing stop 2");
+		String stopName = "stop for insert method in service";
 		
-		Stop actual = stopService.insertStop(new Stop(2, "testing stop 2"));
+//		System.out.println("sid for expected" + expected.getSid());
+		Stop actual = stopService.insertStop(new Stop(stopName));
+		long id = actual.getSid();
+		Stop expected = new Stop(id,stopName);
 		assertNotNull(actual);
 		assertEquals(expected, actual);
 	}
 
 	@Test
 	void testGetAllStops() {
-		Stop expected1 = new Stop(5,"s5");
-		Stop expected2 = new Stop(6,"s6");
+		Stop expected1 = new Stop("stop1 for get all stops");
+		Stop expected2 = new Stop("stop2 for get all stops");
 		
 		stopService.insertStop(expected1);
 		stopService.insertStop(expected2);
@@ -40,30 +43,37 @@ class StopServiceTest {
 
 	@Test
 	void testGetStopById() {
-		Stop expected = new Stop(10,"s10");
+		String stopName = "stop for get stop by id";
+		Stop expected = new Stop(stopName);
 		stopService.insertStop(expected);
+		long id = expected.getSid();
 		
-		Stop actual = stopService.getStopById(10);
+		Stop actual = stopService.getStopById(id);
 		assertEquals(expected.getName(), actual.getName());
 
 	}
 
 	@Test
 	void testGetStopByName() {
-		Stop expected = new Stop(15,"s15");
+		String stopName = "stop for get stop by name";
+
+		Stop expected = new Stop(stopName);
 		stopService.insertStop(expected);
 		
-		Stop actual = stopService.getStopByName("s15");
+		Stop actual = stopService.getStopByName(stopName);
 		assertEquals(expected.getSid(), actual.getSid());
 	}
 
 	@Test
 	void testDeleteStopById() {
 		String expected = "Stop Deleted";
-		Stop s = new Stop(18,"s18");
+		String stopName = "stop for delete stop by id";
+
+		Stop s = new Stop(stopName);
 		stopService.insertStop(s);
+		long id = s.getSid();
 		
-		String actual = stopService.deleteStopById(18);
+		String actual = stopService.deleteStopById(id);
 		assertEquals(expected, actual);
 	}
 
@@ -73,12 +83,14 @@ class StopServiceTest {
 		String expected2 = "Stop exists but your input id does not match with the existing stop id";
 		String expected3 = "Stop does not exist";
 		
-		Stop s = new Stop(20,"s20");
+		String stopName = "stop for update stop by id";
+		Stop s = new Stop(stopName);
 		stopService.insertStop(s);
+		long id=s.getSid();
 		
-		String actual1 = stopService.updateStopById(new Stop(20, "new name"), 20);
-		String actual2 = stopService.updateStopById(new Stop(22, "new name"), 20);
-		String actual3 = stopService.updateStopById(new Stop(20, "new name"), 50);
+		String actual1 = stopService.updateStopById(new Stop(id, "new name"), id);
+		String actual2 = stopService.updateStopById(new Stop(id+5, "new name"), id);
+		String actual3 = stopService.updateStopById(new Stop(id+100, "new name"), id+100);
 		
 		assertEquals(expected1, actual1);
 		assertEquals(expected2, actual2);
@@ -90,11 +102,14 @@ class StopServiceTest {
 		String expected1 = "Stop Updated";
 		String expected2 = "Stop does not exist";
 		
-		Stop s = new Stop(25,"s25");
+		String stopName = "stop for update stop by name";
+		Stop s = new Stop(stopName);
 		stopService.insertStop(s);
+		long id=s.getSid();
+
 		
-		String actual1 = stopService.updateStopByName(new Stop(25, "updated by name"), "s25");
-		String actual2 = stopService.updateStopByName(new Stop(25, "updated by name"), "ABCD");
+		String actual1 = stopService.updateStopByName(new Stop(id, "updated by name"), stopName);
+		String actual2 = stopService.updateStopByName(new Stop(id, "updated by name"), "ABCDXYZ");
 		
 		assertEquals(expected1, actual1);
 		assertEquals(expected2, actual2);

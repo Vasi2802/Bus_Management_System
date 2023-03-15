@@ -1,5 +1,7 @@
 package org.antwalk.entity;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -119,11 +121,41 @@ public class User {
 		this.employee = employee;
 	}
 
+	public User(String userName, String password, String role, Employee employee, Driver driver, Admin admin) {
+		super();
+		this.userName = userName;
+		this.password = password;
+		this.role = role;
+		this.employee = employee;
+		this.driver = driver;
+		this.admin = admin;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(admin, driver, employee, id, password, role, userName);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		User other = (User) obj;
+		return Objects.equals(admin, other.admin) && Objects.equals(driver, other.driver)
+				&& Objects.equals(employee, other.employee) && Objects.equals(id, other.id)
+				&& Objects.equals(password, other.password) && Objects.equals(role, other.role)
+				&& Objects.equals(userName, other.userName);
+	}
+
 
 //	public void setRoles(Collection<Role> roles) {
 //		this.roles = roles;
 //	}
 
-
+	
 
 }
