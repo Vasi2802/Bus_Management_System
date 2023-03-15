@@ -225,7 +225,7 @@ public class AdminService {
 			message += "Booking/Waiting removed";
 
 			// delete booking details associated with this employee
-			bookingDetailsRepo.deleteAllbyE(employee);
+			bookingDetailsRepo.deleteByE(employee);
 
 			// delete user associated with this employee
 			userRepo.delete(employee.getUser());
@@ -258,7 +258,7 @@ public class AdminService {
 			message += "employees' bus removed \n";
 
 			// Remove Booking Details associated with this bus
-			bookingDetailsRepo.deleteAllByB(bus);
+			bookingDetailsRepo.deleteByB(bus);
 			message += "booking details associated with this bus deleted\n";
 
 		}
