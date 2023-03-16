@@ -190,7 +190,7 @@
 
 </head>
 
-<body class="container-fluid">
+<body >
     <form th:action="@{/logout}" id="log" method="POST">
 
     </form>
@@ -214,7 +214,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/employee/book" id="bookbus">
+                    <a href="/admin/analytics" id="bookbus">
                         <i class="uil uil-tachometer-fast-alt"></i>
                         <span class="link-name">Analytics</span>
                     </a>
@@ -266,7 +266,7 @@
     <section class="dashboard">
 
         <!-- NAVBAR -->
-        <div class="top">
+        <div class="top ">
             <i class="uil uil-bars sidebar-toggle"></i>
 
             <div class="search-box">
@@ -278,7 +278,7 @@
         </div>
 
         <!-- PAGE HEADING -->
-        <div class="dash-content">
+        <div class="dash-content ">
             <div class="overview justify-content-between flex-row">
                 <h1 class="pb-2 mt-4 mb-2 border-bottom">
                     <i class="uil uil-tachometer-fast-alt"></i>
@@ -290,20 +290,20 @@
             <!-- MAIN AREA -->
 
             <!-- row 1 -->
-            <div style="display: flex; justify-content: space-between; width: 100%;">
-                <div id="booking-line-chart" style="border: 1px solid #ccc; width: 60%;"></div>
-                <div class="boxes" style="display: flex; flex-direction: column; width:40vw;">
-                    <div class="box box1">
+            <div class= "container-fluid " style="display: flex;">
+                <div class="container " id="booking-line-chart" ></div>
+                <div class="boxes container " style="display: flex; flex-direction: column; width:40vw;">
+                    <div class="h2 text-center  bg-secondary rounded-lg container p-3 ml-3 mr-3">
                         <!-- <i class="uil uil-thumbs-up"></i> -->
-                        <span class="text">Total Employees</span>
-                        <span class="number" id="totalEmployees"></span>
+                        <span >Total Employees</span>
+                        <span id="totalEmployees"></span>
                     </div>
-                    <div class="box box2">
+                    <div class="h2 text-center bg-secondary rounded-lg container p-3 ml-3 mr-3 mt-5 mb-5 " >
                         <!-- <i class="uil uil-comments"></i> -->
                         <span class="text">Total Buses</span>
                         <span class="number" id="totalBuses"></span>
                     </div>
-                    <div class="box box3">
+                    <div class="h2 text-center bg-secondary rounded-lg container p-3 ml-3 mr-3">
                         <!-- <i class="uil uil-share"></i> -->
                         <span class="text">Booked/ Seats</span>
                         <span class="number" id="bookingRatio"></span>
@@ -314,11 +314,11 @@
             <hr style="margin: 2rem;">
 
             <!-- row 2 -->
-            <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
-                <div id="route-piechart-div" style="border: 1px solid #ccc;"></div>
-                <div id="route-barchart-div" style="border: 1px solid #ccc"></div>
-                <div>
-                    <div class="box box1">
+            <div class= "row " style="display: flex;">
+                <div class="col ml-3" id="route-piechart-div" style="border: 1px solid #ccc;"></div>
+                <div class="col ml-4 mr-4" id="route-barchart-div" style="border: 1px solid #ccc"></div>
+                <div class="col-4">
+                    <div class="container bg-info">
                         <i class="uil uil-thumbs-up"></i>
                         <span class="text">Total Buses</span>
                         <span class="number">50,120</span>
@@ -340,7 +340,7 @@
             <hr style="margin: 2rem;">
 
             <!-- row 3 -->
-            <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
+            <div class="container" style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
                 <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
                 <div id="bus-barchart-div" style="border: 1px solid #ccc"></div>
                 <div>

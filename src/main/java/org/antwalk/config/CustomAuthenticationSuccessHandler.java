@@ -1,15 +1,12 @@
 package org.antwalk.config;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.antwalk.entity.Role;
 import org.antwalk.entity.User;
 import org.antwalk.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
