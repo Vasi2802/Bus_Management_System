@@ -36,6 +36,8 @@ import org.antwalk.service.WaitingListService;
 import org.antwalk.user.CrmUser;
 import org.antwalk.user.UpdateProfile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -268,7 +270,7 @@ public class EmployeeController {
 	}
 
 	@PostMapping(value = "/bookABusByBusId/{busId}")
-	public String bookABusByBusId(@RequestBody Long eid, @PathVariable long busId,HttpServletRequest request) {
+	public ResponseEntity<String> bookABusByBusId(@RequestBody Long eid, @PathVariable long busId,HttpServletRequest request) {
 
 		System.out.println("Booking Bus For ==============");
 		System.out.println("bus id =" + busId + "  empId = " + eid + "=============");
@@ -286,25 +288,28 @@ public class EmployeeController {
 			WaitingList waitingList = waitingListRepo.findByE(employee).get();
 			System.out.println("======================================");
 			System.out.println(" EMployee " + employee + " in waitingList");
-			return String.format(
-					"Sorry %s. \nYou are already in the waiting List. \nYour waitList details are WID=%d\t EID=%d\t BusId=%d. \nTo book, you must cancel your waiting List",
-					employee.getName(), waitingList.getWid(), waitingList.getE().getEid(), waitingList.getB().getBid());
+//			return String.format(
+//					"Sorry %s. \nYou are already in the waiting List. \nYour waitList details are WID=%d\t EID=%d\t BusId=%d. \nTo book, you must cancel your waiting List",
+//					employee.getName(), waitingList.getWid(), waitingList.getE().getEid(), waitingList.getB().getBid());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are already in a waiting list ");
 		}
 
 		// prevents an employee to book more than 1 bus/seat for current month
 		if (employee.getB() != null) {
 			System.out.println("======================================");
 			System.out.println(" EMployee " + employee + " has a booking");
-			return String.format("Sorry %s. \nYou can book only 1 bus seat in a month. \nYour current bus ID is %s",
-					employee.getName(), employee.getB().getBid());
+//			return String.format("Sorry %s. \nYou can book only 1 bus seat in a month. \nYour current bus ID is %s",
+//					employee.getName(), employee.getB().getBid());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You can only book 1 seat");
 		}
 
 		// employee tries to book a filled bus
 		if (bus.getAvailableSeats() <= 0) {
 			WaitingList waitingList = new WaitingList(0, employee, bus);
 			waitingListRepo.save(waitingList);
-			return String.format("Hi %s!\nYou have been added to waitlist for bus with id=%d.\n Your waitlist id=%d",
-					employee.getName(), bus.getBid(), waitingList.getWid());
+//			return String.format("Hi %s!\nYou have been added to waitlist for bus with id=%d.\n Your waitlist id=%d",
+//					employee.getName(), bus.getBid(), waitingList.getWid());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Added to waiting List");
 		}
 
 		// seats available and employee doesnt have any bus assigned
@@ -324,8 +329,8 @@ public class EmployeeController {
 	    // emp.getEmployee().setB(bus);
 	    // session.setAttribute("emp", emp);
 	    
-		return String.format("Hi %s!\nYou have successfully booked Bus with id=%d", employee.getName(), bus.getBid());
-
+//		return String.format("Hi %s!\nYou have successfully booked Bus with id=%d", employee.getName(), bus.getBid());
+		 return ResponseEntity.ok("Successfully Booked");
 	}
 
 	// REMOVE BOOKING OR WAITINGLIST FOR AN EMPLOYEE
@@ -377,9 +382,9 @@ public class EmployeeController {
 				// get the employee
 				Employee topEmployee = waitingList.getE();
 
-				String messageForBooking = bookABusByBusId(topEmployee.getEid(), bus.getBid(), null);
-
-				System.out.println(messageForBooking);
+//				String messageForBooking = bookABusByBusId(topEmployee.getEid(), bus.getBid(), null);
+//
+//				System.out.println(messageForBooking);
 
 				// // add booking details
 				// LocalDate today = LocalDate.now();

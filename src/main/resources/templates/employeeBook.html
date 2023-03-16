@@ -75,6 +75,20 @@ font-size:30px;
     font-size:15px;
     position:relative;
 }
+
+#toast{
+
+	margin-top:2%;
+	margin-left:80%;
+	position:absolute;
+}
+
+
+#toasta{
+	margin-top:2%;
+	margin-left:85%;
+	position:absolute;
+}
 </style>
     
 
@@ -163,14 +177,20 @@ font-size:30px;
                 dataType: "text",
                 async: false,
                 success: function (response) {
-                    alert(response);
+                	 $('#toast').toast({
+                		    delay: 2000, // 10 seconds
+                		  });
+                    $('#toast').toast('show');
                 },
                 error: function (response) {
-                    console.log(response.statusText);
-                    alert('Error occured in booking bus');
+                	$('#toasta').toast({
+            		    delay: 2000, // 10 seconds
+            		  });
+                $('#responseData').text(response.responseText);
+                $('#toasta').toast('show');
                 }
             });
-            window.location.href = "/employee/";
+         
         }
     </script>
 
@@ -252,7 +272,7 @@ font-size:30px;
                     alert(response);
                 },
                 error: function (response) {
-
+					
                 }
             });
         };
@@ -268,7 +288,8 @@ font-size:30px;
     <nav>
         <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
 
-          <div class="menu-items">
+              <div class="menu-items">
+          
             <ul class="nav-links">
                 <li><a href="/employee" id="home">
                     <i class="uil uil-estate"></i>
@@ -286,9 +307,17 @@ font-size:30px;
                     <i class="uil uil-thumbs-up"></i>
                     <span class="link-name">Booking Details</span>
                 </a></li>
+                <li><a href="/employee/editprofile">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Edit Profile</span>
+                </a></li>
                 <li><a href="/employee/releaseseat">
                 <i class="uil uil-chart-down"></i>
                 <span class="link-name">Release Seat</span>
+            </a></li>
+            <li><a href="/employee/sos">
+                <i class="uil uil-chart-down"></i>
+                <span class="link-name">SOS</span>
             </a></li>
  <!--                <li><a href="#">
                     <i class="uil uil-share"></i>
@@ -314,8 +343,7 @@ font-size:30px;
                 </div>
             </li>
             </ul>
-        </div>
-    </nav>
+        </div>    </nav>
 
 
 
@@ -334,13 +362,41 @@ font-size:30px;
   </div>
 </div> 
             
-          
+ 
 
             <img src="/images/profile.jpg" alt="">
-        </div>
+    
+    <div id="toast" class="toast bg-success text-white" role="alert">
+  <div class="toast-header bg-black">
+    <strong class="mr-auto">Booking Successful</strong>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    You have successfully booked your seat.
+  </div>
+</div>
+
+ <div id="toasta" class="toast bg-danger text-white" role="alert">
+  <div class="toast-header bg-black">
+    <strong class="mr-auto">Booking Failed</strong>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body" id="responseData">
+    
+  </div>
+</div>
+       
+        </div>            
+
+
         <div style="margin-top:5%;">
             <span style="color:grey;" class="logout-mode"> >bookbus </span><hr>
             <h3 style="color:grey;text-align:center;">Bus Book Form</h3>
+
             </div>
         <div class="align-items-center justify-content-center d-flex p-5">
 
@@ -371,10 +427,15 @@ font-size:30px;
                     <!--Third Row to display list of buses on selected route -->
                     <div class="pt-5 d-flex align-content-center justify-content-center w-100" id="bus-table-container">
                         <table id="bus-table" class="justify-content-center w-100">
+                        
                         </table>
+                        
                     </div>
+ 
                 </div>
+
             </div>
+
         </div>
 
 
