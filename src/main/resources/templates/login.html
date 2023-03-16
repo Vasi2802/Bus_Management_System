@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Login Page</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link rel="stylesheet" href="/fonts/material-icon/css/material-design-iconic-font.min.css">
+	<!-- Main css -->
+	<link rel="stylesheet" href="/css/style.css">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script>
+		if (performance.navigation.type == 1) {
+			// If the page is being reloaded/refreshed
+			var url = window.location.href.split('?')[0];
+			history.replaceState({}, document.title, url);
+
+		}
+	</script>
+</head>
+
+<body>
+	<div>
+
+		<section class="sign-in" style="margin-top:100px;">
+			<div class="container">
+				<div class="signin-content">
+					<div class="signin-image">
+						<figure><img src="/images/8493.jpg" alt="sing up image"></figure>
+
+					</div>
+					<div class="signin-form">
+						<h2 class="form-title">Sign in</h2>
+						<form method="POST" class="register-form" th:action="@{/authenticateTheUser}" id="login-form">
+
+							<div class="form-group">
+								<div class="col-xs-15">
+									<div>
+
+
+										<div th:if="${param.error}"
+											class="alert alert-danger col-xs-offset-1 col-xs-10">
+											Invalid username and password.
+										</div>
+
+										<div th:if="${successresetpassword}"
+											class="alert alert-success col-xs-offset-1 col-xs-10">
+											Password has been reset successfully
+										</div>
+										<div th:if="${confirmregister}"
+											class="alert alert-success col-xs-offset-1 col-xs-10">
+											Successfully Registered
+										</div>
+
+										<div th:if="${param.logout}"
+											class="alert alert-success col-xs-offset-1 col-xs-10">
+											You have been logged out.
+										</div>
+
+									</div>
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label for="your_name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+								<input type="text" name="username" id="your_name" placeholder="Your Name" />
+							</div>
+							<div class="form-group">
+								<label for="your_pass"><i class="zmdi zmdi-lock"></i></label>
+								<input type="password" name="password" id="your_pass" placeholder="Password" />
+							</div>
+							<div>New user ?&nbsp;
+								<a th:href="@{/register/showRegistrationForm}" class="signup-image-link"
+									aria-pressed="true"><u>Register</u></a>
+							</div><Br />
+							<div class="form-group form-button">
+								<input type="submit" name="signin" id="signin" class="form-submit" value="Log in" />
+							</div>
+						</form><br />
+						<div>Forgot Password? &nbsp;
+							<a th:href="@{/register/resetpassword}" class="signup-image-link"
+								aria-pressed="true"><u>Reset your password</u></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</div>
+</body>
+
+</html>

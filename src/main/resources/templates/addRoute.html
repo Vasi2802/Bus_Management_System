@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<title>Bus Management System NRIFT</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+		integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+		integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+	<!----======== CSS ======== -->
+	<link rel="stylesheet" href="/css/home_style.css">
+
+	<!----===== Iconscout CSS ===== -->
+	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+	<!-- from other file -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+	</script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+	</script>
+
+    
+
+</head>
+
+<body class="container-fluid">
+	<form th:action="@{/logout}" id="log" method="POST">
+
+	</form>
+
+	<!-- SIDEBAR -->
+	<nav>
+		<div class="logo-name">
+			<div class="logo-image">
+				<img src="/images/logo.png" alt="">
+			</div>
+
+			<span class="logo_name">NRI Fintech</span>
+		</div>
+
+		<div class="menu-items">
+			<ul class="nav-links">
+				<li><a href="/employee" id="home">
+						<i class="uil uil-estate"></i>
+						<span class="link-name">Dashboard</span>
+					</a></li>
+				<li><a href="/admin/analytics" id="analytics">
+						<i class="uil uil-files-landscapes"></i>
+						<span class="link-name">Analytics</span>
+					</a></li>
+				<li><a href="/admin/manageBus" id = "manageBus">
+						<i class="uil uil-chart"></i>
+						<span class="link-name">Manage Buses</span>
+					</a></li>
+				<li><a href="/admin/manageDriver" id = "manageDriver">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage  Drivers</span>
+					</a></li>
+
+				<li><a href="/admin/manageEmployee" id = "manageEmployee">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage Employees</span>
+					</a></li>
+				
+				<li><a href="/admin/manageRoute" id = "manageRoute">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage Routes</span>
+					</a></li>
+
+				<li><a href="/admin/manageStop" id = "manageStop">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage Stops</span>
+					</a></li>
+				
+				<!--                <li><a href="#">
+                    <i class="uil uil-share"></i>
+                    <span class="link-name">Share</span>
+                </a></li> -->
+			</ul>
+
+			<ul class="logout-mode">
+				<li><a href="#" onclick="document.getElementById('log').submit()">
+						<i class="uil uil-signout"></i>
+
+						<span class="link-name">Logout</span>
+					</a></li>
+
+				<li class="mode">
+					<a href="#">
+						<i class="uil uil-moon"></i>
+						<span class="link-name">Dark Mode</span>
+					</a>
+
+					<div class="mode-toggle">
+						<span class="switch"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+
+	<!-- RIGHT AREA-->
+	<section class="dashboard">
+		<div class="top">
+			<i class="uil uil-bars sidebar-toggle"></i>
+
+			<div class="search-box">
+				<i class="uil uil-search"></i>
+				<input type="text" placeholder="Search here...">
+			</div>
+
+			<img src="images/profile.jpg" alt="">
+		</div>
+
+		<div class="dash-content">
+			<div class="overview">
+				<div class="title">
+					<i class="uil uil-tachometer-fast-alt"></i>
+					<span class="text">Add Route</span>
+				</div>
+			</div>
+
+			<!-- MAIN AREA -->
+            <div class="display: flex; align-items-center justify-content: space-between; width: 100%;" id = "mainArea">
+
+                <div id="data"></div>
+
+                <div>
+                    <table align="center">
+                        <tr>
+                            <td><button id="add" class="btn btn-primary" onclick="add()">+</button></td>
+                            <td><button id="submit" class="btn btn-primary" onclick="submit()">submit</button></td>
+                            <td><button id="remove" class="btn btn-primary" onclick="remove()">-</button></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+			
+
+
+
+
+		</div>
+	</section>
+
+
+
+
+	<!-- <div id="chart_div" style="width: 80vw; align-items: center; justify-content: center; display: flex;"> -->
+
+
+	<!-- <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
+            <table class="columns">
+                <tr>
+                    <td>
+                        <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                    <td>
+                        <div id="route-barchart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                    <td>
+                        <div id="bus-barchart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                </tr>
+                <tr>
+                
+                    <td>
+                        <div id="booking-line-chart" style="border: 1px solid #ccc"></div>
+                    </td>
+                </tr>
+            </table> -->
+	</div>
+
+
+	<script>
+        const info = document.getElementById('data');
+        /* var btn = info.getElementsByTagName("button")[0]; */
+        const addBtn = document.getElementById("add");
+        const removeBtn = document.getElementById("remove");
+        const submitBtn = document.getElementById("submit");
+        removeBtn.disabled = true;
+        submitBtn.disabled = true;
+        // var office ="7";
+        
+        // console.log(addBtn);
+        // console.log(removeBtn);
+        
+        var request = new XMLHttpRequest();
+        var availableStops;
+        request.open('GET',"http://localhost:8080/admin/stop/getall");
+        // request.open("/admin/stop/getall");
+        request.onload = function () {
+            availableStops = JSON.parse(request.responseText);
+            for(i in availableStops){
+                availableStops[i]["use"] = 1;
+            }
+            console.log(availableStops);
+        }
+        request.send();
+        
+        var addedStops = [];
+        var divCnt = 0;
+        
+        function createForm(){
+            var retVal = '<div id = ' + "div" + divCnt + '>'
+            +'<table align="CENTER">'
+            + '<tr>'
+            +'<td>stop: </stop>' 
+            +'<select name="stop">'
+            for(i in availableStops){
+                if(availableStops[i]["use"] == true){
+                    retVal += '<option value=' + availableStops[i]["sid"] + '>' + availableStops[i]["name"] +'</option>';
+                }
+            } 
+            retVal += '</select></td>';
+            retVal += '<td> morning arrival time: </td>'
+            +'<td><input type="time" name="stopMTime"></td>'
+            /* +'<td><input type="submit" value= "add"><td>' */
+            + '<td> evening arrival time: </td>'
+            + '<td><input type="time" name="stopETime"></td>'
+            +'</tr>'
+            +'</div>';
+            // console.log(divCnt);
+            return retVal;
+        }
+        
+        
+        function validateTimes(){
+            if(divCnt >= 2) {
+                var div = info.getElementsByTagName("div")[divCnt - 2];
+                var times = div.getElementsByTagName("input");
+                var MT1 =  times[0].value;
+                var ET1 = times[1].value;
+                div = info.getElementsByTagName("div")[divCnt - 1];
+                times = div.getElementsByTagName("input");
+                var MT2 = times[0].value;
+                var ET2 = times[1].value;
+                if(MT1 >= MT2){
+                    alert("morning arrival time must be increasing!");
+                }
+                if(ET1 >= ET2){
+                    alert("evening arrival time must be increasing!");
+                }
+                return (MT1 < MT2 && ET1 < ET2);
+            }
+            return true;
+        }
+        function remove(){
+            divCnt -= 1;
+            var div = info.getElementsByTagName("div")[divCnt];
+            var dropDown = div.getElementsByTagName("select")[0];
+            // var times = div.getElementsByTagName("input");
+            var lastSid = dropDown.value;
+            // var lastTime = time.value;
+            for(i in availableStops){
+                if(availableStops[i]["sid"] == lastSid){
+                    availableStops[i]["use"] = true;
+                }
+            }
+            div.parentNode.removeChild(div);
+            console.log(divCnt);
+            if(divCnt == 0){
+                removeBtn.disabled = true;
+            }
+            if(divCnt < 2){
+                submitBtn.disabled = true;
+            }
+            if(divCnt < availableStops.length) {
+                addBtn.disabled = false;
+            }
+            console.log("divCnt= " + divCnt );
+        }
+            
+        function add(){
+            var lastDivSid = null;
+            var lastTime = "09:00";
+            toAdd = true;
+            // if(divCnt == 1) {
+            //     var div = info.getElementsByTagName("div")[divCnt - 1];
+            //     var dropDown = div.getElementsByTagName("select")[0];
+            //     var lastSid = dropDown.value;
+            //     if(lastSid == office) {
+            //         toAdd = false;
+            //         alert("start destination cannot be NRI Fintech!");
+            //     }
+            // }
+            if(divCnt > 0 && toAdd){
+                var div = info.getElementsByTagName("div")[divCnt - 1];
+                var dropDown = div.getElementsByTagName("select")[0];
+                var times = div.getElementsByTagName("input");
+                var lastSid = dropDown.value;
+                var lastTime1 = times[0].value;
+                var lastTime2 = times[1].value;
+                if (lastTime1 == "" || lastTime2 == ""){
+                    alert("time can not be empty!");
+                    toAdd = false;
+                }
+                if (toAdd && lastTime1 >= lastTime2){
+                    toAdd = false;
+                    alert("evening arrival time must be greater then morning arrival time");
+                }
+                toAdd = toAdd && validateTimes()
+                if(toAdd){
+                    dropDown.disabled = true;
+                    times[0].disabled = true;
+                    times[1].disabled = true;
+                }
+                // console.log("last sid = " + lastSid  + " " + (typeof lastSid));
+                // console.log("last time= "+  lastTime + " " + (typeof lastSid));
+            }
+            if(toAdd){
+                for(i in availableStops){
+                    if(availableStops[i]["sid"] == lastSid){
+                        availableStops[i]["use"] = false;
+                        break;
+                    }
+                }
+                info.insertAdjacentHTML('beforeend',createForm());
+                divCnt += 1;
+                if (divCnt == availableStops.length){
+                    addBtn.disabled = true;
+                }
+                removeBtn.disabled = false;
+                if(divCnt >= 2) {
+                    submitBtn.disabled = false;
+                }
+            }
+            console.log("divCnt= " + divCnt );
+        }
+        function getObjectById(id,url){
+            var req = new XMLHttpRequest();
+            var retVal;
+            req.open('GET',url +"/" + id,false);
+            req.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200){
+                    retVal = JSON.parse(this.responseText);
+                    // console.log(retVal);
+                }
+            }
+            req.send();
+            return retVal;
+        }
+        function postData(data,url){
+            var req = new XMLHttpRequest();  
+            req.open('POST', url,false);
+            req.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            var retVal ;
+            req.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200){
+                    retVal = JSON.parse(this.responseText);
+                    // console.log(route);
+                }
+            }
+            req.send(data);
+            return retVal;
+        }
+        
+        function submit(){
+            toSubmit = true;
+            var div = info.getElementsByTagName("div")[divCnt - 1];
+            var dropDown = div.getElementsByTagName("select")[0];
+            var times = div.getElementsByTagName("input");
+            var lastSid = dropDown.value;
+            var lastTime1 = times[0].value;
+            var lastTime2 = times[1].value;
+            if (lastTime1 == "" || lastTime2 == ""){
+                alert("time can not be empty!");
+                toSubmit = false;
+            }
+            if (toSubmit && lastTime1 >= lastTime2){
+                toSubmit = false;
+                alert("evening arrival time must be greater than morning arrival time");
+            }
+            // if(toSubmit && dropDown.value != office){
+            //     alert("final destination must be NRI Fintech");
+            //     toSubmit = false;
+            // }
+            toSubmit = toSubmit && validateTimes();
+            if(toSubmit){
+                var MTL = times[0].value ;
+                var ETF = info.getElementsByTagName("div")[0].getElementsByTagName("input")[1].value;
+                if(MTL >= ETF){
+                    alert("evening arrival time of first stop must be after morning arrival time of last stop");
+                    toSubmit = false;
+                }
+            }
+            if(toSubmit){
+                dropDown.disabled = true;
+                times[0].disabled = true;
+                times[1].disabled = true;
+            }
+            console.log(toSubmit);
+            if(toSubmit){
+                var startId = info.getElementsByTagName("div")[0].getElementsByTagName("select")[0].value;
+                var endId = info.getElementsByTagName("div")[divCnt-1].getElementsByTagName("select")[0].value;
+                var startStop = getObjectById(startId,"/stop/getbyid");
+                var endStop = getObjectById(endId,"/stop/getbyid");
+                // console.log(startStop);
+                // console.log(endStop);
+                var data;
+                data = JSON.stringify({
+                    "start" : startStop,
+                    "end" : endStop
+                });
+                // console.log(data);
+                var route = postData(data,"http://localhost:8080/admin/route/insert");
+                console.log(route);
+                for(let i = 0; i < divCnt;i++){
+                    var item = []
+                    var div = info.getElementsByTagName("div")[i];
+                    var stopId =div.getElementsByTagName("select")[0].value;
+                    var MTime = div.getElementsByTagName("input")[0].value;
+                    var ETime = div.getElementsByTagName("input")[1].value;
+                    // console.log("from looop = " + getStop(item[0]));
+                    data = JSON.stringify({
+                        "routeStopId": {
+                            "route": route,
+                            "stop": getObjectById(stopId,"/stop/getbyid")
+                        },
+                        "morningArrivalTime": MTime,
+                        "eveningArrivalTime": ETime
+                    });
+                    // console.log(data);
+                    console.log(postData(data,"http://localhost:8080/admin/arrivaltime/insert"));
+                }
+                // inf.innnerHTML=  "<h2>route with start stop= " +" </h2>"
+                window.blur();
+                // console.log(route);
+                // console.log(route["start"]["name"]);
+                // console.log(route["end"]["name"]);
+                alert("route with id = " + route["rid"] + " with start at " + route["start"]["name"] + " and end at " + route["end"]["name"] + " with " + (divCnt - 2) + " stop(s) in between added");
+                window.location.replace("/admin/manageRoute");
+            }
+        }
+    </script>
+
+    <script src="/script/navigation.js"></script>
+	  
+</body>
+
+</html>
+
+
+<!-- <form class="form-inline">
+    <div class="form-group mb-2">
+      <label for="staticEmail2" class="sr-only">Email</label>
+      <input type="text" readonly class="form-control-plaintext" id="staticEmail2" value="email@example.com">
+    </div>
+    <div class="form-group mx-sm-3 mb-2">
+      <label for="inputPassword2" class="sr-only">Password</label>
+      <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+    </div>
+    <button type="submit" class="btn btn-primary mb-2">Confirm identity</button> -->

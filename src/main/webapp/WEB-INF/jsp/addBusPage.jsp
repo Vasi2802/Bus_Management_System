@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+        <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <html lang="en">
+
+            <head>
+
+                <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+                </script>
+
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+                </script>
+
+                <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+                </script>
+
+                <script>
+                    $(document).ready(() => {
+                        var drivers;
+                        $.ajax({
+                            type: "GET",
+                            url: "/driver/getall",
+                            data: null,
+                            async: false,
+                            success: function (response) {
+                                drivers = response;
+                            },
+                            error: function () {
+                                alert('Error occured in fetching drivers');
+                            }
+                        });
+                        // console.log("drivers fetched = ", drivers);
+                        var driverList = document.getElementById('select-driver-list');
+                        driverList.innerHTML = `<option value="" disabled="" selected="">Select driver</option>`;
+                        drivers.forEach((driver) => {
+                            driverList.innerHTML += `<option did=\${driver.did} >
+                                                        <p>\${driver.driverName}</p>
+                                                    </option>`;
+                        });
+
+                        var routesMap;
+                        $.ajax({
+                            type: "GET",
+                            url: "/arrivaltime/getallroutesasstopslist",
+                            data: null,
+                            async: false,
+                            success: function (response) {
+                                routesMap = response;
+                            },
+                            error: function () {
+                                alert('Error occured in fetching routes');
+                            }
+                        });
+                        // console.log("routes fetched = ", routesMap);
+                        var routesList = document.getElementById('select-route-list');
+                        routesList.innerHTML = `<option value="" disabled="" selected="">Select route</option>`;
+                        Object.keys(routesMap).forEach((routeId) => {
+                            let stops = routesMap[routeId];
+                            // console.log(routeId, routeObj, stops );
+                            routesList.innerHTML += `<option rid=\${routeId}>
+                                                        <p>\${stops[0].name} -> \${stops[stops.length-1].name}</p>
+                                                    </option>`;
+                        });
+                        // <div style="display:hidden" id="\${routeId}">
+                        //                                     \${stops.forEach((stop)=>{
+                        //                                         return stop.name+"<br>";
+                        //                                         })
+                        //                                     }
+                        //                                 </div>
+
+                    })
+                </script>
+
+                <script>
+                    async function addBus() {
+                        url = "/bus/insert";
+                        var bus = {};
+                        $("#add-bus-form").serializeArray().map(function (x) {
+                            bus[x.name] = x.value;
+                        });
+                        bus.availableSeats = bus.totalSeats;
+
+                        await $.ajax({
+                            headers: {
+                                Accept: 'application/json', //imp
+                            },
+                            type: "GET",
+                            url: "/route/getbyid/"+$("#select-route-list option:selected").attr("rid"),
+                            dataType: "json",
+                            contentType: "application/json", //imp
+                            success: function (response) {
+                                console.log("route = ", response);
+                                bus.r=response;
+                            },
+                            error: function () {
+                                alert('Error occured');
+                            }
+                        });
+                        await $.ajax({
+                            headers: {
+                                Accept: 'application/json', //imp
+                            },
+                            type: "GET",
+                            url: "/driver/getbyid/"+$("#select-driver-list option:selected").attr("did"),
+                            dataType: "json",
+                            contentType: "application/json", //imp
+                            success: function (response) {
+                                console.log("driver = ", response);
+                                bus.d=response;
+                            },
+                            error: function () {
+                                alert('Error occured');
+                            }
+                        });
+                       
+                        console.log("got this bus ", bus);
+
+                        $.ajax({
+                            headers: {
+                                Accept: 'application/json', //imp
+                            },
+                            type: "POST",
+                            url: url,
+                            data: JSON.stringify(bus), // imp
+                            dataType: "json",
+                            contentType: "application/json", //imp
+                            success: function (response) {
+                                console.log("added", response);
+                            },
+                            error: function () {
+                                alert('Error occured');
+                            }
+                        });
+
+                    }
+                </script>
+
+
+
+
+            </head>
+
+            <body class="bg-dark vh-100">
+
+                <!-- navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                    <a class="navbar-brand" href="/">Bus Management System</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse text-primary bg-light" id="navbarNav">
+                        <ul class="navbar-nav">
+                            <li class="nav-item active">
+                                <a class="nav-link" href="/employee/dashboard">Home </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/employee/book">Book Bus</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/employee/edit">Edit Profile</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link disabled" href="#">Disabled</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+
+                <div class="container text-light"
+                    style="height:90vh; width: 100vw; align-items: center; display: flex; justify-content: center;">
+                    <form id="add-bus-form" style="max-width: 75rem; padding: 5rem; border: 1px solid white;">
+                        <h2 class="pb-4">Add Bus</h2>
+                        <div class="form-group vw-50">
+                            <label for="totalSeats" class="text-light display-5">Total Seats</label>
+                            <input type="number" class="form-control" id="totalSeats" name="totalSeats"
+                                placeholder="Total Seats in bus">
+                            <label for="select-driver-list" class="text-light display-5">Driver</label>
+                            <select id="select-driver-list" class="browser-default custom-select mb-4">
+                            </select>
+                            <label for="select-route-list" class="text-light display-5">Route</label>
+                            <select id="select-route-list" class="browser-default custom-select mb-4">
+                            </select>
+
+                        </div>
+
+                        <button type="button" class="btn btn-primary" onclick="addBus()">Add Bus</button>
+                    </form>
+                </div>
+
+
+            </body>
+
+            </html>

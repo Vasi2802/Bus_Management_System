@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+    <!----======== CSS ======== -->
+    <link rel="stylesheet" href="/css/home_style.css">
+
+    <!----===== Iconscout CSS ===== -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+    <!-- from other file -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+    </script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+    </script>
+
+
+
+
+
+    <script type="text/javascript">
+        // Load the Visualization API and the corechart package.
+        google.charts.load('current', { 'packages': ['corechart'] });
+
+        // Set a callback to run when the Google Visualization API is loaded.
+        google.charts.setOnLoadCallback(drawChart);
+
+        // Callback that creates and populates a data table,
+        // instantiates the pie chart, passes in the data and
+        // draws it.
+        async function drawChart() {
+
+            // Create the data table.
+            var routeWaitMap;
+            await $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "GET",
+                url: "/admin/analytics/count-waiting-each-route",
+                dataType: "json",
+                contentType: "application/json", //imp
+                success: function (response) {
+                    // console.log("route = ", response);
+                    routeFreq = response;
+                },
+                error: function () {
+                    alert('Error occured in count-waiting-each-route');
+                }
+            })
+
+            var busFreqMap;
+            await $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "GET",
+                url: "/admin/analytics/passenger-count-per-bus",
+                dataType: "json",
+                contentType: "application/json", //imp
+                success: function (response) {
+                    busFreqMap = response;
+                    // console.log(busFreqMap)
+                },
+                error: function () {
+                    alert('Error occured in passenger-count-per-bus');
+                }
+            });
+
+            // --------------------------- BOOKING PER MONTH ENDS -------------------------
+            var bookingFreq;
+            await $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "GET",
+                url: "/admin/analytics/booking-per-month",
+                dataType: "json",
+                contentType: "application/json", //imp
+                success: function (response) {
+                    bookingFreq = response;
+                    // console.log(bookingFreq);
+                },
+                error: function () {
+                    alert('Error occured in booking-per-month');
+                }
+            });
+
+            var bookingData = new google.visualization.DataTable();
+            var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+            bookingData.addColumn('string', 'Month');
+            bookingData.addColumn('number', 'Bookings In Month');
+            bookingData.addRows(bookingFreq);
+
+            var options = {
+                title: 'Bookings Per Month For This Year',
+                legend: { position: 'bottom' },
+                width: "70vw",
+                height: "50vh",
+                dataOpacity: 0.8,
+                pointsVisible: true
+
+            };
+            var bookingLineChart = new google.visualization.LineChart(document.getElementById('booking-line-chart'));
+            bookingLineChart.draw(bookingData, options);
+            // --------------------------- BOOKING PER MONTH ENDS -------------------------
+
+
+            var routeData = new google.visualization.DataTable();
+            routeData.addColumn('string', 'Route');
+            routeData.addColumn('number', 'WaitList');
+            routeData.addRows(Object.entries(routeFreq));
+
+            var busData = new google.visualization.DataTable();
+            busData.addColumn('string', 'Bus');
+            busData.addColumn('number', 'Passenger Count');
+            busData.addRows(Object.entries(busFreqMap));
+
+
+            // Set chart options
+            var piechart_options = {
+                width: 400,
+                height: 300
+            };
+            var barchart_options = {
+                width: 400,
+                height: 300,
+                legend: 'none'
+            };
+
+            var piechart = new google.visualization.PieChart(document.getElementById('route-piechart-div'));
+            piechart.draw(routeData, piechart_options);
+            var barchart = new google.visualization.BarChart(document.getElementById('route-barchart-div'));
+            barchart.draw(routeData, barchart_options);
+
+            var piechart = new google.visualization.PieChart(document.getElementById('bus-piechart-div'));
+            piechart.draw(busData, piechart_options);
+            var barchart = new google.visualization.BarChart(document.getElementById('bus-barchart-div'));
+            barchart.draw(busData, barchart_options);
+
+
+        }
+    </script>
+
+
+
+
+</head>
+
+<body class="container-fluid">
+    <form th:action="@{/logout}" id="log" method="POST">
+
+    </form>
+
+    <!-- SIDEBAR -->
+    <nav>
+        <div class="logo-name">
+            <div class="logo-image">
+                <img src="/images/logo.png" alt="">
+            </div>
+
+            <span class="logo_name">NRI Fintech</span>
+        </div>
+
+        <div class="menu-items">
+            <ul class="nav-links">
+                <li><a href="/employee" id="home">
+                        <i class="uil uil-estate"></i>
+                        <span class="link-name">Dashboard</span>
+                    </a></li>
+                <li><a href="/employee/book" id="bookbus">
+                        <i class="uil uil-files-landscapes"></i>
+                        <span class="link-name">Book Bus</span>
+                    </a></li>
+                <li><a href="/employee/trackbus">
+                        <i class="uil uil-chart"></i>
+                        <span class="link-name">Track Bus</span>
+                    </a></li>
+                <li><a href="/employee/showbookingdetails">
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="link-name">Booking Details</span>
+                    </a></li>
+                <li><a href="#">
+                        <i class="uil uil-comments"></i>
+                        <span class="link-name">SOS</span>
+                    </a></li>
+                <!--                <li><a href="#">
+                    <i class="uil uil-share"></i>
+                    <span class="link-name">Share</span>
+                </a></li> -->
+            </ul>
+
+            <ul class="logout-mode">
+                <li><a href="#" onclick="document.getElementById('log').submit()">
+                        <i class="uil uil-signout"></i>
+
+                        <span class="link-name">Logout</span>
+                    </a></li>
+
+                <li class="mode">
+                    <a href="#">
+                        <i class="uil uil-moon"></i>
+                        <span class="link-name">Dark Mode</span>
+                    </a>
+
+                    <div class="mode-toggle">
+                        <span class="switch"></span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <!-- RIGHT AREA-->
+    <section class="dashboard">
+        <div class="top">
+            <i class="uil uil-bars sidebar-toggle"></i>
+
+            <div class="search-box">
+                <i class="uil uil-search"></i>
+                <input type="text" placeholder="Search here...">
+            </div>
+            
+            <img src="images/profile.jpg" alt="">
+        </div>
+        
+        <div class="dash-content">
+            <div class="overview">
+                <div class="title">
+                    <i class="uil uil-tachometer-fast-alt"></i>
+                    <span class="text">Analytics</span>
+                </div>
+            </div>
+            
+            <!-- MAIN AREA -->
+
+            <hr style="margin: 2rem;">
+            <!-- row 1 -->
+            <div style="display: flex; justify-content: space-between; width: 100%;">
+                <div id="booking-line-chart" style="border: 1px solid #ccc; width: 60%;"></div>
+                <div class="boxes" style="display: flex; flex-direction: column; width:40vw;">
+                    <div class="box box1">
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="text">Total Buses</span>
+                        <span class="number">50,120</span>
+                    </div>
+                    <div class="box box2">
+                        <i class="uil uil-comments"></i>
+                        <span class="text">Employees</span>
+                        <span class="number">20,120</span>
+                    </div>
+                    <div class="box box3">
+                        <i class="uil uil-share"></i>
+                        <span class="text">Total Routes</span>
+                        <span class="number">10,120</span>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="margin: 2rem;">
+            
+            <!-- row 2 -->
+            <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
+                <div id="route-piechart-div" style="border: 1px solid #ccc;"></div>
+                <div id="route-barchart-div" style="border: 1px solid #ccc"></div>
+                <div>
+                    <div class="box box1">
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="text">Total Buses</span>
+                        <span class="number">50,120</span>
+                    </div>
+                    <div class="box box2">
+                        <i class="uil uil-comments"></i>
+                        <span class="text">Employees</span>
+                        <span class="number">20,120</span>
+                    </div>
+                    <div class="box box3">
+                        <i class="uil uil-share"></i>
+                        <span class="text">Total Routes</span>
+                        <span class="number">10,120</span>
+                    </div>
+                </div>
+            </div>
+            
+
+            <hr style="margin: 2rem;">
+            
+            <!-- row 3 -->
+            <div style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
+                <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
+                <div id="bus-barchart-div" style="border: 1px solid #ccc"></div>
+                <div>
+                    <div class="box box1">
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="text">Total Buses</span>
+                        <span class="number">50,120</span>
+                    </div>
+                    <div class="box box2">
+                        <i class="uil uil-comments"></i>
+                        <span class="text">Employees</span>
+                        <span class="number">20,120</span>
+                    </div>
+                    <div class="box box3">
+                        <i class="uil uil-share"></i>
+                        <span class="text">Total Routes</span>
+                        <span class="number">10,120</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+
+
+    <!-- <div id="chart_div" style="width: 80vw; align-items: center; justify-content: center; display: flex;"> -->
+
+
+    <!-- <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
+            <table class="columns">
+                <tr>
+                    <td>
+                        <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                    <td>
+                        <div id="route-barchart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                    <td>
+                        <div id="bus-barchart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                </tr>
+                <tr>
+                
+                    <td>
+                        <div id="booking-line-chart" style="border: 1px solid #ccc"></div>
+                    </td>
+                </tr>
+            </table> -->
+    </div>
+
+
+    <script src="/script/home_script.js"></script>
+    <!--    <script src="/script/navigation.js"></script> -->
+</body>
+
+</html>
+
+
+
+
+</html>

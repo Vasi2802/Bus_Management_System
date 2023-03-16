@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<title>Bus Management System NRIFT</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+		integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+		integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+	<!----======== CSS ======== -->
+	<link rel="stylesheet" href="/css/home_style.css">
+
+	<!----===== Iconscout CSS ===== -->
+	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+	<!-- from other file -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+	</script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+	</script>
+
+</head>
+
+<body class="container-fluid">
+	<form th:action="@{/logout}" id="log" method="POST">
+
+	</form>
+
+	<!-- SIDEBAR -->
+	<nav>
+		<div class="logo-name">
+			<div class="logo-image">
+				<img src="/images/logo.png" alt="">
+			</div>
+
+			<span class="logo_name">NRI Fintech</span>
+		</div>
+
+		<div class="menu-items">
+			<ul class="nav-links">
+				<li><a href="/employee" id="home">
+						<i class="uil uil-estate"></i>
+						<span class="link-name">Dashboard</span>
+					</a></li>
+				<li><a href="/admin/analytics" id="analytics">
+						<i class="uil uil-files-landscapes"></i>
+						<span class="link-name">Analytics</span>
+					</a></li>
+				<li><a href="/admin/manageBus" id = "manageBus">
+						<i class="uil uil-chart"></i>
+						<span class="link-name">Manage Buses</span>
+					</a></li>
+				<li><a href="/admin/manageDriver" id = "manageDriver">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage  Drivers</span>
+					</a></li>
+
+				<li><a href="/admin/manageEmployee" id = "manageEmployee">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage Employees</span>
+					</a></li>
+				
+				<li><a href="/admin/manageRoute" id = "manageRoute">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage Routes</span>
+					</a></li>
+
+				<li><a href="/admin/manageStop" id = "manageStop">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage Stops</span>
+					</a></li>
+				
+				<!--                <li><a href="#">
+                    <i class="uil uil-share"></i>
+                    <span class="link-name">Share</span>
+                </a></li> -->
+			</ul>
+
+			<ul class="logout-mode">
+				<li><a href="#" onclick="document.getElementById('log').submit()">
+						<i class="uil uil-signout"></i>
+
+						<span class="link-name">Logout</span>
+					</a></li>
+
+				<li class="mode">
+					<a href="#">
+						<i class="uil uil-moon"></i>
+						<span class="link-name">Dark Mode</span>
+					</a>
+
+					<div class="mode-toggle">
+						<span class="switch"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+
+	<!-- RIGHT AREA-->
+	<section class="dashboard">
+		<div class="top">
+			<i class="uil uil-bars sidebar-toggle"></i>
+
+			<div class="search-box">
+				<i class="uil uil-search"></i>
+				<input type="text" placeholder="Search here...">
+			</div>
+
+			<img src="images/profile.jpg" alt="">
+		</div>
+
+		<div class="dash-content">
+			<div class="overview">
+				<div class="title">
+					<i class="uil uil-tachometer-fast-alt"></i>
+					<span class="text">Edit Driver</span>
+				</div>
+			</div>
+
+			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;" id = "mainArea">
+				<form onsubmit="return false">
+					<table align="CENTER">
+						<tr>
+							<td>Existing Driver:</td>
+							<td>
+								<select id="select-driver" name=>
+									<option th:each="driver : ${list}" th:value="${driver.did}"
+										th:text="${driver.driverName}" th:selected="'driver-selected'">
+								</option>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								New name : <input type="text" id="input-name">
+							</td>
+							<td>
+								New contact : <input type="text" id="input-contact">
+							</td>
+							<!-- <td>
+								New Email : <input type="email" id="input-email">
+							</td> -->
+						</tr>
+						<tr>
+							<td>
+								<button onclick="addDriver()">UPDATE</button>
+							</td>
+							<td>
+								<button onclick="gomanage()">BACK</button>
+							</td>
+						</tr>
+					</table>
+				</form>
+            </div>
+
+			
+
+
+
+
+		</div>
+	</section>
+
+
+
+   
+    
+
+
+
+
+
+	<!-- <div id="chart_div" style="width: 80vw; align-items: center; justify-content: center; display: flex;"> -->
+
+
+	<!-- <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
+            <table class="columns">
+                <tr>
+                    <td>
+                        <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                    <td>
+                        <div id="route-barchart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                    <td>
+                        <div id="bus-barchart-div" style="border: 1px solid #ccc"></div>
+                    </td>
+                </tr>
+                <tr>
+                
+                    <td>
+                        <div id="booking-line-chart" style="border: 1px solid #ccc"></div>
+                    </td>
+                </tr>
+            </table> -->
+	</div>
+
+
+	<script>
+        function addDriver() {
+			var url = '/admin/driver/update' ;
+			console.log($( "#select-driver option:selected" ).attr("value"));
+			var driver = {
+				did: Number($( "#select-driver option:selected" ).attr("value")),
+				driverName: document.getElementById("input-name").value,
+				driverContactNo: document.getElementById("input-contact").value,
+				// driverEmail: document.getElementById("input-email").value,
+				
+			};
+
+			console.log(driver);
+			// alert("Click Ok to update");
+			$.ajax({
+				headers: {
+					Accept: 'application/json', //imp
+				},
+				type: "PUT",
+				url: url,
+				data: JSON.stringify(driver), // imp
+				dataType: "json",
+				contentType: "application/json", //imp
+				success: function (response) {
+					console.log("added", response);
+					alert('Driver Updated')
+					window.location.href = "/admin/manageDriver";
+				},
+				error: function () {
+					alert('Error occured');
+				}
+			});
+		
+		}
+		function gomanage(){
+			window.location.href = "/admin/manageDriver";
+		}
+				 
+        
+    </script>
+	<!--    <script src="/script/navigation.js"></script> -->
+</body>
+
+</html>
