@@ -12,6 +12,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+
 @Entity
 @Table(name="admin")
 public class Admin {
@@ -55,13 +56,12 @@ public class Admin {
 	}
 
 
-
 	public Admin(long aid, String name, String email, String password) {
 		super();
 		this.aid = aid;
+
 	}
 
-	
 	public Admin() {
 		super();
 		// TODO Auto-generated constructor stub

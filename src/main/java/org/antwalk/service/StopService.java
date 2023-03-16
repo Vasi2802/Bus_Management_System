@@ -16,10 +16,11 @@ public class StopService {
 	public Stop insertStop(Stop s) {
 		return stopRepo.save(s);
 	}
-	
+
 	public List<Stop> getAllStops(){
 		return stopRepo.findAll();
 	}
+	
 	
 	public Stop getStopById(long id) {
 		return stopRepo.findById(id).get();

@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -131,13 +131,39 @@
 			<div class="overview">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Analytics</span>
+					<span class="text">View Routes</span>
 				</div>
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;">
+				<table align="CENTER" border="2" width="90%" text-align="center"
+            border-spacing="30px">
+				<thead>
+					<tr>
+						<th>Route ID</th>
+						<th>Stop Id</th>
+						<th>Stop Name</th>
+						<th>Morning Arrival Time</th>
+						<th>Evening Arrival Time</th>
+					</tr>
+				</thead>   
+                <tbody>
+                    <tr th:each="row : ${arrivalTimeTableList}">
+                        <td th:text="${row.routeStopId.route.rid}" />
+                        <td th:text="${row.routeStopId.stop.sid}" />
+						<td th:text="${row.routeStopId.stop.name}" />
+						<td th:text="${row.morningArrivalTime}" />
+						<td th:text="${row.eveningArrivalTime}" />
+                    </tr>
+                </tbody>
+            </table>
+			<form action="/admin/viewRoutes" th:action="@{/admin/viewRoutes}" method="GET" style="text-align:center">
+				<input type="submit" value="GoBack" />
+			</form>
+            </div>
 
-
+			
 
 
 
@@ -184,3 +210,5 @@
 </body>
 
 </html>
+
+

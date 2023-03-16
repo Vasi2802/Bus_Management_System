@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -131,13 +131,40 @@
 			<div class="overview">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Analytics</span>
+					<span class="text">Add Bus</span>
 				</div>
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;">
+				<form id="add-bus-form" style="max-width: 75rem; padding: 5rem; border: 1px solid white;">
+					<h2 class="pb-4">Add Bus</h2>
+					<div class="form-group vw-50">
+						<label for="totalSeats" class="text-light display-5">Total Seats</label>
+						<input type="number" class="form-control" min = 0 id="totalSeats" name="totalSeats"
+							placeholder="Total Seats in bus">
+						<label for="select-driver-list" class="text-dark display-5">Driver</label>
+						<select id="select-driver-list" class="browser-default custom-select mb-4">
+						</select>
+						<label for="select-route-list" class="text-dark display-5">Route</label>
+						<select id="select-route-list" class="browser-default custom-select mb-4">
+						</select>
+					</div>
+		
+					<button type="button" class="btn btn-primary" onclick="addBus()">Add Bus</button>
 
+					<button type="button" class="btn btn-primary" onclick="goBack()">Back</button>
+					<!-- <form th:action="@{/admin/manageBus}">
+						<input type="submit" value="GoBack" /> 
+					</form> -->
+				    
+				</form>
 
+            </div>
+		
+            </div>
+
+			
 
 
 
@@ -181,6 +208,135 @@
 
 	<script src="/script/home_script.js"></script>
 	<!--    <script src="/script/navigation.js"></script> -->
+
+
+
+	<script>
+        $(document).ready(() => {
+            var drivers;
+            $.ajax({
+                type: "GET",
+                url: "/admin/get-available-drivers",
+                data: null,
+                async: false,
+                success: function (response) {
+                    drivers = response;
+                    console.log(response);
+                    var driverList = document.getElementById('select-driver-list');
+                    driverList.innerHTML = `<option value="" disabled="" selected="">Select driver</option>`;
+                    drivers?.forEach((driver) => {
+                        driverList.innerHTML += `<option did=${driver.did} >
+                                                        <p>${driver.driverName}</p>
+                                                    </option>`;
+                    });
+                },
+                error: function () {
+                    alert('Error occured in fetching drivers');
+                }
+            });
+            // console.log("drivers fetched = ", drivers);
+
+
+            var routesMap;
+            $.ajax({
+                type: "GET",
+                url: "/admin/getallroutesasstopslist",
+                data: null,
+                async: false,
+                success: function (response) {
+                    routesMap = response;
+                },
+                error: function () {
+                    alert('Error occured in fetching routes');
+                }
+            });
+            // console.log("routes fetched = ", routesMap);
+            var routesList = document.getElementById('select-route-list');
+            routesList.innerHTML = `<option value="" disabled="" selected="">Select route</option>`;
+            Object.keys(routesMap).forEach((routeId) => {
+                let stops = routesMap[routeId];
+                // console.log(routeId, routeObj, stops );
+                routesList.innerHTML += `<option rid=${routeId}>
+                                                        <p>${stops[0].name} -> ${stops[stops.length-1].name}</p>
+                                                    </option>`;
+            });
+        })
+    </script>
+
+
+
+<script>
+	async function addBus() {
+		url = "/admin/bus/insert";
+		var bus = {};
+		$("#add-bus-form").serializeArray().map(function (x) {
+			bus[x.name] = x.value;
+		});
+		bus.availableSeats = bus.totalSeats;
+
+		await $.ajax({
+			headers: {
+				Accept: 'application/json', //imp
+			},
+			type: "GET",
+			url: "/admin/route/getbyid/" + $("#select-route-list option:selected").attr("rid"),
+			dataType: "json",
+			contentType: "application/json", //imp
+			success: function (response) {
+				console.log("route = ", response);
+				bus.r = response;
+			},
+			error: function () {
+				alert('Error occured');
+			}
+		});
+		await $.ajax({
+			headers: {
+				Accept: 'application/json', //imp
+			},
+			type: "GET",
+			url: "/admin/driver/getbyid/" + $("#select-driver-list option:selected").attr("did"),
+			dataType: "json",
+			contentType: "application/json", //imp
+			success: function (response) {
+				console.log("driver = ", response);
+				bus.d = response;
+			},
+			error: function () {
+				alert('Error occured');
+			}
+		});
+
+		console.log("got this bus ", bus);
+
+		$.ajax({
+			headers: {
+				Accept: 'application/json', //imp
+			},
+			type: "POST",
+			url: url,
+			data: JSON.stringify(bus), // imp
+			dataType: "json",
+			contentType: "application/json", //imp
+			success: function (response) {
+				console.log("added", response);
+			},
+			error: function () {
+				alert('Error occured');
+			}
+		});
+
+	}
+
+	function goBack(){
+		window.location.href= "/admin/manageBus";
+	}
+
+
+</script>
+
+
+
 </body>
 
 </html>

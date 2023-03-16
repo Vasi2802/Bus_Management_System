@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -131,19 +131,59 @@
 			<div class="overview">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Analytics</span>
+					<span class="text">Edit Driver</span>
 				</div>
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;" id = "mainArea">
+				<form onsubmit="return false">
+					<table align="CENTER">
+						<tr>
+							<td>Existing Driver:</td>
+							<td>
+								<select id="select-driver" name=>
+									<option th:each="driver : ${list}" th:value="${driver.did}"
+										th:text="${driver.driverName}" th:selected="'driver-selected'">
+								</option>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								New name : <input type="text" id="input-name">
+							</td>
+							<td>
+								New contact : <input type="text" id="input-contact">
+							</td>
+							<!-- <td>
+								New Email : <input type="email" id="input-email">
+							</td> -->
+						</tr>
+						<tr>
+							<td>
+								<button onclick="addDriver()">UPDATE</button>
+							</td>
+							<td>
+								<button onclick="gomanage()">BACK</button>
+							</td>
+						</tr>
+					</table>
+				</form>
+            </div>
 
-
+			
 
 
 
 
 		</div>
 	</section>
+
+
+
+   
+    
+
 
 
 
@@ -179,7 +219,46 @@
 	</div>
 
 
-	<script src="/script/home_script.js"></script>
+	<script>
+        function addDriver() {
+			var url = '/admin/driver/update' ;
+			console.log($( "#select-driver option:selected" ).attr("value"));
+			var driver = {
+				did: Number($( "#select-driver option:selected" ).attr("value")),
+				driverName: document.getElementById("input-name").value,
+				driverContactNo: document.getElementById("input-contact").value,
+				// driverEmail: document.getElementById("input-email").value,
+				
+			};
+
+			console.log(driver);
+			// alert("Click Ok to update");
+			$.ajax({
+				headers: {
+					Accept: 'application/json', //imp
+				},
+				type: "PUT",
+				url: url,
+				data: JSON.stringify(driver), // imp
+				dataType: "json",
+				contentType: "application/json", //imp
+				success: function (response) {
+					console.log("added", response);
+					alert('Driver Updated')
+					window.location.href = "/admin/manageDriver";
+				},
+				error: function () {
+					alert('Error occured');
+				}
+			});
+		
+		}
+		function gomanage(){
+			window.location.href = "/admin/manageDriver";
+		}
+				 
+        
+    </script>
 	<!--    <script src="/script/navigation.js"></script> -->
 </body>
 

@@ -5,6 +5,7 @@ import java.util.List;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
 import org.antwalk.repository.DriverRepo;
+import org.antwalk.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,34 +24,38 @@ public class DriverController {
 	@Autowired
 	DriverRepo driverRepo;
 	
+
+	DriverService driverService;
+	
 	@PostMapping("/insert")
 	public Driver insert(@RequestBody Driver d) {
-		return driverRepo.save(d);
+		return driverService.insertDriver(d);
 	}
 	
 	@GetMapping("/getall")
 	public List<Driver> getAll(){
-		return driverRepo.findAll();
+		return driverService.getAllDrivers();
 	}
 	
 	@GetMapping("/getbyid/{id}")
 	public Driver getById(@PathVariable long id) {
-		return driverRepo.findById(id).get();
+		return driverService.getDriverById(id);
 	}
 	
 	@DeleteMapping("/deletebyid/{id}")
 	public String deleteById(@PathVariable long id) {
-		driverRepo.deleteById(id);
+		driverService.deleteDriverById(id);
 		return "Deleted";
 	}
 	
 	@PutMapping("/update/{id}")
 	public String update(@RequestBody Driver d, @PathVariable long id) {
-		List<Driver> driverList = driverRepo.findAll();
+
+		List<Driver> driverList = driverService.getAllDrivers();
 		for(Driver obj:driverList) {
 			if(obj.getDid() == id) {
 				if(d.getDid() == id) {
-					driverRepo.save(d);
+					driverService.insertDriver(d);
 					return "Updated";
 				}
 				

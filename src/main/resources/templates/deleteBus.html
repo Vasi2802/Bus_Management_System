@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -131,13 +131,40 @@
 			<div class="overview">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Analytics</span>
+					<span class="text">Delete A Bus</span>
 				</div>
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;">
+                <table align="CENTER" border="2" width="90%" text-align="center" border-spacing="30px">
+                    <tr>
+                        <td>Bus ID</td>
+                        <td>Total Seats</td>
+                        <td>Available Seats</td>
+                        <td>Start</td>
+                        <td></td>
+                    </tr>
+                     <tr th:each="bus : ${list}">
+                        <td th:text="${bus.bid}"></td>
+                        <td th:text="${bus.totalSeats}"></td>
+                        <td th:text="${bus.availableSeats}"></td>
+                        <td th:text="${bus.startTime}"></td>
+                            
+                        <td>					
+                            <form th:action="@{/admin/bus/deletebyidnew/{id}(id=${bus.bid})}" method="GET">
+                                <input type="submit" value="DELETE">
+                            </form> 
+                        </td>				
+                     </tr>		
+                </table>
+                <br><br>
+                <form th:action="@{/admin/manageBus}">
+                    <input type="submit" value="GoBack" /> 
+                </form>
+            </div>
 
-
+			
 
 
 
@@ -184,3 +211,5 @@
 </body>
 
 </html>
+
+

@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -131,13 +131,40 @@
 			<div class="overview">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Analytics</span>
+					<span class="text">View Routes</span>
 				</div>
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;">
+                <table align="CENTER" border="2" width="90%" text-align="center"
+            border-spacing="30px">
+                <thead>
+                    <tr>
+                        <th>Route ID</th>
+                        <th>Route start</th>
+                        <th>Route End</th>
+                        <th>View Stops</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="route : ${list}">
+                        <td th:text="${route.rid}" />
+                        <td th:text="${route.start.name}" />
+                        <td th:text="${route.end.name}" />
+                        <td>
+                            <form th:action="@{/admin/viewStops}" method="GET">
+                                <input type="hidden" name="rid" th:value="${route.rid}" />
+                                <input type="hidden" name="shift" value="morning" /> 
+                                <input type="submit" value="View Stops" />
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
 
-
+			
 
 
 
@@ -184,3 +211,5 @@
 </body>
 
 </html>
+
+

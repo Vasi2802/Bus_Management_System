@@ -64,10 +64,23 @@ public class StopController {
 		
 	}
 
+	@PutMapping("/update")
+	public Stop update(@RequestBody Stop stop) {
+	
+		stopRepo.save(stop);
+		return stop;
+		
+	}
+
 	@GetMapping(value="/stopform")
 	public ModelAndView postMethodName() {
 		ModelAndView modelAndView = new ModelAndView("stopForm");		
 		return modelAndView;
 	}
+
+
+	
+
+
 	
 }

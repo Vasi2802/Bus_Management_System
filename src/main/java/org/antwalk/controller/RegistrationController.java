@@ -1,5 +1,4 @@
 package org.antwalk.controller;
-
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -10,6 +9,7 @@ import org.antwalk.entity.Otp;
 import org.antwalk.entity.User;
 import org.antwalk.service.GlobalDbService;
 import org.antwalk.service.OtpService;
+import org.antwalk.entity.User;
 import org.antwalk.service.UserService;
 import org.antwalk.user.CrmUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,7 +154,6 @@ public class RegistrationController {
 //	
 //	}
 	
-
 	@PostMapping("/processRegistrationForm")
 	public String processRegistrationForm(
 				@Valid @ModelAttribute("crmUser") CrmUser theCrmUser, 

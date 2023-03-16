@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -131,13 +131,37 @@
 			<div class="overview">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Analytics</span>
+					<span class="text">Delete Employee</span>
 				</div>
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;">
+				<table align="CENTER" border="2" width="90%" text-align="center" border-spacing="30px">
+					<tr>
+						<td>Employee ID</td>
+						<td>Employee Name</td>
+						<td>Contact Number</td>
+						<td>Bus Number</td>
+						<td></td>
+					</tr>
+					 <tr th:each="emp : ${list}">
+						<td th:text="${emp.eid}"></td>
+						<td th:text="${emp.name}"></td>
+						<td th:text="${emp.contactNo}"></td>
+						<td th:if="${emp.b}" th:text="${emp.b.bid}"></td>
+							
+						<td>					
+							<form th:action="@{/admin/delete/employee/{id}(id=${emp.eid})}" method="GET">
+								<input type="submit" value="DELETE">
+							</form> 					
+						</td>							
+					 </tr>		
+			</table>
+			<br><br>
+            </div>
 
-
+			
 
 
 

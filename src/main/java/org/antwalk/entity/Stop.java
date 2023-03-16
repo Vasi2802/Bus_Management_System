@@ -18,7 +18,7 @@ public class Stop {
 	@Column(name="sid")
 	private long sid;
 	
-	@Column(name="name")
+	@Column(name="name",unique=true)
 	private String name;
 	
 	

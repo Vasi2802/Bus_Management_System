@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -131,13 +131,31 @@
 			<div class="overview">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Analytics</span>
+					<span class="text">Manage Stops</span>
 				</div>
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;">
+				<table align="center">
+					<tr>
+					<td>
+					<form action="/admin/addStop" Method="GET">
+						<button type="submit"  class="btn btn-primary" >add a new stop</button>
+					</form>
+					</td>
+					</tr>
+					<tr>
+					<td>
+					<form action="/admin/editStop" Method="GET">
+						<button type="submit" class="btn btn-primary" >edit a stop</button>
+					</form>
+					</td>
+					</tr>
+				</table>
+            </div>
 
-
+			
 
 
 

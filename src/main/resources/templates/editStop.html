@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -136,14 +136,43 @@
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;" id = "mainArea">
+			<form id = "add-stop-form">
+				<table?>
+					<tr>
+                        <td>
+                            <label for="stopname" class="text-dark display-5">Select Stop: </label>
+                        </td>
+                        <td>
+                            <select id="select-stop" name="stop">
+                                <option th:each="s : ${list}" th:id="'stop-selected'" th:value="${s.sid}" th:text="${s.name}"></option>
+                            </select>
+                        </td>
+                        <td>
+                            <label for="stopname" class="text-dark display-5">New Name: </label>
+                            <input type="text" class="form-control" id="input-name" name="name" placeholder="Stop Name">
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary" th:onclick="'addStop()'">update</button>
+                        </td>
+                    </tr>
+				</table>
+			</form>
+            </div>
 
-
+			
 
 
 
 
 		</div>
 	</section>
+
+
+
+   
+    
+
 
 
 
@@ -179,7 +208,40 @@
 	</div>
 
 
-	<script src="/script/home_script.js"></script>
+	<script>
+        function addStop() {
+						var url = '/admin/stop/update';
+						console.log($( "#select-stop option:selected" ).attr("value"));
+						var stop = {
+							sid: Number($( "#select-stop option:selected" ).attr("value")),
+							name: document.getElementById("input-name").value
+						};
+	
+						console.log(stop);
+						alert("Click Ok to update");
+						$.ajax({
+							headers: {
+								Accept: 'application/json', //imp
+							},
+							type: "PUT",
+							url: url,
+							data: JSON.stringify(stop), // imp
+							dataType: "json",
+							contentType: "application/json", //imp
+							success: function (response) {
+								console.log("added", response);
+								alert('Stop Updated')
+								window.location.href = "/admin/manageStop";
+							},
+							error: function () {
+								alert('Error occured');
+							}
+						});
+					
+					}
+				 
+        
+    </script>
 	<!--    <script src="/script/navigation.js"></script> -->
 </body>
 

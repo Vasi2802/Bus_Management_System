@@ -2,6 +2,7 @@ package org.antwalk.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +12,9 @@ import org.antwalk.entity.Admin;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
 import org.antwalk.entity.Route;
+import org.antwalk.entity.Employee;
+import org.antwalk.entity.Route;
+import org.antwalk.entity.RouteStopId;
 import org.antwalk.entity.Stop;
 import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.AdminRepo;
@@ -31,6 +35,14 @@ import org.antwalk.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.antwalk.service.ArrivalTimeService;
+import org.antwalk.service.BookingDetailsService;
+import org.antwalk.service.BusService;
+import org.antwalk.service.DriverService;
+import org.antwalk.service.EmployeeService;
+import org.antwalk.service.RouteService;
+import org.antwalk.service.StopService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +52,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.validation.BindingResult;
+import org.antwalk.user.CrmUser;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.antwalk.entity.ArrivalTimeTable;
+import org.springframework.ui.Model;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/admin")
@@ -89,6 +109,12 @@ public class AdminController {
 
 	@Autowired
 	private AdminService adminService;
+	private RouteService routeService;
+	
+
+	@Autowired
+	private DriverService driverService;
+
 
 	@PostMapping("/insert")
 	public Admin insert(@RequestBody Admin a) {
@@ -133,6 +159,7 @@ public class AdminController {
 		return modelAndView;
 	}
 
+
 	@GetMapping("/analytics")
 	public ModelAndView getAllWaitingAnalytics() {
 		ModelAndView modelAndView = new ModelAndView("analytics");
@@ -160,6 +187,9 @@ public class AdminController {
 
 	// GET ALL WAITLIST BY ROUTE ID
 
+	// Analytics
+
+	// GET ALL WAITLIST BY ROUTE ID
 	@GetMapping("/analytics/waiting-by-routeid/{routeId}")
 	public List<WaitingList> getWaitingListByRoute(@PathVariable Long routeId) {
 		Route route = routeRepo.findById(routeId).get();
@@ -215,20 +245,17 @@ public class AdminController {
 		Map<Bus, Integer> busFreq = busService.getPassesngersPerBus();
 		Map<String, Integer> busFreqWithDesc = new HashMap<>();
 		for (Bus bus : busFreq.keySet()) {
-			busFreqWithDesc.put(
-					"BUS" + bus.getBid() + " on " + arrivalTimeService.getRouteDescription(bus.getR().getRid()),
+
+			busFreqWithDesc.put("BUS"+ bus.getBid() + " on " + arrivalTimeService.getRouteDescription(bus.getR().getRid()),
 					busFreq.get(bus));
 		}
 		return busFreqWithDesc;
 	}
 
-	// GET TOTAL BOOKING PER MONTH FOR CURRENT YEAR
-
 	@GetMapping("/analytics/booking-per-month")
 	public List<List<Object>> bookingPerMonth() {
 		return bookingDetailsService.getBookingPerMonth();
 	}
-
 	// GET NUMBER STATISTICS
 	/*
 	 * TOTAL EMPLOYEES
@@ -261,8 +288,8 @@ public class AdminController {
 	 * waitinglist
 	 * user
 	 */
-	@PostMapping("/delete/employee")
-	public String deleteEmployee(@RequestBody long employeeId) {
+	@GetMapping("/delete/employee/{employeeId}")
+	public String deleteEmployee(@PathVariable long employeeId) {
 		return adminService.deleteEmployee(employeeId);
 	}
 
@@ -273,8 +300,8 @@ public class AdminController {
 	 * 2. waitingList
 	 * 3. busId of employees
 	 */
-	@PostMapping("/delete/bus")
-	public String deleteBus(@RequestBody long busId) {
+	@GetMapping("/delete/bus/{busId}")
+	public String deleteBus(@PathVariable long busId) {
 		return adminService.deleteBus(busId);
 	}
 
@@ -288,4 +315,331 @@ public class AdminController {
 	public String deleteRoute(@RequestBody long routeId) {
 		return adminService.deleteRoute(routeId);
 	}
+	
+	@GetMapping("/")
+	public ModelAndView getDashboard() {
+		ModelAndView modelAndView = new ModelAndView("admin");
+		return modelAndView;
+	}
+
+	@GetMapping("/manageBus")
+	public ModelAndView manageBus() {
+		ModelAndView modelAndView = new ModelAndView("manageBus");
+		return modelAndView;
+	}
+
+	@GetMapping("/manageDriver")
+	public ModelAndView manageDriver() {
+		ModelAndView modelAndView = new ModelAndView("manageDriver");
+		return modelAndView;
+	}
+
+
+	@GetMapping("/manageRoute")
+	public ModelAndView manageRoute() {
+		ModelAndView modelAndView = new ModelAndView("manageRoute");
+		return modelAndView;
+	}
+
+	@GetMapping("/manageStop")
+	public ModelAndView manageStop() {
+		ModelAndView modelAndView = new ModelAndView("manageStop");
+		return modelAndView;
+	}
+
+	@GetMapping("/addStop")
+	public ModelAndView addStop() {
+		ModelAndView modelAndView = new ModelAndView("addStop");
+		return modelAndView;
+	}
+
+
+	@GetMapping("/addRoute")
+	public ModelAndView addRoute() {
+		ModelAndView modelAndView = new ModelAndView("addRoute");
+		return modelAndView;
+	}
+
+	
+
+	@PostMapping("/stop/insert")
+	public Stop insert(@RequestBody Stop s) {
+		return stopRepo.save(s);
+	}
+
+	@GetMapping("/editStop")
+	public ModelAndView editStop() {
+		String uri = "http://localhost:8080/stop/getall"; 
+		RestTemplate restTemplate = new RestTemplate();
+	    List<Stop> result = stopRepo.findAll();
+		ModelAndView mv=new ModelAndView("editstop");
+		mv.addObject("list", result);
+		return mv;
+	}
+
+
+	@PutMapping("/stop/update")
+	public Stop updateStop(@RequestBody Stop stop) {
+		stopRepo.save(stop);
+		return stop;
+		
+	}
+
+	@GetMapping("/stop/getall")
+	public List<Stop> getAllStops(){
+		return stopRepo.findAll();
+	}
+
+
+	@PostMapping("/route/insert")
+	public Route insertRoute(@RequestBody Route r) {
+		return routeRepo.save(r);
+	}
+
+
+	@PostMapping("/arrivaltime/insert")
+	public ArrivalTimeTable insert(@RequestBody ArrivalTimeTable at) {
+		return arrivalTimeService.insertArrivalTime(at);
+	}
+
+
+	@GetMapping("/route/getall")
+	public List<Route> getAllRoutes(){
+		return routeRepo.findAll();
+	}
+
+	@RequestMapping("/viewRoutes")
+	public ModelAndView viewRoutes(HttpServletRequest request) {
+		String uri = "http://localhost:8080/admin/route/getall";
+		RestTemplate restTemplate = new RestTemplate();
+		List<Route> result = routeRepo.findAll();
+		ModelAndView mv = new ModelAndView("viewRoutes");
+		mv.addObject("list", result);
+		return mv;
+
+	}
+
+	@GetMapping("/viewStops")
+	public ModelAndView getAllStopsWithTimeByRouteid(@RequestParam Long rid, @RequestParam String shift) {
+		try {
+			Route route = routeRepo.findById(rid).get();
+			List<ArrivalTimeTable> arrivalTimeTableList;
+			if (shift.equalsIgnoreCase("morning")) {
+				arrivalTimeTableList = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
+			} else {
+				arrivalTimeTableList = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
+			}
+			ModelAndView modelAndView = new ModelAndView("viewStops");
+			// System.out.println(arrivalTimeTableList);
+			modelAndView.addObject("arrivalTimeTableList", arrivalTimeTableList);
+			return modelAndView;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return new ModelAndView("error");
+		}
+	}
+
+	@RequestMapping("/viewDrivers")
+	public ModelAndView viewDrivers(HttpServletRequest request) {
+		String uri = "http://localhost:8080/admin/driver/getall";
+		RestTemplate restTemplate = new RestTemplate();
+		List<Driver> result = driverRepo.findAll();
+		System.out.println(result);
+		ModelAndView mv = new ModelAndView("viewDrivers");
+		mv.addObject("list", result);
+		return mv;
+
+	}
+
+	@RequestMapping("/deleteRoute")
+	public ModelAndView deleteRoute1(HttpServletRequest request) {
+//		String uri = "http://localhost:8080/admin/route/getall";
+//		RestTemplate restTemplate = new RestTemplate();
+		List<Route> result = routeRepo.findAll();
+		ModelAndView mv =new ModelAndView("deleteRoute");
+//		// if(result.size() == 0){
+//		// 	mv = new ModelAndView("alertPage");
+//		// 	mv.addObject("message","no routes found!");
+//		// 	return manageRoute();
+//		// }
+//		// else{
+//		mv = new ModelAndView("deleteRoute");
+		mv.addObject("list", result);
+//		// }
+//		return mv;
+		
+		return mv;
+	}
+
+	public String alertAndRedirect(String msg, String url) {
+		return "<script>alert("+msg+")</script>";
+	}
+
+	@GetMapping("/alert")
+	public ModelAndView alert() {
+		ModelAndView mv = new ModelAndView("alert");
+		return mv;
+	}
+
+
+
+	@RequestMapping("/manageEmployee")
+	public ModelAndView manageEmployee() {
+		ModelAndView mv = new ModelAndView("manageEmployee");
+		String uri = "http://localhost:8080/admin/emp/getall"; 
+		RestTemplate restTemplate = new RestTemplate();
+	    String result = restTemplate.getForObject(uri, String.class); 
+	    List<Employee> result1 = employeeService.getAllEmployees();
+//	    System.out.println(restTemplate.getForObject(uri, List.class));
+		mv.addObject("list",result1);
+		return mv;
+	}
+
+	@GetMapping("/employee/getbyid/{id}")
+	public Employee getById1(@PathVariable long id) {
+		return empRepo.findById(id).get();
+	}
+
+	@GetMapping("/route/deletebyid/{id}")
+	 public ModelAndView deletebyid(@PathVariable("id")long id){
+		routeService.deleteRouteByIdExternal(id);
+		 String uri ="http://localhost:8080/admin/route/getall";
+		 RestTemplate restTemplate = new RestTemplate();
+		 List<Route> result =routeRepo.findAll();
+		 ModelAndView mv = new ModelAndView("deleteRoute"); 
+		 mv.addObject("list", result);
+		 return mv;
+	 }
+
+
+	 @GetMapping("/emp/getall")
+	public List<Employee> getAllEmployee() {
+		return employeeService.getAllEmployees();
+	}
+	 
+	 @GetMapping("/driver/getall")
+		public List<Driver> getAllDriver() {
+			return driverService.getAllDrivers();
+		}
+
+	 @GetMapping("/employee/deletebyidnew/{id}")
+	public ModelAndView deleteByIdEmployee(@PathVariable("id") long id) {
+		employeeService.deleteemployee(id);
+		
+		
+		return manageEmployee();
+	}
+
+	@GetMapping("/editDriver")
+	public ModelAndView editDriver() {
+		String uri = "http://localhost:8080/admin/driver/getall";
+		RestTemplate restTemplate = new RestTemplate();
+		List<Driver> result = driverService.getAllDrivers();
+		ModelAndView mv = new ModelAndView("editDriver");
+		mv.addObject("list", result);
+		return mv;
+	}
+	
+
+	// @PutMapping("/driver/update/{id}")
+	// public String updateDriver(@RequestBody Driver d, @PathVariable long id) {
+	// 	List<Driver> driverList = driverService.getAllDrivers();
+	// 	for(Driver obj:driverList) {
+	// 		if(obj.getDid() == id) {
+	// 			if(d.getDid() == id) {
+	// 				driverService.insertDriver(d);
+	// 				return "Updated";
+	// 			}
+				
+	// 			else {
+	// 				return "Id doesn't match";
+	// 			}
+				
+	// 		}
+	// 	}
+	// 	return "Id does not exist";
+		
+	// }
+
+
+	@PutMapping("/driver/update")
+	public Driver updateDriver(@RequestBody Driver d) {
+		// System.out.println(driverService.updateDriverById(d, id));
+		return driverService.insertDriver(d);	
+	}
+
+	@GetMapping("/addBus")
+	public ModelAndView AddBus(){
+		ModelAndView mv = new ModelAndView("addBus");
+		return mv;
+	}
+
+	@GetMapping("/getallroutesasstopslist")
+	public Map<Long, List<Stop>> getAllRoutesAsListOfStop() {
+		Map<Long, List<Stop>> routes = new HashMap<>();
+		for (Route route : routeRepo.findAll()) {
+			List<Stop> stops = getStopsByRouteId(route.getRid(), "morning");
+			routes.put(route.getRid(), stops);
+			System.out.println(route.getRid() + "" + stops);
+		}
+		return routes;
+	}
+
+	@GetMapping("/getallstopsinaroute")
+	public List<Stop> getStopsByRouteId(@RequestParam long routeId, @RequestParam String shift) {
+		try {
+			Route route = routeRepo.findById(routeId).get();
+			List<ArrivalTimeTable> arrivalTimeTables = null;
+			if (shift.equalsIgnoreCase("morning")) {
+				arrivalTimeTables = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
+			} else {
+				arrivalTimeTables = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
+			}
+			List<Stop> stops = arrivalTimeTables.stream().map(ArrivalTimeTable::getRouteStopId)
+					.collect(Collectors.toList()).stream().map(RouteStopId::getStop).collect(Collectors.toList());
+
+			return stops;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return new ArrayList<>();
+		}
+	}
+
+	@PostMapping("/bus/insert")
+	public Bus insert(@RequestBody Bus b) {
+		return busRepo.save(b);
+	}
+
+	@GetMapping("/route/getbyid/{id}")
+	public Route getByIdRoute(@PathVariable long id) {
+		return routeRepo.findById(id).get();
+	}
+
+
+	@GetMapping("/driver/getbyid/{id}")
+	public Driver getByIdDriver(@PathVariable long id) {
+		return driverService.getDriverById(id);
+	}
+
+
+	@RequestMapping("/deleteBus")
+	public ModelAndView deleteBus(){
+	    List<Bus> result = busService.getAllBus();
+		ModelAndView mv = new ModelAndView("deleteBus");
+		mv.addObject("list",result);
+		return mv;
+	}
+
+	@GetMapping("/bus/getall")
+	public List<Bus> getAllBus(){
+		return busRepo.findAll();
+	}
+
+
+	@GetMapping("/bus/deletebyidnew/{id}")
+	public ModelAndView deleteById2(@PathVariable("id") long id) {
+		busService.deleteBusById(id);
+		return deleteBus();
+	}
+	
 }

@@ -18,6 +18,13 @@ import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
+import java.util.List;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.antwalk.entity.BookingDetails;
+import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.Stop;
 import org.antwalk.entity.User;
@@ -41,6 +48,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.antwalk.repository.StopRepo;
+import org.antwalk.repository.UserRepo;
+import org.antwalk.repository.WaitingListRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -91,15 +104,7 @@ public class EmployeeController {
 		return empRepo.save(e);
 	}
 
-	@GetMapping("/getall")
-	public List<Employee> getAll() {
-		return empRepo.findAll();
-	}
 
-	@GetMapping("/getbyid/{id}")
-	public Employee getById1(@PathVariable long id) {
-		return empRepo.findById(id).get();
-	}
 
 	@DeleteMapping("/deletebyid/{id}")
 	public String deleteById(@PathVariable long id) {
@@ -169,10 +174,9 @@ public class EmployeeController {
 	    	modelAndView = new ModelAndView("error-booking-details");
 	    return modelAndView;
 	    }	
-
-	    
-		return modelAndView;
+	    return modelAndView;
 	}
+
 	
 	@GetMapping("/trackbus")
 	public ModelAndView trackbus(HttpServletRequest request) {
@@ -213,6 +217,12 @@ public class EmployeeController {
 	}
 //	Route route = routeRepo.getById(id);
 //	List<Stop> stops = route.ge
+	public ModelAndView trackbus() {
+		System.out.println("Working");
+		ModelAndView modelAndView = new ModelAndView("employee-track-bus");
+		return modelAndView;
+	}
+
 
 	@GetMapping("/book")
 	public ModelAndView book() {
@@ -272,6 +282,7 @@ public class EmployeeController {
 	@PostMapping(value = "/bookABusByBusId/{busId}")
 	public ResponseEntity<String> bookABusByBusId(@RequestBody Long eid, @PathVariable long busId,HttpServletRequest request) {
 
+
 		System.out.println("Booking Bus For ==============");
 		System.out.println("bus id =" + busId + "  empId = " + eid + "=============");
 		Bus bus = busRepo.findById(busId).get();
@@ -292,15 +303,15 @@ public class EmployeeController {
 //					"Sorry %s. \nYou are already in the waiting List. \nYour waitList details are WID=%d\t EID=%d\t BusId=%d. \nTo book, you must cancel your waiting List",
 //					employee.getName(), waitingList.getWid(), waitingList.getE().getEid(), waitingList.getB().getBid());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are already in a waiting list ");
+
 		}
 
 		// prevents an employee to book more than 1 bus/seat for current month
 		if (employee.getB() != null) {
-			System.out.println("======================================");
-			System.out.println(" EMployee " + employee + " has a booking");
 //			return String.format("Sorry %s. \nYou can book only 1 bus seat in a month. \nYour current bus ID is %s",
 //					employee.getName(), employee.getB().getBid());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You can only book 1 seat");
+
 		}
 
 		// employee tries to book a filled bus
@@ -310,6 +321,7 @@ public class EmployeeController {
 //			return String.format("Hi %s!\nYou have been added to waitlist for bus with id=%d.\n Your waitlist id=%d",
 //					employee.getName(), bus.getBid(), waitingList.getWid());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Added to waiting List");
+
 		}
 
 		// seats available and employee doesnt have any bus assigned
@@ -331,6 +343,7 @@ public class EmployeeController {
 	    
 //		return String.format("Hi %s!\nYou have successfully booked Bus with id=%d", employee.getName(), bus.getBid());
 		 return ResponseEntity.ok("Successfully Booked");
+
 	}
 
 	// REMOVE BOOKING OR WAITINGLIST FOR AN EMPLOYEE
@@ -343,16 +356,11 @@ public class EmployeeController {
 	 * the waiting list
 	 */
 	@PostMapping("/removebooking")
-	public String removeBooking(@RequestBody Long employeeId,HttpServletRequest request ) {
-		
-		HttpSession session = request.getSession();
-	    User emp = (User)session.getAttribute("emp");
-	    emp.getEmployee().setB(null);
-	    
-		String message = "";
-		Employee employee = empRepo.findById(employeeId).get(); // to fetched from session data ( __INCOMPLETE__ )
 
-		// if employee has a bus ID, remove it
+	public String removeBooking(@RequestBody Long employeeId) {
+		String message = "";
+		Employee employee = empRepo.findById(employeeId).get();
+
 		
 		
 		if (employee.getB() != null) {
@@ -476,4 +484,5 @@ public class EmployeeController {
 		employeeBookingDetails.put("busStatus", busStatus);
 		return employeeBookingDetails;		
 	}
+
 }

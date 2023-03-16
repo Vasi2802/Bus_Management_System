@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -136,8 +136,23 @@
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;" id = "mainArea">
+			<form id = "add-stop-form">
+				<table?>
+					<tr>
+                        <td>
+                            <label for="stopname" >Stop Name</label>
+                            <input type="text" id="stopname" name="name" placeholder="Stop Name">
+                        </td>
+                        <td>
+                            <button type="button"  onclick="addStop()">Add Stop</button>
+                        </td>
+                    </tr>
+				</table>
+			</form>
+            </div>
 
-
+			
 
 
 
@@ -179,7 +194,37 @@
 	</div>
 
 
-	<script src="/script/home_script.js"></script>
+	<script>
+        function addStop() {
+            var url = '/admin/stop/insert';
+            var stop = {
+				"name" : document.getElementById("mainArea").getElementsByTagName("input")[0].value,
+			};
+            console.log(stop);
+            // alert('Click ok to add this Stop')
+            $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "POST",
+                url: url,
+                data: JSON.stringify(stop), // imp
+                dataType: "json",
+                contentType: "application/json", //imp
+                success: function (response) {
+                    console.log("added",response);
+                    alert('Stop Added'); 
+                    window.location.href = "/admin/manageStop";
+                },
+                error: function () {
+                    alert('Error occured');
+                    // window.location.href="/stop/stopform";
+                }
+                
+            });
+            //window.location.href = "/stop/managing";
+        }
+    </script>
 	<!--    <script src="/script/navigation.js"></script> -->
 </body>
 

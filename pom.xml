@@ -29,8 +29,6 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
-		<!-- SMTP DEPS -->
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
@@ -50,11 +48,13 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 		</dependency>
+
 <dependency>
                         <groupId>com.twilio.sdk</groupId>
                         <artifactId>twilio</artifactId>
                         <version>8.8.0</version>
                 </dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -75,7 +75,6 @@
 			<version>5.2.0</version>
 		</dependency>
 
-		<!-- SECURITY DEPS -->
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

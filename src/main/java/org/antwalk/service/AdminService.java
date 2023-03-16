@@ -6,12 +6,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+
 import org.antwalk.entity.Admin;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.Route;
-import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.AdminRepo;
 import org.antwalk.repository.ArrivalTimeRepo;
 import org.antwalk.repository.BookingDetailsRepo;
@@ -29,13 +30,14 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.tomcat.util.http.fileupload.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 
 @Service
 public class AdminService {
@@ -43,6 +45,8 @@ public class AdminService {
 	@Autowired
 	private AdminRepo adminRepo;
 
+	@Autowired
+	private EntityManager entityManager;
 	@Autowired
 	private BookingDetailsService bookingDetailsService;
 
@@ -69,7 +73,9 @@ public class AdminService {
 	private UserRepo userRepo;
 
 	@Autowired
-	private EmployeeRepo employeeRepo;public Admin insertAdmin(Admin a) {
+	private EmployeeRepo employeeRepo;
+	
+	public Admin insertAdmin(Admin a) {
 		return adminRepo.save(a);
 	}
 
@@ -81,6 +87,8 @@ public class AdminService {
 		return adminRepo.findById(id).get();
 	}
 
+
+	
 	public String deleteAdminById(long id) {
 		adminRepo.deleteById(id);
 		return "Admin Deleted";
@@ -105,6 +113,8 @@ public class AdminService {
 
 	}
 
+	
+	
 	public ResponseEntity<Resource> generateReport() {
 
 		LocalDate today = LocalDate.now();
@@ -214,6 +224,7 @@ public class AdminService {
 		
 	}
 
+	@Transactional
 	public String deleteEmployee(long employeeId){
 		String message= "";
 		Optional<Employee> employeeOptional = employeeRepo.findById(employeeId);
@@ -224,14 +235,18 @@ public class AdminService {
 			employeeService.removeBooking(employee.getEid()); 
 			message += "Booking/Waiting removed";
 
+			// delete employee 
+			entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+	        entityManager.remove(employee);
+	        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+	        
 			// delete booking details associated with this employee
 			bookingDetailsRepo.deleteByE(employee);
 
 			// delete user associated with this employee
 			userRepo.delete(employee.getUser());
 
-			// delete employee 
-			employeeRepo.deleteById(employee.getEid());
+
 			message += "employee deleted";
 
 		}
@@ -288,4 +303,6 @@ public class AdminService {
 		}
         return message;
     }
+
+
 }

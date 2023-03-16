@@ -13,7 +13,7 @@ public interface BusRepo extends JpaRepository<Bus, Long>{
     public List<Bus> findAllByR(Route route);
     
     public Optional<Bus> findByD(Driver driver);
-
     public void deleteByR(Route route);
+
     
 }

@@ -11,8 +11,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.antwalk.entity.BookingDetails;
+
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
+
 import org.antwalk.repository.BookingDetailsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,6 +76,7 @@ public class BookingDetailsService {
 		LocalDate curMonth;
 		List<List<Object>> monthFreq = new ArrayList<>();
 		int j = 0;
+		
 		for (int i = 1; i < 13; i++) {
 			curMonth = LocalDate.now().withMonth(i);
 			curLastDate = curMonth.withDayOfMonth(curMonth.lengthOfMonth());
@@ -98,6 +101,7 @@ public class BookingDetailsService {
 
 		return monthFreq;
 	}
+
 
     public List<BookingDetails> getAllBookingDetailsForPeriod(LocalDate firstDate, LocalDate lastdate) {
 		firstDate = firstDate.minusDays(1);

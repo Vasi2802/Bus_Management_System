@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -131,13 +131,35 @@
 			<div class="overview">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Analytics</span>
+					<span class="text">View Drivers</span>
 				</div>
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;">
+				<table align="CENTER" border="2" width="90%" text-align="center"
+            border-spacing="30px">
+				<thead>
+					<tr>
+						<th>Driver Id</th>
+						<th>Driver Name</th>
+						<th>Driver Contact Details</th>
+					</tr>
+				</thead>   
+                <tbody>
+                    <tr th:each="row : ${list}">
+                        <td th:text="${row.did}" />
+						<td th:text="${row.driverName}" />
+						<td th:text="${row.driverContactNo}" />
+                    </tr>
+                </tbody>
+            </table>
+			<form action="/admin/manageDriver"  method="GET" style="text-align:center">
+				<input type="submit" value="GoBack" />
+			</form>
+            </div>
 
-
+			
 
 
 
@@ -184,3 +206,5 @@
 </body>
 
 </html>
+
+

@@ -54,7 +54,7 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/admin" id="home">
+				<li><a href="/employee" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
 					</a></li>
@@ -131,13 +131,40 @@
 			<div class="overview">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Analytics</span>
+					<span class="text">Delete Route</span>
 				</div>
 			</div>
 
 			<!-- MAIN AREA -->
+            <div class="display: flex; justify-content: space-between; width: 100%;" id="mainArea">
+				
+                <table align="CENTER" border="2" width="90%" text-align="center" border-spacing="30px">
+                    <thead>
+                        <tr>
+                            <th>Route ID</th>
+                            <th>Route start</th>
+                            <th>Route End</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="route : ${list}">
+                            <td th:text="${route.rid}"></td>
+                            <td th:text="${route.start.name}"></td>
+                            <td th:text="${route.end.name}"></td>
+							<input type="hidden" name="rid" th:value="${route.rid}" />
+                            <td>
+                                <form th:action="@{/admin/route/deletebyid/{rid}(rid=${route.rid})}">
+                                    <input type="submit" value="DELETE" />
+                                </form> 
+                                <!-- <td><button id="add" class="btn btn-primary" onclick="deleteRoute()">Delete</button></td> -->
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-
+			
 
 
 
@@ -177,6 +204,29 @@
                 </tr>
             </table> -->
 	</div>
+
+    <script>
+        function deleteRoute(){
+            var req = new XMLHttpRequest();  
+			id = document.getElementById("mainArea").getElementsByTagName("input")[0].value;
+            var url = "/admin/route/deletebyid/" + id;
+            console.log(url);
+            req.open('GET', url, false);
+            req.onload = function () {
+                if (req.status === 200) {
+                    alert("route deleted!");
+                } else {
+                    alert("Error: " + req.status);
+                }
+            };
+            req.send();
+            }
+
+
+        function d(url){
+            console.log(url);
+        }
+    </script>
 
 
 	<script src="/script/home_script.js"></script>

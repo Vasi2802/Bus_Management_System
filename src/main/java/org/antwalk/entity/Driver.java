@@ -14,6 +14,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+
 @Entity
 @Table(name="driver")
 public class Driver {
@@ -46,6 +47,7 @@ public class Driver {
 		this.bus = bus;
 	}
 
+	
 	public User getUser() {
 		return user;
 	}
@@ -69,6 +71,7 @@ public class Driver {
 	public void setDriverName(String driverName) {
 		this.driverName = driverName;
 	}
+
 
 	public String getDriverContactNo() {
 		return driverContactNo;
