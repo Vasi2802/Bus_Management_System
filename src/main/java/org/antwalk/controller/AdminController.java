@@ -86,7 +86,7 @@ public class AdminController {
 
 	@Autowired
 	private BookingDetailsService bookingDetailsService;
-	
+
 	@Autowired
 	private AdminService adminService;
 
@@ -250,9 +250,42 @@ public class AdminController {
 
 	// GENERATE REPORT
 	@GetMapping("/analytics/downlaod-report")
-	public ResponseEntity<Resource> downloadReport(){
+	public ResponseEntity<Resource> downloadReport() {
 		return adminService.generateReport();
 	}
 
+	// DELETE EMPLOYEE
+	/*
+	 * Deletes associated-
+	 * booking details
+	 * waitinglist
+	 * user
+	 */
+	@PostMapping("/delete/employee")
+	public String deleteEmployee(@RequestBody long employeeId) {
+		return adminService.deleteEmployee(employeeId);
+	}
 
+	// DELETE BUS
+	/*
+	 * Deletes associated - 
+	 * 1. BookingDeetails
+	 * 2. waitingList
+	 * 3. busId of employees
+	 */
+	@PostMapping("/delete/bus")
+	public String deleteBus(@RequestBody long busId) {
+		return adminService.deleteBus(busId);
+	}
+
+	// DELETE ROUTE
+	/*
+	 * Deletes associated -
+	 * buses
+	 * arrival timetable
+	 */
+	@PostMapping("/delete/route")
+	public String deleteRoute(@RequestBody long routeId) {
+		return adminService.deleteRoute(routeId);
+	}
 }

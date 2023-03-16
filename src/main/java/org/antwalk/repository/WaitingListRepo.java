@@ -23,5 +23,9 @@ public interface WaitingListRepo extends JpaRepository<WaitingList, Long>{
     public long countByBus(List<Bus> b);
 
     public List<WaitingList> findByBIn(List<Bus> b);
+
+    public List<WaitingList> findAllByB(Bus bus);
+
+    public void deleteAllByB(Bus bus);
     
 }
