@@ -276,6 +276,9 @@ public class AdminService {
 			bookingDetailsRepo.deleteByB(bus);
 			message += "booking details associated with this bus deleted\n";
 
+			// delete bus
+			busRepo.delete(bus);
+
 		}
 		else{
 			message = "bus does not exist";
@@ -283,6 +286,7 @@ public class AdminService {
         return message;
     }
 
+	@Transactional
     public String deleteRoute(long routeId) {
 		String message="";
 		Optional<Route> routeOptional = routeRepo.findById(routeId);
@@ -296,6 +300,9 @@ public class AdminService {
 			// remove time table entries associated with this route
 			arrivalTimeRepo.deleteByRouteStopId_Route(route);
 			message += "time table associated deleted";
+
+			// remove route table entry
+			routeRepo.delete(route);
 
 		}
 		else{

@@ -54,62 +54,64 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/employee" id="home">
+				<li>
+					<a href="/admin" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
-					</a></li>
-				<li><a href="/admin/analytics" id="analytics">
-						<i class="uil uil-files-landscapes"></i>
-						<span class="link-name">Analytics</span>
-					</a></li>
-				<li><a href="/admin/manageBus" id = "manageBus">
+					</a>
+				</li>
+				<li>
+					<a href="/admin/manageBus" id="manageBus">
 						<i class="uil uil-chart"></i>
 						<span class="link-name">Manage Buses</span>
-					</a></li>
-				<li><a href="/admin/manageDriver" id = "manageDriver">
+					</a>
+				</li>
+				<li>
+					<a href="/admin/manageDriver" id="manageDriver">
 						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage  Drivers</span>
-					</a></li>
+						<span class="link-name">Manage Drivers</span>
+					</a>
+				</li>
 
-				<li><a href="/admin/manageEmployee" id = "manageEmployee">
+				<li>
+					<a href="/admin/manageEmployee" id="manageEmployee">
 						<i class="uil uil-thumbs-up"></i>
 						<span class="link-name">Manage Employees</span>
-					</a></li>
-				
-				<li><a href="/admin/manageRoute" id = "manageRoute">
+					</a>
+				</li>
+
+				<li>
+					<a href="/admin/manageRoute" id="manageRoute">
 						<i class="uil uil-thumbs-up"></i>
 						<span class="link-name">Manage Routes</span>
-					</a></li>
+					</a>
+				</li>
 
-				<li><a href="/admin/manageStop" id = "manageStop">
+				<li>
+					<a href="/admin/manageStop" id="manageStop">
 						<i class="uil uil-thumbs-up"></i>
 						<span class="link-name">Manage Stops</span>
-					</a></li>
-				
-				<!--                <li><a href="#">
-                    <i class="uil uil-share"></i>
-                    <span class="link-name">Share</span>
-                </a></li> -->
-			</ul>
-
-			<ul class="logout-mode">
-				<li><a href="#" onclick="document.getElementById('log').submit()">
-						<i class="uil uil-signout"></i>
-
-						<span class="link-name">Logout</span>
-					</a></li>
-
-				<li class="mode">
-					<a href="#">
-						<i class="uil uil-moon"></i>
-						<span class="link-name">Dark Mode</span>
 					</a>
-
-					<div class="mode-toggle">
-						<span class="switch"></span>
-					</div>
 				</li>
-			</ul>
+
+				<ul class="logout-mode">
+					<li><a href="#" onclick="document.getElementById('log').submit()">
+							<i class="uil uil-signout"></i>
+
+							<span class="link-name">Logout</span>
+						</a></li>
+
+					<li class="mode">
+						<a href="#">
+							<i class="uil uil-moon"></i>
+							<span class="link-name">Dark Mode</span>
+						</a>
+
+						<div class="mode-toggle">
+							<span class="switch"></span>
+						</div>
+					</li>
+				</ul>
 		</div>
 	</nav>
 
@@ -127,40 +129,30 @@
 			<img src="images/profile.jpg" alt="">
 		</div>
 
+		<!-- MAIN AREA -->
+
 		<div class="dash-content">
-			<div class="overview">
+			<div class="overview justify-content-between flex-row border-bottom mb-3">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
 					<span class="text">Manage Stops</span>
 				</div>
 			</div>
 
-			<!-- MAIN AREA -->
-            <div class="display: flex; justify-content: space-between; width: 100%;">
-				<table align="center">
-					<tr>
-					<td>
-					<form action="/admin/addStop" Method="GET">
-						<button type="submit"  class="btn btn-primary" >add a new stop</button>
-					</form>
-					</td>
-					</tr>
-					<tr>
-					<td>
-					<form action="/admin/editStop" Method="GET">
-						<button type="submit" class="btn btn-primary" >edit a stop</button>
-					</form>
-					</td>
-					</tr>
-				</table>
-            </div>
-
-			
-
-
-
+			<div class="row mb-3">
+				<a href="/admin/addStop">
+					<button type="submit" class="btn btn-primary">Add Stop</button>
+				</a>
+			</div>
+			<div class="row mb-3">
+				<a href="/admin/editStop">
+					<button type="submit" class="btn btn-primary">Edit Stop</button>
+				</a>
+			</div>
 
 		</div>
+
+
 	</section>
 
 

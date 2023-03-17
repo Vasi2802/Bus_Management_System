@@ -5,23 +5,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-  crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-  crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/home_style.css">
-     
+
     <!----===== Iconscout CSS ===== -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
-	
-	 <link rel="stylesheet" href="/fonts/material-icon/css/material-design-iconic-font.min.css">
-	<!-- from other file -->
-	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/fonts/material-icon/css/material-design-iconic-font.min.css">
+    <!-- from other file -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
     </script>
@@ -31,7 +29,7 @@
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
     </script>
-	<script th:inline="javascript">
+    <script th:inline="javascript">
         /*<![CDATA[*/
         var phno = /*[[${session.emp.getEmployee().getName()}]]*/ 'default';
         var bus = /*[[${session.emp.getEmployee().getB()}]]*/ 'default';
@@ -39,71 +37,77 @@
         /*]]>*/
 
     </script>
-	<style>
-@media (max-width: 767px) {
-  span {
-    font-size: 10px;
-  }
-  #clock{
-  font-size: 25px;
-  }
-  }
+    <style>
+        @media (max-width: 767px) {
+            span {
+                font-size: 10px;
+            }
 
-@media (max-width: 427px) {
-  span {
-    font-size: 7px;
-  }
-  }
-  
-@font-face{
-    font-family: 'Digital-7';
-    src:  url('fonts/digital-7.ttf') format('woff2'),   b ,g,mdrx
-    url('digital-7.woff') format('woff');
-}
-.clockdate-wrapper {
-    background: #141E30;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    padding:3px;
-    padding-left:50px;
-    padding-right:50px;
-    width:100%;
-    text-align:center;
-    border-radius:5px;
-    margin:0 auto;
-  
-}
-#clock{
-font-size:30px;
-    font-family: Digital-7, 'sans-serif';
-    text-shadow:0px 0px 1px #fff;
-    color:#fff;
-}
-#clock span {
-    color: rgba(255, 255, 255, 0.8);
-    text-shadow:0px 0px 1px #333;
-    font-size:15px;
-    position:relative;
-}
-</style>
+            #clock {
+                font-size: 25px;
+            }
+        }
+
+        @media (max-width: 427px) {
+            span {
+                font-size: 7px;
+            }
+        }
+
+        @font-face {
+            font-family: 'Digital-7';
+            src: url('fonts/digital-7.ttf') format('woff2'), b, g, mdrx url('digital-7.woff') format('woff');
+        }
+
+        .clockdate-wrapper {
+            background: #141E30;
+            /* fallback for old browsers */
+            background: -webkit-linear-gradient(to right, #243B55, #141E30);
+            /* Chrome 10-25, Safari 5.1-6 */
+            background: linear-gradient(to right, #243B55, #141E30);
+            /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+            padding: 3px;
+            padding-left: 50px;
+            padding-right: 50px;
+            width: 100%;
+            text-align: center;
+            border-radius: 5px;
+            margin: 0 auto;
+
+        }
+
+        #clock {
+            font-size: 30px;
+            font-family: Digital-7, 'sans-serif';
+            text-shadow: 0px 0px 1px #fff;
+            color: #fff;
+        }
+
+        #clock span {
+            color: rgba(255, 255, 255, 0.8);
+            text-shadow: 0px 0px 1px #333;
+            font-size: 15px;
+            position: relative;
+        }
+    </style>
 
     <script>
         console.log(eid);
         var employee;
         var bus;
         setInterval(() => {
-      	  // Get the current time
-      	  const now = new Date();
+            // Get the current time
+            const now = new Date();
 
-      	  // Format the time as hh:mm:ss
-      	  const hours = now.getHours().toString().padStart(2, '0');
-      	  const minutes = now.getMinutes().toString().padStart(2, '0');
-      	  const seconds = now.getSeconds().toString().padStart(2, '0');
-      	  const time = `${hours}:${minutes}:${seconds}`;
-      	  
-      	  $('#clock').text(time);
-      	}, 1000);
-        
+            // Format the time as hh:mm:ss
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const seconds = now.getSeconds().toString().padStart(2, '0');
+            const time = `${hours}:${minutes}:${seconds}`;
+
+            $('#clock').text(time);
+        }, 1000);
+
         $(document).ready(async () => {
             url = "/employee/getbyid/" + eid;
             await $.ajax({
@@ -119,81 +123,82 @@ font-size:30px;
                     alert('Error occured ', response.statusText);
                 }
             });
-            $("#bus-id-display").append(`${bus? bus.bid : "NA"}`);
-            
+            $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
 
-          
+
+
         });
 
     </script>
-    <title>Employee Dashboard </title> 
+    <title>Employee Dashboard </title>
 </head>
+
 <body>
-                <form th:action="@{/logout}" id="log" method="POST">
-						
-</form>
+    <form th:action="@{/logout}" id="log" method="POST">
+
+    </form>
     <nav>
-       <!--  <div class="logo-name">
+        <!--  <div class="logo-name">
             <div class="logo-image">
                 <img src="/images/logo.png" alt="">
             </div> -->
-<img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
-            
-           
-           <div class="menu-items">
-          
+        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" />
+
+
+        <div class="menu-items">
+
             <ul class="nav-links">
                 <li><a href="/employee" id="home">
-                    <i class="uil uil-estate"></i>
-                    <span class="link-name">Dashboard</span>
-                </a></li>
+                        <i class="uil uil-estate"></i>
+                        <span class="link-name">Dashboard</span>
+                    </a></li>
                 <li><a href="/employee/book" id="bookbus">
-                    <i class="uil uil-files-landscapes"></i>
-                    <span class="link-name">Book Bus</span>
-                </a></li>
+                        <i class="uil uil-files-landscapes"></i>
+                        <span class="link-name">Book Bus</span>
+                    </a></li>
                 <li><a href="/employee/trackbus" id="track-bus-link">
-                    <i class="uil uil-chart"></i>
-                    <span class="link-name">Track Bus</span>
-                </a></li>
+                        <i class="uil uil-chart"></i>
+                        <span class="link-name">Track Bus</span>
+                    </a></li>
                 <li><a href="/employee/showbookingdetails">
-                    <i class="uil uil-thumbs-up"></i>
-                    <span class="link-name">Booking Details</span>
-                </a></li>
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="link-name">Booking Details</span>
+                    </a></li>
                 <li><a href="/employee/editprofile">
-                    <i class="uil uil-thumbs-up"></i>
-                    <span class="link-name">Edit Profile</span>
-                </a></li>
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="link-name">Edit Profile</span>
+                    </a></li>
                 <li><a href="/employee/releaseseat">
-                <i class="uil uil-chart-down"></i>
-                <span class="link-name">Release Seat</span>
-            </a></li>
-            <li><a href="/employee/sos">
-                <i class="uil uil-chart-down"></i>
-                <span class="link-name">SOS</span>
-            </a></li>
- <!--                <li><a href="#">
+                        <i class="uil uil-chart-down"></i>
+                        <span class="link-name">Release Seat</span>
+                    </a></li>
+                <li><a href="/employee/sos">
+                        <i class="uil uil-chart-down"></i>
+                        <span class="link-name">SOS</span>
+                    </a></li>
+                <!--                <li><a href="#">
                     <i class="uil uil-share"></i>
                     <span class="link-name">Share</span>
                 </a></li> -->
             </ul>
-            
+
             <ul class="logout-mode">
                 <li><a href="#" onclick="document.getElementById('log').submit()">
-                    <i class="uil uil-signout"></i>
-    
-                     <span class="link-name">Logout</span> 
-                </a></li>
+                        <i class="uil uil-signout"></i>
+
+                        <span class="link-name">Logout</span>
+                    </a></li>
 
                 <li class="mode">
                     <a href="#">
                         <i class="uil uil-moon"></i>
-                    <span class="link-name">Dark Mode</span>
-                </a>
+                        <span class="link-name">Dark Mode</span>
+                    </a>
 
-                <div class="mode-toggle">
-                  <span class="switch"></span>
-                </div>
-            </li>
+                    <div class="mode-toggle">
+                        <span class="switch"></span>
+                    </div>
+                </li>
             </ul>
         </div>
     </nav>
@@ -201,82 +206,85 @@ font-size:30px;
 
 
 
-<!-- Employee Dashboard-->
+    <!-- Employee Dashboard-->
     <div class="dashboard" id="homeContent">
         <div class="top">
-        
+
             <i class="uil uil-bars sidebar-toggle"></i>
 
-                <h3 style="color:grey;text-align:center;">Edit Profile</h3>
-                  <!--  <div id="clockdate">
+            <h3 style="color:grey;text-align:center;">Edit Profile</h3>
+            <!--  <div id="clockdate">
   <div class="clockdate-wrapper">
     <div id="clock"></div>
     <div id="date"></div>
   </div>
 </div>  -->
-            
-          
+
+
             <img src="/images/profile.jpg" alt="">
-           
+
         </div>
-        
-<div style="margin-top:5%;">
-<span style="color:grey;" class="logout-mode"> >edit-profile</span><hr>
 
-</div>
-<Br/>
+        <div style="margin-top:5%;">
+            <span style="color:grey;" class="logout-mode"> >edit-profile</span>
+            <hr>
 
-<div class="container">
-<div th:if="${success}"
-											class="alert alert-success col-xs-offset-1 col-xs-10">
-											Successfully Updated
-										</div>
-										
-				<div style="color:red;">Update your profile using the following form note that you cannot change your email.
-				Only Admin is authorized to change the email.</div><br>
-				
-                 <form th:action="@{/employee/editprofileprocess}" 
-						  	   th:object="${updateProfile}" method="POST" class="register-form" id="register-form">
-						  	   
-						  	   <!-- Place for messages: error, alert etc ... -->	
-					    <div class="form-group">
-					        <div class="col-xs-15">
-					            
-					        </div>
-					    </div>
-                            <div class="form-group">Full Name
-                                <label for="name"><br/><i class="zmdi zmdi-account material-icons-name"></i></label>
-                                <input type="text" th:field="*{fullName}" name="fullName" required="true" placeholder="Change Full Name (*)"/>
-                                	
-                            </div>
-                            <br/>
-							<br/>
-							 <div class="form-group">Contact Number
-                                <label for="contact"><Br/><i class="zmdi zmdi-smartphone-iphone"></i></label>
-                                <input type="text" th:field="*{contactNo}" name="contactNo" required="true" placeholder="Change Contact No (*)" />
-                            </div>
-                            
-                             <br/>
-							<br/>
-							 <div class="form-group">Password
-                                <label for="contact"><br/><i class="zmdi zmdi-smartphone-iphone"></i></label>
-                                <input type="password" th:field="*{password}" name="password" placeholder="Change Password (*)" />
-                            </div>
-                            
-                            <div class="form-group form-button">
-                                <input type="submit" name="signup" id="signup" class="form-submit" value="Update"/>
-                            </div>
-                            
-                        </form>
+        </div>
+        <Br />
+
+        <div class="container">
+            <div th:if="${success}" class="alert alert-success col-xs-offset-1 col-xs-10">
+                Successfully Updated
             </div>
-     </div>
-      
 
-    
+            <div style="color:red;">Update your profile using the following form note that you cannot change your email.
+                Only Admin is authorized to change the email.</div><br>
+
+            <form th:action="@{/employee/editprofileprocess}" th:object="${updateProfile}" method="POST"
+                class="register-form" id="register-form">
+
+                <!-- Place for messages: error, alert etc ... -->
+                <div class="form-group">
+                    <div class="col-xs-15">
+
+                    </div>
+                </div>
+                <div class="form-group">Full Name
+                    <label for="name"><br /><i class="zmdi zmdi-account material-icons-name"></i></label>
+                    <input type="text" th:field="*{fullName}" name="fullName" required="true"
+                        placeholder="Change Full Name (*)" />
+
+                </div>
+                <br />
+                <br />
+                <div class="form-group">Contact Number
+                    <label for="contact"><Br /><i class="zmdi zmdi-smartphone-iphone"></i></label>
+                    <input type="text" th:field="*{contactNo}" name="contactNo" required="true"
+                        placeholder="Change Contact No (*)" />
+                </div>
+
+                <br />
+                <br />
+                <div class="form-group">Password
+                    <label for="contact"><br /><i class="zmdi zmdi-smartphone-iphone"></i></label>
+                    <input type="password" th:field="*{password}" name="password" placeholder="Change Password (*)" />
+                </div>
+
+                <div class="form-group form-button">
+                    <input type="submit" name="signup" id="signup" class="form-submit" value="Update" />
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+
     <!-- Book Bus -->
-   
+
 
     <script src="/script/home_script.js"></script>
- <!--    <script src="/script/navigation.js"></script> -->
+    <!--    <script src="/script/navigation.js"></script> -->
 </body>
+
 </html>

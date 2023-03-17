@@ -190,7 +190,7 @@
 
 </head>
 
-<body >
+<body>
     <form th:action="@{/logout}" id="log" method="POST">
 
     </form>
@@ -208,56 +208,69 @@
         <div class="menu-items">
             <ul class="nav-links">
                 <li>
-                    <a href="" id="home">
+                    <a href="/admin" id="home">
                         <i class="uil uil-estate"></i>
                         <span class="link-name">Dashboard</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/admin/analytics" id="bookbus">
-                        <i class="uil uil-tachometer-fast-alt"></i>
+                    <a href="/admin/analytics" id="analytics">
+                        <i class="uil uil-files-landscapes"></i>
                         <span class="link-name">Analytics</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/employee/trackbus">
+                    <a href="/admin/manageBus" id="manageBus">
                         <i class="uil uil-chart"></i>
-                        <span class="link-name">Track Bus</span>
+                        <span class="link-name">Manage Buses</span>
                     </a>
                 </li>
                 <li>
-                    <a href="/employee/showbookingdetails">
+                    <a href="/admin/manageDriver" id="manageDriver">
                         <i class="uil uil-thumbs-up"></i>
-                        <span class="link-name">Booking Details</span>
+                        <span class="link-name">Manage Drivers</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="/admin/analytics/downlaod-report">
-                        <i class="uil uil-comments"></i>
-                        <span class="link-name">Generate Report in XLSX</span>
+                    <a href="/admin/manageEmployee" id="manageEmployee">
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="link-name">Manage Employees</span>
                     </a>
                 </li>
-            </ul>
 
-            <ul class="logout-mode">
-                <li><a href="#" onclick="document.getElementById('log').submit()">
-                        <i class="uil uil-signout"></i>
-
-                        <span class="link-name">Logout</span>
-                    </a></li>
-
-                <li class="mode">
-                    <a href="#">
-                        <i class="uil uil-moon"></i>
-                        <span class="link-name">Dark Mode</span>
+                <li>
+                    <a href="/admin/manageRoute" id="manageRoute">
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="link-name">Manage Routes</span>
                     </a>
-
-                    <div class="mode-toggle">
-                        <span class="switch"></span>
-                    </div>
                 </li>
-            </ul>
+
+                <li>
+                    <a href="/admin/manageStop" id="manageStop">
+                        <i class="uil uil-thumbs-up"></i>
+                        <span class="link-name">Manage Stops</span>
+                    </a>
+                </li>
+
+                <ul class="logout-mode">
+                    <li><a href="#" onclick="document.getElementById('log').submit()">
+                            <i class="uil uil-signout"></i>
+
+                            <span class="link-name">Logout</span>
+                        </a></li>
+
+                    <li class="mode">
+                        <a href="#">
+                            <i class="uil uil-moon"></i>
+                            <span class="link-name">Dark Mode</span>
+                        </a>
+
+                        <div class="mode-toggle">
+                            <span class="switch"></span>
+                        </div>
+                    </li>
+                </ul>
         </div>
     </nav>
 
@@ -289,16 +302,17 @@
 
             <!-- MAIN AREA -->
 
-            <!-- row 1 -->
-            <div class= "container-fluid " style="display: flex;">
-                <div class="container " id="booking-line-chart" ></div>
-                <div class="boxes container " style="display: flex; flex-direction: column; width:40vw;">
-                    <div class="h2 text-center  bg-secondary rounded-lg container p-3 ml-3 mr-3">
+            <!------------------------------- row 1 --------------------------------------->
+
+            <div class="row " >
+                <div class="col-lg-8 " id="booking-line-chart" ></div>
+                <div class="col-sm-3">
+                    <div class="h2 text-center border-bottom rounded-lg container p-3 ml-3 mr-3">
                         <!-- <i class="uil uil-thumbs-up"></i> -->
-                        <span >Total Employees</span>
+                        <span>Total Employees</span>
                         <span id="totalEmployees"></span>
                     </div>
-                    <div class="h2 text-center bg-secondary rounded-lg container p-3 ml-3 mr-3 mt-5 mb-5 " >
+                    <div class="h2 text-center bg-secondary rounded-lg container p-3 ml-3 mr-3 mt-5 mb-5 ">
                         <!-- <i class="uil uil-comments"></i> -->
                         <span class="text">Total Buses</span>
                         <span class="number" id="totalBuses"></span>
@@ -313,11 +327,10 @@
 
             <hr style="margin: 2rem;">
 
-            <!-- row 2 -->
-            <div class= "row " style="display: flex;">
-                <div class="col ml-3" id="route-piechart-div" style="border: 1px solid #ccc;"></div>
-                <div class="col ml-4 mr-4" id="route-barchart-div" style="border: 1px solid #ccc"></div>
-                <div class="col-4">
+            <!------------------------------- row 2 --------------------------------------->
+
+            <div class="row ">
+                <div class="col-sm-2">
                     <div class="container bg-info">
                         <i class="uil uil-thumbs-up"></i>
                         <span class="text">Total Buses</span>
@@ -334,68 +347,40 @@
                         <span class="number">10,120</span>
                     </div>
                 </div>
+                <div class="col-md-4 ml-4 mr-4" id="route-barchart-div" style="border: 1px solid #ccc"></div>
+                <div class="col-md-4 ml-3" id="route-piechart-div" style="border: 1px solid #ccc;"></div>
             </div>
 
 
             <hr style="margin: 2rem;">
 
             <!-- row 3 -->
-            <div class="container" style="display: flex; flex-direction: row; justify-content: space-between; width: 100%">
-                <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
-                <div id="bus-barchart-div" style="border: 1px solid #ccc"></div>
-                <div>
-                    <div class="box box1">
-                        <i class="uil uil-thumbs-up"></i>
-                        <span class="text">Total Buses</span>
-                        <span class="number">50,120</span>
-                    </div>
-                    <div class="box box2">
-                        <i class="uil uil-comments"></i>
-                        <span class="text">Employees</span>
-                        <span class="number">20,120</span>
-                    </div>
-                    <div class="box box3">
-                        <i class="uil uil-share"></i>
-                        <span class="text">Total Routes</span>
-                        <span class="number">10,120</span>
+            <div class="row justify-content-between">
+                <div class="col-md-4 ml-3" id="bus-piechart-div" style="border: 1px solid #ccc"></div>
+                <div class="col-md-4 ml-4 mr-4" id="bus-barchart-div" style="border: 1px solid #ccc"></div>
+                <div class="col-sm-2">
+                    <div>
+                        <div class="box box1">
+                            <i class="uil uil-thumbs-up"></i>
+                            <span class="text">Total Buses</span>
+                            <span class="number">50,120</span>
+                        </div>
+                        <div class="box box2">
+                            <i class="uil uil-comments"></i>
+                            <span class="text">Employees</span>
+                            <span class="number">20,120</span>
+                        </div>
+                        <div class="box box3">
+                            <i class="uil uil-share"></i>
+                            <span class="text">Total Routes</span>
+                            <span class="number">10,120</span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
+            </div>
     </section>
 
-
-
-
-    <!-- <div id="chart_div" style="width: 80vw; align-items: center; justify-content: center; display: flex;"> -->
-
-
-    <!-- <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
-            <table class="columns">
-                <tr>
-                    <td>
-                        <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                    <td>
-                        <div id="route-barchart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                    <td>
-                        <div id="bus-barchart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-                <tr>
-                
-                    <td>
-                        <div id="booking-line-chart" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-            </table> -->
     </div>
 
 
