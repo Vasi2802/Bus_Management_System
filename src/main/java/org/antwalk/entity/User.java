@@ -36,6 +36,7 @@ public class User {
 //	@Column(name = "email")
 //	private String email;
 
+	@Column(name = "role")
 	private String role;
 
 	@JsonManagedReference
@@ -151,10 +152,20 @@ public class User {
 				&& Objects.equals(userName, other.userName);
 	}
 
+	public User(Long id, String userName, String password, String role) {
+		super();
+		this.id = id;
+		this.userName = userName;
+		this.password = password;
+		this.role = role;
+	}
+
 
 //	public void setRoles(Collection<Role> roles) {
 //		this.roles = roles;
 //	}
+	
+	
 
 	
 

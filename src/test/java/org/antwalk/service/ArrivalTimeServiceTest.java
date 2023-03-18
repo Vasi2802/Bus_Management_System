@@ -15,6 +15,8 @@ import org.antwalk.entity.Route;
 import org.antwalk.entity.RouteStopId;
 import org.antwalk.entity.Stop;
 import org.antwalk.repository.ArrivalTimeRepo;
+import org.antwalk.repository.RouteRepo;
+import org.antwalk.repository.StopRepo;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,12 @@ class ArrivalTimeServiceTest {
 	
 	@MockBean
 	private ArrivalTimeRepo atRepo;
+	
+	@MockBean
+	private RouteRepo routeRepo;
+
+	@MockBean
+	private StopRepo stopRepo;
 	
 	Route r;
 	Stop s;
@@ -49,6 +57,8 @@ class ArrivalTimeServiceTest {
 	@Test
 	void testInsertArrivalTime() {
 		ArrivalTimeTable expected = new ArrivalTimeTable(composite, morning, evening);
+		
+		
 		when(atRepo.save(expected)).thenReturn(expected);
 		
 		ArrivalTimeTable actual = atService.insertArrivalTime(expected);
@@ -77,6 +87,9 @@ class ArrivalTimeServiceTest {
 		long rid = 1;
 		long sid= 5;
 		ArrivalTimeTable expected = new ArrivalTimeTable(composite, morning, evening);
+		
+		when(routeRepo.findById(rid)).thenReturn(Optional.of(r));
+		when(stopRepo.findById(sid)).thenReturn(Optional.of(s));
 		when(atRepo.findById(composite)).thenReturn(Optional.of(expected));
 		
 		ArrivalTimeTable actual = atService.getArrivalTimeById(rid, sid);
@@ -87,15 +100,56 @@ class ArrivalTimeServiceTest {
 	void testDeleteArrivalTimeById() {
 		long rid = 1;
 		long sid= 5;
+		
 		ArrivalTimeTable at = new ArrivalTimeTable(composite, morning, evening);
+		when(routeRepo.findById(rid)).thenReturn(Optional.of(r));
+		when(stopRepo.findById(sid)).thenReturn(Optional.of(s));
 		atService.deleteArrivalTimeById(rid, sid);
 		
 		verify(atRepo, times(1)).deleteById(composite);
 	}
-//
-//	@Test
-//	void testUpdateArrivalTimeById() {
-//		fail("Not yet implemented");
-//	}
+
+	@Test
+	void testUpdateArrivalTimeById() {
+		String expected1 = "Arrival Time Updated";
+		String expected2 = "Arrival Time exists but your input id does not match with the existing Arrival Time id";
+		String expected3 = "Arrival Time does not exist";
+		
+		long rid = 1;
+		long sid= 5;
+		
+		ArrivalTimeTable at = new ArrivalTimeTable(composite, morning, evening);
+		List<ArrivalTimeTable> atList = new ArrayList<>();
+		atList.add(at);
+		
+		at.setEveningArrivalTime(LocalTime.of(18, 25));
+		
+		when(routeRepo.findById(rid)).thenReturn(Optional.of(r));
+		when(stopRepo.findById(sid)).thenReturn(Optional.of(s));
+		
+		when(atRepo.findAll()).thenReturn(atList);
+		when(atRepo.save(at)).thenReturn(at);
+		
+		String actual1 = atService.updateArrivalTimeById(at, rid, sid);
+		assertEquals(expected1, actual1);
+		
+		Route newRoute = new Route(5, new Stop(3, "s3"), new Stop(12, "s12"), "yes");
+		Stop newStop = new Stop(8, "s8");
+		LocalTime newMorning = LocalTime.of(7, 50);
+		LocalTime newEvening = LocalTime.of(18, 20);
+		RouteStopId newcomposite = new RouteStopId(newRoute,newStop);
+		ArrivalTimeTable newAt = new ArrivalTimeTable(newcomposite, newMorning, newEvening);
+		
+		when(routeRepo.findById((long) 5)).thenReturn(Optional.of(newRoute));
+		when(stopRepo.findById((long) 8)).thenReturn(Optional.of(newStop));
+		
+		when(atRepo.save(newAt)).thenReturn(newAt);
+		
+		String actual2 = atService.updateArrivalTimeById(newAt, rid, sid);
+		assertEquals(expected2, actual2);
+	
+		String actual3 = atService.updateArrivalTimeById(newAt, 5, 8);
+		assertEquals(expected3, actual3);
+	}
 
 }

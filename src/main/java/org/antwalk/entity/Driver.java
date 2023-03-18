@@ -99,6 +99,16 @@ public class Driver {
 		this.user = user;
 		this.bus = bus;
 	}
+	
+	
+
+	public Driver(long did, String driverName, String driverContactNo, User user) {
+		super();
+		this.did = did;
+		this.driverName = driverName;
+		this.driverContactNo = driverContactNo;
+		this.user = user;
+	}
 
 	@Override
 	public int hashCode() {

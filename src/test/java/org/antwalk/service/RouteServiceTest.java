@@ -52,7 +52,7 @@ class RouteServiceTest {
 	void testGetAllRoutes() {
 		List<Route> expected = new ArrayList<>();
 		Route r1 = new Route(1, start, end,active);
-		Route r2 = new Route(2, new Stop(2,"s2"), new Stop(8, "s8"),active);
+		Route r2 = new Route(2, new Stop(2,"s2"), new Stop(8, "s8"), active);
 		expected.add(r1);
 		expected.add(r2);
 
