@@ -68,6 +68,15 @@ public class Admin {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+
+	public Admin(long aid, String contactNo, User user) {
+		super();
+		this.aid = aid;
+		this.contactNo = contactNo;
+		this.user = user;
+	}
 
 	@Override
 	public int hashCode() {
