@@ -62,7 +62,7 @@
                 let stops = routesMap[routeId];
                 // console.log(routeId, routeObj, stops );
                 routesList.innerHTML += `<option rid=${routeId}>
-                                                        <p>${stops[0].name} -> ${stops[stops.length-1].name}</p>
+                                                        <p>${stops[0].name} -> ${stops[stops.length - 1].name}</p>
                                                     </option>`;
             });
         })
@@ -112,7 +112,7 @@
 
             console.log("got this bus ", bus);
 
-            $.ajax({
+            await $.ajax({
                 headers: {
                     Accept: 'application/json', //imp
                 },
@@ -123,13 +123,18 @@
                 contentType: "application/json", //imp
                 success: function (response) {
                     console.log("added", response);
+                    setTimeout(() => {
+                        // window.location.href = "/admin/managebus";
+                        console.log('Waited 1s');
+                    }, 10000);
+                    
                 },
                 error: function () {
                     alert('Error occured');
                 }
             });
 
-            window.location.href= "/admin/managebus"
+
 
         }
     </script>

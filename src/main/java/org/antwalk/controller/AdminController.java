@@ -241,7 +241,7 @@ public class AdminController {
 	// PASSENGER COUNT FOR EACH BUS
 
 	@GetMapping("/analytics/passenger-count-per-bus")
-	public Map<String, Integer> passengerCoutntPerBus() {
+	public Map<String, Integer> passengerCountPerBus() {
 		Map<Bus, Integer> busFreq = busService.getPassesngersPerBus();
 		Map<String, Integer> busFreqWithDesc = new HashMap<>();
 		for (Bus bus : busFreq.keySet()) {
@@ -271,6 +271,14 @@ public class AdminController {
 		statistics.put("totalBuses", busService.getAllBus().size());
 		statistics.put("totalSeats", busService.getTotalSeatsOfAll());
 		statistics.put("totalSeatsBooked", busService.getTotalBookedSeats());
+
+		statistics.put("mostWaitlistedRoute", adminService.getMostWaitlistedRoute());
+		statistics.put("mostWaitlistedBus", adminService.getMostWaitlistedBus());
+		statistics.put("totalInWaitlist", adminService.getTotalInWaitlist());
+		
+		statistics.put("totalPassengers", busService.getTotalBookedSeats());
+		statistics.put("mostUsedBus", (int)busService.getMostUsedBus());
+		statistics.put("mostUsedRoute", (int)busService.getMostUsedRoute());
 
 		return statistics;
 	}
@@ -575,11 +583,11 @@ public class AdminController {
 		return driverService.insertDriver(d);	
 	}
 
-	@GetMapping("/addBus")
-	public ModelAndView AddBus(){
-		ModelAndView mv = new ModelAndView("addBus");
-		return mv;
-	}
+	// @GetMapping("/addBus")
+	// public ModelAndView AddBus(){
+	// 	ModelAndView mv = new ModelAndView("addBus");
+	// 	return mv;
+	// }
 
 	@GetMapping("/getallroutesasstopslist")
 	public Map<Long, List<Stop>> getAllRoutesAsListOfStop() {

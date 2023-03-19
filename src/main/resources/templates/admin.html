@@ -87,7 +87,7 @@
                 }
             });
 
-            // --------------------------- BOOKING PER MONTH ENDS -------------------------
+            // --------------------------- BOOKING PER MONTH STARTS  -------------------------
             var bookingFreq;
             await $.ajax({
                 headers: {
@@ -113,10 +113,8 @@
             bookingData.addRows(bookingFreq);
 
             var options = {
-                title: 'Bookings Per Month For This Year',
+                // title: 'Bookings Per Month For This Year',
                 legend: { position: 'bottom' },
-                width: "70vw",
-                height: "50vh",
                 dataOpacity: 0.8,
                 pointsVisible: true
 
@@ -139,13 +137,10 @@
 
             // Set chart options
             var piechart_options = {
-                width: 400,
-                height: 300
+                legend: { position: 'bottom' },
             };
             var barchart_options = {
-                width: 400,
-                height: 300,
-                legend: 'none'
+                legend: { position: 'bottom' }
             };
 
             var piechart = new google.visualization.PieChart(document.getElementById('route-piechart-div'));
@@ -175,6 +170,13 @@
                     document.getElementById("totalEmployees").innerHTML = `${stats?.totalEmployees}`;
                     document.getElementById("totalBuses").innerText = `${stats?.totalBuses}`;
                     document.getElementById('bookingRatio').innerText = `${stats?.totalSeatsBooked}/${stats.totalSeats}`;
+
+                    document.getElementById("mostWaitlistedRoute").innerText = `${stats?.mostWaitlistedRoute}`;
+                    document.getElementById("mostWaitlistedBus").innerText = `${stats?.mostWaitlistedBus}`;
+                    document.getElementById("totalInWaitlist").innerText = `${stats?.totalInWaitlist}`;
+                    document.getElementById("totalPassengers").innerText = `${stats?.totalPassengers}`;
+                    document.getElementById("mostUsedBus").innerText = `${stats?.mostUsedBus}`;
+                    document.getElementById("mostUsedRoute").innerText = `${stats?.mostUsedRoute}`;
                 },
                 error: function () {
                     alert('Error occured in getting stats');
@@ -273,8 +275,9 @@
     <section class="dashboard">
 
         <!-- NAVBAR -->
-        <div class="top ">
-            <i class="uil uil-bars sidebar-toggle"></i>
+        <div class="top "
+            >
+            <i class="uil uil-bars sidebar-toggle "></i>
 
             <div class="search-box">
                 <i class="uil uil-search"></i>
@@ -286,93 +289,129 @@
 
         <!-- PAGE HEADING -->
         <div class="dash-content ">
-            <div class="overview justify-content-between flex-row">
-                <h1 class="pb-2 mt-4 mb-2 border-bottom">
+            <div class="overview justify-content-between flex-row" style="display: flex;">
+                <h1 class="pb-2 mt-4 mb-2">
                     <i class="uil uil-tachometer-fast-alt"></i>
-                    <span class="text">Analytics</span>
+                    <span class="text">Dashboard</span>
                 </h1>
 
+                <a class="mt-5" href="/admin/analytics/downlaod-report">
+                    <button class="btn btn-outline-secondary">Download Report</button>
+                </a>
+                
+
+            </div>
+
+            <!-- SEPARATOR -->
+            <div class="mb-5 mt-1 rounded-lg"
+                style="width: 100%; 
+                height: 10px; 
+                background: linear-gradient(90deg, rgba(5,36,201,1) 0%, rgba(0,58,203,1) 22%, rgba(255,255,255,0) 100%);"
+                >
             </div>
 
             <!-- MAIN AREA -->
 
             <!------------------------------- row 1 --------------------------------------->
+            
 
-            <div class="row " >
-                <div class="col-lg-8 " id="booking-line-chart" ></div>
+            <div class="row justify-content-between">
+                <div class="col-lg-8 card ml-2">
+                    <div class="card-header">Bookings Per Month for in the current year</div>
+                    <div class="card-body" id="booking-line-chart"></div>
+                </div>
                 <div class="col-sm-3">
-                    <div class="h2 text-center border-bottom rounded-lg container p-3 ml-3 mr-3">
-                        <!-- <i class="uil uil-thumbs-up"></i> -->
-                        <span>Total Employees</span>
-                        <span id="totalEmployees"></span>
+                    <div class="card m-2">
+                        <h3 class="card-header rounded-top badge-primary h4">Total Employees</h3>
+                        <span class="card-body rounded-bottom badge-light" id="totalEmployees"></span>
                     </div>
-                    <div class="h2 text-center bg-secondary rounded-lg container p-3 ml-3 mr-3 mt-5 mb-5 ">
-                        <!-- <i class="uil uil-comments"></i> -->
-                        <span class="text">Total Buses</span>
-                        <span class="number" id="totalBuses"></span>
+                    <div class="card m-2">
+                        <span class="card-header rounded-top badge-primary h4">Total Buses</span>
+                        <span class="card-body rounded-bottom badge-light" id="totalBuses"></span>
                     </div>
-                    <div class="h2 text-center bg-secondary rounded-lg container p-3 ml-3 mr-3">
-                        <!-- <i class="uil uil-share"></i> -->
-                        <span class="text">Booked/ Seats</span>
-                        <span class="number" id="bookingRatio"></span>
+                    <div class="card m-2">
+                        <span class="card-header rounded-top badge-primary h4">Booking Ratio</span>
+                        <span class="card-body rounded-bottom badge-light" id="bookingRatio"></span>
                     </div>
                 </div>
             </div>
 
-            <hr style="margin: 2rem;">
+            <!-- SEPARATOR -->
+            <div class="mb-5 mt-5 rounded-lg"
+                style="width: 100%; 
+                height: 10px; 
+                background: linear-gradient(90deg, rgba(5,36,201,1) 0%, rgba(0,58,203,1) 22%, rgba(255,255,255,0) 100%);"
+                >
+            </div>
 
             <!------------------------------- row 2 --------------------------------------->
 
-            <div class="row ">
-                <div class="col-sm-2">
-                    <div class="container bg-info">
-                        <i class="uil uil-thumbs-up"></i>
-                        <span class="text">Total Buses</span>
-                        <span class="number">50,120</span>
+            <div class="row justify-content-between mr-2">
+                <div class="col-sm-3">
+                    <div class="card m-2">
+                        <span class="card-header rounded-top badge-primary">Most Waitlisted Route</span>
+                        <span class="card-body rounded-bottom badge-light " id="mostWaitlistedRoute"></span>
                     </div>
-                    <div class="box box2">
-                        <i class="uil uil-comments"></i>
-                        <span class="text">Employees</span>
-                        <span class="number">20,120</span>
+                    <div class="card m-2">
+                        <span class="card-header rounded-top badge-primary">Most Waitlisted Bus</span>
+                        <span class="card-body rounded-bottom badge-light " id="mostWaitlistedBus"></span>
                     </div>
-                    <div class="box box3">
-                        <i class="uil uil-share"></i>
-                        <span class="text">Total Routes</span>
-                        <span class="number">10,120</span>
+                    <div class="card m-2">
+                        <span class="card-header rounded-top badge-primary">Total In Waitlist</span>
+                        <span class="card-body rounded-bottom badge-light" id="totalInWaitlist"></span>
                     </div>
                 </div>
-                <div class="col-md-4 ml-4 mr-4" id="route-barchart-div" style="border: 1px solid #ccc"></div>
+                <div class="col-md-4 card">
+                    <div class="card-header">Waiting List per Route</div>
+                    <div class="card-body" id="route-barchart-div"></div>
+                </div>
+                <div class="col-md-4 card">
+                    <div class="card-header">Waiting List per Route</div>
+                    <div class="card-body" id="route-piechart-div"></div>
+                </div>
+                <!-- <div class="col-md-4 ml-4 mr-4" id="route-barchart-div" style="border: 1px solid #ccc"></div> -->
+                <!-- <div class="col-md-4 ml-3" id="route-piechart-div" style="border: 1px solid #ccc;"></div> -->
+            </div>
+
+            <!-- SEPARATOR -->
+            <div class="mb-5 mt-5 rounded-lg"
+                style="width: 100%; 
+                height: 10px; 
+                background: linear-gradient(90deg, rgba(5,36,201,1) 0%, rgba(0,58,203,1) 22%, rgba(255,255,255,0) 100%);"
+                >
+            </div>
+
+            <!-- row 3 -->
+            <div class="row justify-content-between mr-2">
+                <div class="col-md-4 card">
+                    <div class="card-header">Passenger Count Per Bus</div>
+                    <div class="card-body" id="bus-piechart-div"></div>
+                </div>
+                <div class="col-md-4 card">
+                    <div class="card-header">Passenger Count Per Bus</div>
+                    <div class="card-body" id="bus-barchart-div"></div>
+                </div>
+                <!-- <div class="col-md-4 ml-3" id="bus-piechart-div" style="border: 1px solid #ccc"></div>
+                <div class="col-md-4 ml-4 mr-4" id="bus-barchart-div" style="border: 1px solid #ccc"></div> -->
+                <div class="col-sm-3">
+                    <div class="card m-2">
+                        <span class="card-header rounded-top badge-primary">Total Passengers</span>
+                        <span class="card-body rounded-bottom badge-light " id="totalPassengers"></span>
+                    </div>
+                    <div class="card m-2">
+                        <span class="card-header rounded-top badge-primary">Most Used Bus</span>
+                        <span class="card-body rounded-bottom badge-light " id="mostUsedBus"></span>
+                    </div>
+                    <div class="card m-2">
+                        <span class="card-header rounded-top badge-primary">Most Used Route</span>
+                        <span class="card-body rounded-bottom badge-light" id="mostUsedRoute"></span>
+                    </div>
+                </div>
+                <div class="col-md-4 ml-4 mr-4 " id="route-barchart-div" style="border: 1px solid #ccc"></div>
                 <div class="col-md-4 ml-3" id="route-piechart-div" style="border: 1px solid #ccc;"></div>
             </div>
 
-
-            <hr style="margin: 2rem;">
-
-            <!-- row 3 -->
-            <div class="row justify-content-between">
-                <div class="col-md-4 ml-3" id="bus-piechart-div" style="border: 1px solid #ccc"></div>
-                <div class="col-md-4 ml-4 mr-4" id="bus-barchart-div" style="border: 1px solid #ccc"></div>
-                <div class="col-sm-2">
-                    <div>
-                        <div class="box box1">
-                            <i class="uil uil-thumbs-up"></i>
-                            <span class="text">Total Buses</span>
-                            <span class="number">50,120</span>
-                        </div>
-                        <div class="box box2">
-                            <i class="uil uil-comments"></i>
-                            <span class="text">Employees</span>
-                            <span class="number">20,120</span>
-                        </div>
-                        <div class="box box3">
-                            <i class="uil uil-share"></i>
-                            <span class="text">Total Routes</span>
-                            <span class="number">10,120</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+        </div>
     </section>
 
     </div>

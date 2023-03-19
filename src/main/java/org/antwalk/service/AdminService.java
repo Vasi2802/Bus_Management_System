@@ -3,7 +3,9 @@ package org.antwalk.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -13,6 +15,7 @@ import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.Route;
+import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.AdminRepo;
 import org.antwalk.repository.ArrivalTimeRepo;
 import org.antwalk.repository.BookingDetailsRepo;
@@ -38,7 +41,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 public class AdminService {
 
@@ -50,13 +52,12 @@ public class AdminService {
 	@Autowired
 	private BookingDetailsService bookingDetailsService;
 
-
 	@Autowired
 	private EmployeeService employeeService;
 
 	@Autowired
 	private BusRepo busRepo;
-	
+
 	@Autowired
 	private WaitingListRepo waitingListRepo;
 
@@ -74,7 +75,7 @@ public class AdminService {
 
 	@Autowired
 	private EmployeeRepo employeeRepo;
-	
+
 	public Admin insertAdmin(Admin a) {
 		return adminRepo.save(a);
 	}
@@ -87,8 +88,6 @@ public class AdminService {
 		return adminRepo.findById(id).get();
 	}
 
-
-	
 	public String deleteAdminById(long id) {
 		adminRepo.deleteById(id);
 		return "Admin Deleted";
@@ -113,8 +112,6 @@ public class AdminService {
 
 	}
 
-	
-	
 	public ResponseEntity<Resource> generateReport() {
 
 		LocalDate today = LocalDate.now();
@@ -131,13 +128,14 @@ public class AdminService {
 		sheet.setColumnWidth(3, 2000);
 		sheet.setColumnWidth(4, 10000);
 
-		// =================================== Header Creation =======================================
+		// =================================== Header Creation
+		// =======================================
 
 		{
 			Row header = sheet.createRow(0);
 
 			CellStyle headerStyle = workbook.createCellStyle();
-			// headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());	
+			// headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
 			// headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 			headerStyle.setWrapText(true);
 
@@ -214,60 +212,56 @@ public class AdminService {
 
 		InputStreamResource file = new InputStreamResource(inputStream);
 
-
-		
 		return ResponseEntity.ok()
-		.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
-		// .contentLength(file.length())
-		.contentType(MediaType.APPLICATION_OCTET_STREAM)
-		.body(file);
-		
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+				// .contentLength(file.length())
+				.contentType(MediaType.APPLICATION_OCTET_STREAM)
+				.body(file);
+
 	}
 
 	@Transactional
-	public String deleteEmployee(long employeeId){
-		String message= "";
+	public String deleteEmployee(long employeeId) {
+		String message = "";
 		Optional<Employee> employeeOptional = employeeRepo.findById(employeeId);
-		if(employeeOptional.isPresent()){
+		if (employeeOptional.isPresent()) {
 			Employee employee = employeeOptional.get();
-			
+
 			// removes booking or waiting
-			employeeService.removeBooking(employee.getEid()); 
+			employeeService.removeBooking(employee.getEid());
 			message += "Booking/Waiting removed";
 
-			// delete employee 
+			// delete employee
 			entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
-	        entityManager.remove(employee);
-	        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
-	        
+			entityManager.remove(employee);
+			entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+
 			// delete booking details associated with this employee
 			bookingDetailsRepo.deleteByE(employee);
 
 			// delete user associated with this employee
 			userRepo.delete(employee.getUser());
 
-
 			message += "employee deleted";
 
-		}
-		else
+		} else
 			message = "employee not found";
 		return message;
 	}
 
-    public String deleteBus(long busId) {
+	public String deleteBus(long busId) {
 		Optional<Bus> busOptional = busRepo.findById(busId);
 		String message = "";
-		if(busOptional.isPresent()){
+		if (busOptional.isPresent()) {
 			Bus bus = busOptional.get();
-			
+
 			// Remove all waitingList Entry associated with this bus
 			waitingListRepo.deleteAllByB(bus);
 			message += "waitLists Removed\n";
-			
+
 			// Remove All Employee's booking associated with this bus
 			List<Employee> employees = employeeRepo.findAllByB(bus);
-			for(Employee employee: employees){
+			for (Employee employee : employees) {
 				employeeService.removeBooking(employee.getEid());
 			}
 			message += "employees' bus removed \n";
@@ -279,20 +273,19 @@ public class AdminService {
 			// delete bus
 			busRepo.delete(bus);
 
-		}
-		else{
+		} else {
 			message = "bus does not exist";
 		}
-        return message;
-    }
+		return message;
+	}
 
 	@Transactional
-    public String deleteRoute(long routeId) {
-		String message="";
+	public String deleteRoute(long routeId) {
+		String message = "";
 		Optional<Route> routeOptional = routeRepo.findById(routeId);
-		if(routeOptional.isPresent()){
+		if (routeOptional.isPresent()) {
 			Route route = routeOptional.get();
-			
+
 			// remove buses associated with the route
 			busRepo.deleteByR(route);
 			message += "buses removed += \n";
@@ -304,12 +297,58 @@ public class AdminService {
 			// remove route table entry
 			routeRepo.delete(route);
 
-		}
-		else{
+		} else {
 			message = "Route Id Invalid";
 		}
-        return message;
-    }
+		return message;
+	}
 
+	public int getMostWaitlistedRoute() {
+		List<WaitingList> waitingLists = waitingListRepo.findAll();
+		List<Route> routes = routeRepo.findAll();
+		Map<Route, Long> routeCount = new HashMap<>();
+		Route mostWaitlistedRoute = null;
+		long count=0;
+		for (Route route : routes) {
+			long freq = getCountWaitingListByRoute(route.getRid());
+			routeCount.put(route, freq);
+		}
+		try {
+			mostWaitlistedRoute = routeCount.entrySet().stream()
+					.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();
+			count = routeCount.entrySet().stream()
+					.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getValue();
+		} catch (Exception e) {
+			return 0;
+		}
+		if (count != 0) {
+			return (int) mostWaitlistedRoute.getRid();
+		}
+		return 0;
+
+	}
+
+	public int getMostWaitlistedBus() {
+		List<WaitingList> waitingLists = waitingListRepo.findAll();
+		Map<Bus, Integer> waitingPerBus = new HashMap<>();
+		for (WaitingList waitingList : waitingLists) {
+			Bus bus = waitingList.getB();
+			int freq = waitingPerBus.getOrDefault(bus, 0);
+			waitingPerBus.put(bus, freq + 1);
+		}
+		if (waitingPerBus.size() == 0) {
+			return 0;
+		}
+		return waitingPerBus.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
+				.get().getValue();
+	}
+
+	public int getTotalInWaitlist() {
+		return waitingListRepo.findAll().size();
+	}
+
+	private long getCountWaitingListByRoute(long rid) {
+		return 0;
+	}
 
 }
