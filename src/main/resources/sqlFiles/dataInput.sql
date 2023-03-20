@@ -1,9 +1,7 @@
 -- data for stop table
 
-desc stop;
-select * from stop;
-select * from route;
-
+-- desc stop;
+-- select * from stop;
 
 insert into stop(name) values
 ('Belgharia'),
@@ -56,8 +54,8 @@ insert into stop(name) values
 
 -- data for route table
 
-desc route;
-select * from route;
+-- desc route;
+-- select * from route;
 
 insert into route(active,start,end) values
 ('YES', 1, 12);
@@ -77,8 +75,8 @@ insert into route(active,start,end) values
 
 -- data for time table
 
-desc time;
-select * from time;
+-- desc time;
+-- select * from time;
 
 insert into time(route_id, stop_id, morning_arrival_time, evening_arrival_time) values
 (1,1,'06:50','19:10'),
@@ -148,9 +146,36 @@ insert into time(route_id, stop_id, morning_arrival_time, evening_arrival_time) 
 (5,38,'08:25','17:35'),
 (5,12,'08:30','17:30');
 
+-- data for global_db
+-- desc global_db;
+
+insert into global_db(username) values
+('subhashreem@trainee.nrifintech.com'),
+('anupama@trainee.nrifintech.com'),
+('shreyanshs@trainee.nrifintech.com'),
+('ankitag@trainee.nrifintech.com'),
+('achyutm@trainee.nrifintech.com'),
+('mohammadv@trainee.nrifintech.com'),
+('arijitse@trainee.nrifintech.com'),
+('prajeetg@trainee.nrifintech.com'),
+('shreyar@trainee.nrifintech.com'),
+('abhijits@trainee.nrifintech.com'),
+('roshans@nrifintech.com'),
+('anuragb@nrifintech.com'),
+('annweshak@nrifintech.com'),
+('suchetanc@nrifintech.com'),
+('anikets@nrifintech.com'),
+('swairikd@nrifintech.com'),
+('rajarshigd@nrifintech.com'),
+('subhs@nrifintech.com'),
+('satwikkp@nrifintech.com'),
+('monidepag@nrifintech.com'),
+('pragyaj@nrifintech.com'),
+('sagniks@trainee.nrifintech.com');
+
 -- data for user table
 
-desc user;
+-- desc user;
 select * from user;
 
 insert into user(username, password, role) values
@@ -184,19 +209,20 @@ insert into user(username, password, role) values
 ('anikets@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE'),
 ('swairikd@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE'),
 ('rajarshigd@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE'),
-('subhs@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE'),
-('satikkp@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE'),
+('shubhs@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE'),
+('satwikkp@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE'),
 ('monidepag@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE'),
 ('pragyaj@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE'),
 ('sagniks@trainee.nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_EMPLOYEE');
 
-
+insert into user(username, password, role) values
+('admin@nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_ADMIN');
 
 
 -- data for driver table
 
-desc driver;
-select * from driver;
+-- desc driver;
+-- select * from driver;
 
 insert into driver(driver_name, driver_contact, auth_id) values
 ('Anuj Sharma', '1234567890', 1),
@@ -210,25 +236,74 @@ insert into driver(driver_name, driver_contact, auth_id) values
 ('Rahul Kumar', '9876543210', 9),
 ('Sahil Mullick', '120000000789', 10);
 
+
 -- data for bus table
 
-desc bus;
-select * from bus;
+-- desc bus;
 
-insert into bus(start_time, total_seats, available_seats, bus_route, driver_id) values
-('06:40', 20,20, 1, 1),
-('06:40', 15,15, 1, 2),
-('06:35', 25,25, 2, 3),
-('06:35', 5,5, 2, 4),
-('06:50', 20,20, 3, 5),
-('06:50', 20,20, 3, 6),
-('06:05', 25,25, 4, 7),
-('06:05', 5,5, 4, 8),
-('07:45', 20,20, 5, 9);
+insert into bus(total_seats, available_seats, bus_route, driver_id) values
+(20,18, 1, 1),
+(15,15, 1, 2),
+(25,23, 2, 3),
+(1,0, 2, 4),
+(20,20, 3, 5),
+(20,20, 3, 6),
+(25,24, 4, 7),
+(5,5, 4, 8),
+(20,18, 5, 9);
+
+-- data for employee table
+
+-- desc employee;
+-- select * from employee;
+
+insert into employee(name, contact_no, bus_id, auth_id) values
+('Subhashree Mitra', '9836281074', 1, 11),
+('Anupam Adhikari', '1234567890', 3, 12),
+('Shreyansh Sahu', '2345678901', 7, 13),
+('Ankita Gupta', '4567890123', 9, 14),
+('Achyut Madhawan', '3456789012', 9, 15),
+('Mohammad Vasi', '5678901234', 3, 16),
+('Prajeet Guha', '6789012345', 4, 18),
+('Shreya Rai', '4567890123', 1, 19);
+
+insert into employee(name, contact_no, bus_id, auth_id) values
+('Arijit Seal', '1234567890', null, 17),
+('Abhijit Singh', '1234567890', null, 20),
+('Roshan Kumar Singh', '2345678901', null, 21),
+('Anurag Bakode', '4567890123', null, 22),
+('Annwesha Kayal', '3456789012', null, 23),
+('Suchetan Chanda', '5678901234', null, 24),
+('Aniket Saha', '6789012345', null, 25),
+('Swairik Dey', '4567890123', null, 26),
+('Rajarshi Ghosh Dastidar', '4567890123', null, 27),
+('Shubh Saxena', '4567890123', null, 28),
+('Satwik Kant Poddar', '4567890123', null, 29),
+('Monidepa Ghosh', '4567890123', null, 30),
+('Pragya Joshi', '4567890123', null, 31),
+('Sagnik Sinha', '4567890123', null, 32);
 
 
 
+-- data for booking details
 
+-- desc booking_details;
+-- select * from booking_details;
 
+insert into booking_details(emp_id, bus_id, booking_for_month) values
+(1, 1, '2023-03-25'),
+(2, 3, '2023-03-25'),
+(3, 7, '2023-03-26'),
+(4, 9, '2023-03-27'),
+(5, 9, '2023-03-25'),
+(6, 3, '2023-03-26'),
+(7, 4, '2023-03-27'),
+(8, 1, '2023-03-28');
 
+-- data for waiting list table
 
+-- select * from waiting_list;
+
+insert into waiting_list(emp_id, bus_id) values
+(9,4),
+(10,4);

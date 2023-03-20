@@ -9,6 +9,8 @@ import java.util.Optional;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
+import org.antwalk.entity.History;
+import org.antwalk.entity.Route;
 import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.BookingDetailsRepo;
 import org.antwalk.repository.BusRepo;
@@ -40,21 +42,26 @@ public class EmployeeService {
 	@Autowired
 	private BookingDetailsRepo bookingDetailsRepo;
 
-
 	@Autowired
 	private EntityManager entityManager;
 
 	@Autowired
 	private EmployeeRepo empRepo;
-	
+
+	@Autowired
+	private ArrivalTimeService arrivalTimeService;
+
+	@Autowired
+	private HistoryService historyService;
+
 	public Employee insertEmployee(Employee e) {
 		return empRepo.save(e);
 	}
-	
-	public List<Employee> getAllEmployees(){
+
+	public List<Employee> getAllEmployees() {
 		return empRepo.findAll();
 	}
-	
+
 	public Employee getEmployeeById(long id) {
 		return empRepo.findById(id).get();
 	}
@@ -64,27 +71,39 @@ public class EmployeeService {
 		return "Employee Deleted";
 	}
 
-
 	@Transactional
-	public void updateEmployeeById(Long id,String contact, String name) {
+	public void updateEmployeeById(Long id, String contact, String name) {
 		empRepo.getById(id).setContactNo(contact);
 		empRepo.getById(id).setName(name);
 	}
 
 	public String removeBooking(long employeeId) {
-		
+
 		String message = "";
-		Employee employee = empRepo.findById(employeeId).get(); 
+		Employee employee = empRepo.findById(employeeId).get();
 
 		// if employee has a bus ID, remove it
-		
+
 		if (employee.getB() != null) {
 			Bus bus = busRepo.getById(employee.getB().getBid());
-			message += String.format("Removed busId=%d from employee=%s\n", employee.getB().getBid(), employee.getName());
+			message += String.format("Removed busId=%d from employee=%s\n", employee.getB().getBid(),
+					employee.getName());
 			employee.setB(null);
 			empRepo.save(employee);
 			bus.setAvailableSeats(bus.getAvailableSeats() + 1);
 			busRepo.save(bus);
+
+			// ---------- Add entry to history table
+			Route route = bus.getR();
+			String routeDescription = arrivalTimeService.getRouteDescription(route.getRid());
+			historyService.add(new History(0L,
+					employee.getEid(),
+					LocalDate.now(),
+					bus.getBid(),
+					route.getRid(),
+					routeDescription,
+					"Booking Remove"));
+			// -------------------------------------------
 
 			// ----------------------------------------------------------
 			// trigger to add first employee from waiting list to booking
@@ -112,18 +131,39 @@ public class EmployeeService {
 						.println(topEmployee.getName() + " from waitList has been assigned busID "
 								+ topEmployee.getB().getBid());
 
+				// ---------- Add entry to history table
+				historyService.add(new History(0L,
+						topEmployee.getEid(),
+						LocalDate.now(),
+						bus.getBid(),
+						route.getRid(),
+						routeDescription,
+						"Waitlist Remove"));
+				// -------------------------------------------
 			}
 
 		}
-		
+
 		Optional optionalWaitingList = waitingListRepo.findByE(employee);
 		if (optionalWaitingList.isPresent()) {
 			WaitingList waitingList = (WaitingList) optionalWaitingList.get();
 			message += String.format("Removed waitingList entry with WID=%d", waitingList.getWid());
 			waitingListRepo.deleteById(waitingList.getWid());
+
+			// ---------- Add entry to history table
+			Bus bus = waitingList.getB();
+			Route route = bus.getR();
+			String routeDescription = arrivalTimeService.getRouteDescription(route.getRid());
+			historyService.add(new History(0L,
+					employee.getEid(),
+					LocalDate.now(),
+					bus.getBid(),
+					route.getRid(),
+					routeDescription,
+					"Waitlist Remove"));
+			// -------------------------------------------
 		}
 
-		
 		return message;
 	}
 
@@ -133,11 +173,7 @@ public class EmployeeService {
 		System.out.println("bus id =" + busId + "  empId = " + eid + "=============");
 		Bus bus = busRepo.findById(busId).get();
 		Employee employee = empRepo.findById(eid).get();
-		LocalDate todayDate = LocalDate.now(); // current date goes in booking details
-		// .withDayOfMonth(1); // gets day 1 of current month
-		// LocalDate nextMonthDay1 = todaydate.plusMonths(1); // gets first day of next
-		// month
-		// System.out.println(todaydate.plusMonths(1).toString());
+		LocalDate todayDate = LocalDate.now();
 		Date date = Date.valueOf(todayDate);
 
 		// prevents an employee in waitingList to book a bus
@@ -162,6 +198,19 @@ public class EmployeeService {
 		if (bus.getAvailableSeats() <= 0) {
 			WaitingList waitingList = new WaitingList(0, employee, bus);
 			waitingListRepo.save(waitingList);
+
+			// ---------- Add entry to history table
+			Route route = bus.getR();
+			String routeDescription = arrivalTimeService.getRouteDescription(route.getRid());
+			historyService.add(new History(0L,
+					employee.getEid(),
+					LocalDate.now(),
+					bus.getBid(),
+					route.getRid(),
+					routeDescription,
+					"Waitlist Add"));
+			// -------------------------------------------
+
 			return String.format("Hi %s!\nYou have been added to waitlist for bus with id=%d.\n Your waitlist id=%d",
 					employee.getName(), bus.getBid(), waitingList.getWid());
 		}
@@ -176,21 +225,29 @@ public class EmployeeService {
 		System.out.println(employee + " has booked the bus");
 		empRepo.save(employee);
 
+		// ---------- Add entry to history table
+		Route route = bus.getR();
+		String routeDescription = arrivalTimeService.getRouteDescription(route.getRid());
+		historyService.add(new History(0L,
+				employee.getEid(),
+				LocalDate.now(),
+				bus.getBid(),
+				route.getRid(),
+				routeDescription,
+				"Booking Add"));
+		// -------------------------------------------
+
 		return String.format("Hi %s!\nYou have successfully booked Bus with id=%d", employee.getName(), bus.getBid());
 
 	}
 
-
-
-
-
 	@Transactional
 	public void deleteemployee(Long id) {
-	    Employee emp = entityManager.find(Employee.class,id);
-	    if (emp != null) {
-	        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
-	        entityManager.remove(emp);
-	        entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
-	    }
+		Employee emp = entityManager.find(Employee.class, id);
+		if (emp != null) {
+			entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
+			entityManager.remove(emp);
+			entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
+		}
 	}
 }

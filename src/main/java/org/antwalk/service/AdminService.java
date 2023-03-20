@@ -3,6 +3,7 @@ package org.antwalk.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.antwalk.entity.Admin;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
+import org.antwalk.entity.History;
 import org.antwalk.entity.Route;
 import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.AdminRepo;
@@ -75,6 +77,9 @@ public class AdminService {
 
 	@Autowired
 	private EmployeeRepo employeeRepo;
+
+	@Autowired
+	private HistoryService historyService;
 
 	public Admin insertAdmin(Admin a) {
 		return adminRepo.save(a);
@@ -220,10 +225,117 @@ public class AdminService {
 
 	}
 
+	public ResponseEntity<Resource> generateStatsReport() {
+		LocalDate today = LocalDate.now();
+		List<History> historyList = historyService.getAllForPeriod(today.withDayOfMonth(1),
+				today.withDayOfMonth(today.lengthOfMonth()));
+
+		System.out.println(historyList);
+
+		Map<Long, String> routeDescriptionMap = new HashMap<>();
+		Map<Long, Integer> routeDemandMap = new HashMap<>();
+
+		for(History history: historyList){
+			if(history.getTransactionType().contains("Add")){
+				long routeId = history.getRouteId();
+				int prevValue = routeDemandMap.getOrDefault(routeId, 0);
+				routeDemandMap.put(routeId, prevValue+1);
+				routeDescriptionMap.putIfAbsent(routeId, history.getRouteDescription());
+			}
+		}
+
+		System.out.println("Aa" + historyList);
+
+		Workbook workbook = new XSSFWorkbook();
+
+		Sheet sheet = workbook.createSheet("Route_Stats_for_" + today.getMonth().name());
+		sheet.setColumnWidth(0, 4000);
+		sheet.setColumnWidth(1, 20000);
+		sheet.setColumnWidth(2, 5000);
+
+
+		// =================================== Header Creation
+		// =======================================
+
+		{
+			Row header = sheet.createRow(0);
+
+			CellStyle headerStyle = workbook.createCellStyle();
+			// headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+			// headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setWrapText(true);
+
+			XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+			font.setFontName("Arial");
+			font.setFontHeightInPoints((short) 12);
+			font.setBold(true);
+			headerStyle.setFont(font);
+
+			Cell headerCell = header.createCell(0);
+			headerCell.setCellValue("Route ID");
+			headerCell.setCellStyle(headerStyle);
+
+			headerCell = header.createCell(1);
+			headerCell.setCellValue("Route Description");
+			headerCell.setCellStyle(headerStyle);
+
+			headerCell = header.createCell(2);
+			headerCell.setCellValue("Demand");
+			headerCell.setCellStyle(headerStyle);
+
+		}
+
+		// ======================= TABLE CREATION ================================
+
+		int rowNum = 2;
+		for (long routeId : routeDemandMap.keySet()) {
+			CellStyle style = workbook.createCellStyle();
+			style.setWrapText(false);
+
+			Row row = sheet.createRow(rowNum);
+
+			Cell cell = row.createCell(0);
+			cell.setCellValue(routeId);
+			cell.setCellStyle(style);
+
+			cell = row.createCell(1);
+			cell.setCellValue(routeDescriptionMap.getOrDefault(routeId, "Route ID"+routeId));
+			cell.setCellStyle(style);
+
+			cell = row.createCell(2);
+			cell.setCellValue(routeDemandMap.getOrDefault(routeId, 0));
+			cell.setCellStyle(style);
+
+			rowNum += 1;
+		}
+
+		String fileName = "Route_Stats_For_" + today.getMonth().name() + ".xlsx";
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		try {
+			workbook.write(outputStream);
+			workbook.close();
+		} catch (IOException e) {
+			System.out.println("IO EXCEPTION");
+		}
+
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+		InputStreamResource file = new InputStreamResource(inputStream);
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+				// .contentLength(file.length())
+				.contentType(MediaType.APPLICATION_OCTET_STREAM)
+				.body(file);
+
+	}
+
 	@Transactional
 	public String deleteEmployee(long employeeId) {
 
-		// System.out.println("employee id to be deleted = "+employeeId+" " +(employeeId+1));
+		// System.out.println("employee id to be deleted = "+employeeId+" "
+		// +(employeeId+1));
 		String message = "";
 		Optional<Employee> employeeOptional = employeeRepo.findByEid(employeeId);
 		if (employeeOptional.isPresent()) {
@@ -232,7 +344,7 @@ public class AdminService {
 			// removes booking or waiting
 			employeeService.removeBooking(employee.getEid());
 			message += "Booking/Waiting removed";
-			
+
 			// delete booking details associated with this employee
 			bookingDetailsRepo.deleteByE(employee);
 
@@ -289,10 +401,9 @@ public class AdminService {
 		if (routeOptional.isPresent()) {
 			Route route = routeOptional.get();
 
-			
 			// remove buses associated with the route
 			List<Bus> busList = busRepo.findAllByR(route);
-			for(Bus bus: busList){
+			for (Bus bus : busList) {
 				deleteBus(bus.getBid());
 			}
 			message += "buses removed \n";
@@ -315,7 +426,7 @@ public class AdminService {
 		List<Route> routes = routeRepo.findAll();
 		Map<Route, Long> routeCount = new HashMap<>();
 		Route mostWaitlistedRoute = null;
-		long count=0;
+		long count = 0;
 		for (Route route : routes) {
 			long freq = getCountWaitingListByRoute(route.getRid());
 			routeCount.put(route, freq);
@@ -324,14 +435,18 @@ public class AdminService {
 			mostWaitlistedRoute = routeCount.entrySet().stream()
 					.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();
 			count = routeCount.entrySet().stream()
-					.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getValue();
+			.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getValue();
+			System.out.println("count = "+count);
+			System.out.println("most = "+mostWaitlistedRoute.getRid());
 		} catch (Exception e) {
+			System.out.println("error");
 			return 0;
 		}
 		if (count != 0) {
+			System.out.println("count ="+count);
 			return (int) mostWaitlistedRoute.getRid();
 		}
-		return 0;
+		return (int)mostWaitlistedRoute.getRid();
 
 	}
 
@@ -346,8 +461,8 @@ public class AdminService {
 		if (waitingPerBus.size() == 0) {
 			return 0;
 		}
-		return waitingPerBus.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
-				.get().getValue();
+		return (int)waitingPerBus.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
+				.get().getKey().getBid();
 	}
 
 	public int getTotalInWaitlist() {

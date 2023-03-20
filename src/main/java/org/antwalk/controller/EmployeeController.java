@@ -26,6 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
+import org.antwalk.entity.History;
+import org.antwalk.entity.Route;
 import org.antwalk.entity.Stop;
 import org.antwalk.entity.User;
 import org.antwalk.entity.WaitingList;
@@ -39,6 +41,8 @@ import org.antwalk.repository.WaitingListRepo;
 import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.EmployeeService;
+import org.antwalk.service.HistoryService;
+import org.antwalk.service.RouteService;
 import org.antwalk.service.WaitingListService;
 import org.antwalk.user.CrmUser;
 import org.antwalk.user.UpdateProfile;
@@ -71,10 +75,10 @@ public class EmployeeController {
 
 	@Autowired
 	RouteRepo routeRepo;
-	
+
 	@Autowired
 	ArrivalTimeService timeserv;
-	
+
 	@Autowired
 	BusRepo busRepo;
 
@@ -92,19 +96,26 @@ public class EmployeeController {
 
 	@Autowired
 	EmployeeService employeeService;
-	
+
 	@Autowired
 	WaitingListService waitingListService;
 
 	@Autowired
 	BookingDetailsService bookingDetailsService;
 
+	@Autowired
+	HistoryService historyService;
+
+	@Autowired
+	RouteService routeService;
+
+	@Autowired
+	ArrivalTimeService arrivalTimeService;
+
 	@PostMapping("/insert")
 	public Employee insert(@RequestBody Employee e) {
 		return empRepo.save(e);
 	}
-
-
 
 	@DeleteMapping("/deletebyid/{id}")
 	public String deleteById(@PathVariable long id) {
@@ -146,83 +157,76 @@ public class EmployeeController {
 	public ModelAndView releaseseat(HttpServletRequest request) {
 		ModelAndView modelAndView = new ModelAndView("release-seat-form");
 		HttpSession session = request.getSession();
-	    User user = (User)session.getAttribute("emp");
+		User user = (User) session.getAttribute("emp");
 		Employee employee = employeeService.getEmployeeById(user.getEmployee().getEid());
 		Optional<WaitingList> waitingListOptional = waitingListRepo.findByE(employee);
-	    if(employee.getB()==null && waitingListOptional.isEmpty()) {
-	    	modelAndView = new ModelAndView("error-seat-form");
-	    	return modelAndView;
-	    }	
-	    
+		if (employee.getB() == null && waitingListOptional.isEmpty()) {
+			modelAndView = new ModelAndView("error-seat-form");
+			return modelAndView;
+		}
 
 		return modelAndView;
 	}
-	
-	
 
-	
-
-	
 	@GetMapping("/showbookingdetails")
 	public ModelAndView booking(HttpServletRequest request) {
-		
+
 		ModelAndView modelAndView = new ModelAndView("employee-booking-details");
 		HttpSession session = request.getSession();
-	    User user = (User)session.getAttribute("emp");
+		User user = (User) session.getAttribute("emp");
 		Employee employee = employeeService.getEmployeeById(user.getEmployee().getEid());
-	    if(employee.getB()==null) {
-	    	modelAndView = new ModelAndView("error-booking-details");
-	    return modelAndView;
-	    }	
-	    return modelAndView;
-	}
-
-	
-	@GetMapping("/trackbus")
-	public ModelAndView trackbus(HttpServletRequest request) {
-		
-		ModelAndView modelAndView = new ModelAndView("employee-track-bus");
-		HttpSession session = request.getSession();
-	    User user = (User)session.getAttribute("emp");
-		Employee employee = employeeService.getEmployeeById(user.getEmployee().getEid());
-	    if(employee.getB()==null) {
-	    	modelAndView = new ModelAndView("error-track-bus");
-	    	return modelAndView;
-	    }
-	    
-	    Long rid = employee.getB().getR().getRid();
-	    
-	    LocalTime currentTime = LocalTime.now(); // get the current time
-	    LocalTime noon = LocalTime.of(12, 0); // set noon time to 12:00 PM
-	    
-		
-		  if (currentTime.isBefore(noon)) { List<Stop> stops=
-		  timeserv.getStopsByRouteId(rid, "morning"); List<ArrivalTimeTable> aAndS =
-		  timeserv.getAllStopsWithTimeByRouteId(rid, "morning");
-		  
-		  modelAndView.addObject("arrTime", aAndS);
-		  
-		  modelAndView.addObject("end", "NRIFINTECH");
-		  modelAndView.addObject("allStops", stops); } else {
-		 
-	    	List<Stop> stops= timeserv.getStopsByRouteId(rid, "evening");
-	    	List<ArrivalTimeTable> aAndS = timeserv.getAllStopsWithTimeByRouteId(rid, "evening");
-	    
-	    	modelAndView.addObject("arrTime", aAndS);
-	    	modelAndView.addObject("start", "NRIFINTECH");
-	    	modelAndView.addObject("allStops", stops);
-	    }
-	    
+		if (employee.getB() == null) {
+			modelAndView = new ModelAndView("error-booking-details");
+			return modelAndView;
+		}
 		return modelAndView;
 	}
-//	Route route = routeRepo.getById(id);
-//	List<Stop> stops = route.ge
+
+	@GetMapping("/trackbus")
+	public ModelAndView trackbus(HttpServletRequest request) {
+
+		ModelAndView modelAndView = new ModelAndView("employee-track-bus");
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("emp");
+		Employee employee = employeeService.getEmployeeById(user.getEmployee().getEid());
+		if (employee.getB() == null) {
+			modelAndView = new ModelAndView("error-track-bus");
+			return modelAndView;
+		}
+
+		Long rid = employee.getB().getR().getRid();
+
+		LocalTime currentTime = LocalTime.now(); // get the current time
+		LocalTime noon = LocalTime.of(12, 0); // set noon time to 12:00 PM
+
+		if (currentTime.isBefore(noon)) {
+			List<Stop> stops = timeserv.getStopsByRouteId(rid, "morning");
+			List<ArrivalTimeTable> aAndS = timeserv.getAllStopsWithTimeByRouteId(rid, "morning");
+
+			modelAndView.addObject("arrTime", aAndS);
+
+			modelAndView.addObject("end", "NRIFINTECH");
+			modelAndView.addObject("allStops", stops);
+		} else {
+
+			List<Stop> stops = timeserv.getStopsByRouteId(rid, "evening");
+			List<ArrivalTimeTable> aAndS = timeserv.getAllStopsWithTimeByRouteId(rid, "evening");
+
+			modelAndView.addObject("arrTime", aAndS);
+			modelAndView.addObject("start", "NRIFINTECH");
+			modelAndView.addObject("allStops", stops);
+		}
+
+		return modelAndView;
+	}
+
+	// Route route = routeRepo.getById(id);
+	// List<Stop> stops = route.ge
 	public ModelAndView trackbus() {
 		System.out.println("Working");
 		ModelAndView modelAndView = new ModelAndView("employee-track-bus");
 		return modelAndView;
 	}
-
 
 	@GetMapping("/book")
 	public ModelAndView book() {
@@ -239,12 +243,13 @@ public class EmployeeController {
 		// stops.add(new Stop(4, "Stop4"));
 		// stops.add(new Stop(5, "Stop5"));
 	}
-	
+
 	@GetMapping("/sos")
 	public ModelAndView sos() {
 		ModelAndView modelAndView = new ModelAndView("viewsos");
 		return modelAndView;
 	}
+
 	@GetMapping("/edit")
 	public ModelAndView employeeEditForm() {
 		ModelAndView modelAndView = new ModelAndView("employeeEdit");
@@ -280,35 +285,31 @@ public class EmployeeController {
 	}
 
 	@PostMapping(value = "/bookABusByBusId/{busId}")
-	public ResponseEntity<String> bookABusByBusId(@RequestBody Long eid, @PathVariable long busId,HttpServletRequest request) {
-
+	public ResponseEntity<String> bookABusByBusId(@RequestBody Long eid, @PathVariable long busId,
+			HttpServletRequest request) {
 
 		System.out.println("Booking Bus For ==============");
 		System.out.println("bus id =" + busId + "  empId = " + eid + "=============");
 		Bus bus = busRepo.findById(busId).get();
 		Employee employee = empRepo.findById(eid).get();
-		LocalDate todayDate = LocalDate.now(); // current date goes in booking details
-		// .withDayOfMonth(1); // gets day 1 of current month
-		// LocalDate nextMonthDay1 = todaydate.plusMonths(1); // gets first day of next
-		// month
-		// System.out.println(todaydate.plusMonths(1).toString());
+		LocalDate todayDate = LocalDate.now();
+
 		Date date = Date.valueOf(todayDate);
-		// prevents an employee in waitingList to book a bus
+
 		if (waitingListRepo.findByE(employee).isPresent()) {
 			WaitingList waitingList = waitingListRepo.findByE(employee).get();
 			System.out.println("======================================");
 			System.out.println(" EMployee " + employee + " in waitingList");
-//			return String.format(
-//					"Sorry %s. \nYou are already in the waiting List. \nYour waitList details are WID=%d\t EID=%d\t BusId=%d. \nTo book, you must cancel your waiting List",
-//					employee.getName(), waitingList.getWid(), waitingList.getE().getEid(), waitingList.getB().getBid());
+
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are already in a waiting list ");
 
 		}
 
 		// prevents an employee to book more than 1 bus/seat for current month
 		if (employee.getB() != null) {
-//			return String.format("Sorry %s. \nYou can book only 1 bus seat in a month. \nYour current bus ID is %s",
-//					employee.getName(), employee.getB().getBid());
+			// return String.format("Sorry %s. \nYou can book only 1 bus seat in a month.
+			// \nYour current bus ID is %s",
+			// employee.getName(), employee.getB().getBid());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You can only book 1 seat");
 
 		}
@@ -317,8 +318,22 @@ public class EmployeeController {
 		if (bus.getAvailableSeats() <= 0) {
 			WaitingList waitingList = new WaitingList(0, employee, bus);
 			waitingListRepo.save(waitingList);
-//			return String.format("Hi %s!\nYou have been added to waitlist for bus with id=%d.\n Your waitlist id=%d",
-//					employee.getName(), bus.getBid(), waitingList.getWid());
+			// return String.format("Hi %s!\nYou have been added to waitlist for bus with
+			// id=%d.\n Your waitlist id=%d",
+			// employee.getName(), bus.getBid(), waitingList.getWid());
+
+			// ---------- Add entry to history table
+			Route route = bus.getR();
+			String routeDescription = arrivalTimeService.getRouteDescription(route.getRid());
+			historyService.add(new History(0L,
+					employee.getEid(),
+					LocalDate.now(),
+					bus.getBid(),
+					route.getRid(),
+					routeDescription,
+					"Waitlist Add"));
+			// -------------------------------------------
+
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Added to waiting List");
 
 		}
@@ -332,16 +347,20 @@ public class EmployeeController {
 		System.out.println("======================================");
 		System.out.println(employee + " has booked the bus");
 		empRepo.save(employee);
-		
-		
-		// HttpSession session = request.getSession();
-		
-	    // User emp = (User)session.getAttribute("emp");
-	    // emp.getEmployee().setB(bus);
-	    // session.setAttribute("emp", emp);
-	    
-//		return String.format("Hi %s!\nYou have successfully booked Bus with id=%d", employee.getName(), bus.getBid());
-		 return ResponseEntity.ok("Successfully Booked");
+
+		// ---------- Add entry to history table
+		Route route = bus.getR();
+		String routeDescription = arrivalTimeService.getRouteDescription(route.getRid());
+		historyService.add(new History(0L,
+				employee.getEid(),
+				LocalDate.now(),
+				bus.getBid(),
+				route.getRid(),
+				routeDescription,
+				"Booking Add"));
+		// -------------------------------------------
+
+		return ResponseEntity.ok("Successfully Booked");
 
 	}
 
@@ -360,8 +379,6 @@ public class EmployeeController {
 		String message = "";
 		Employee employee = empRepo.findById(employeeId).get();
 
-		
-		
 		if (employee.getB() != null) {
 			Bus bus = busRepo.getById(employee.getB().getBid());
 			message += String.format("Removed busId=%d from employee=%s\n", employee.getB().getBid(),
@@ -370,6 +387,18 @@ public class EmployeeController {
 			empRepo.save(employee);
 			bus.setAvailableSeats(bus.getAvailableSeats() + 1);
 			busRepo.save(bus);
+
+			// ---------- Add entry to history table
+			Route route = bus.getR();
+			String routeDescription = arrivalTimeService.getRouteDescription(route.getRid());
+			historyService.add(new History(0L,
+					employee.getEid(),
+					LocalDate.now(),
+					bus.getBid(),
+					route.getRid(),
+					routeDescription,
+					"Booking Remove"));
+			// -------------------------------------------
 
 			// ----------------------------------------------------------
 			// trigger to add first employee from waiting list to booking
@@ -389,26 +418,22 @@ public class EmployeeController {
 				// get the employee
 				Employee topEmployee = waitingList.getE();
 
-//				String messageForBooking = bookABusByBusId(topEmployee.getEid(), bus.getBid(), null);
-//
-//				System.out.println(messageForBooking);
+				// book bus for top employee
+				employeeService.bookABusByBusId(topEmployee.getEid(), bus.getBid());
 
-				// // add booking details
-				// LocalDate today = LocalDate.now();
-				// BookingDetails bookingDetails = new BookingDetails(0, employee, bus,
-				// Date.valueOf(today));
-
-				// // assign bus Id to employee
-				// employee.setB(bus);
-				// empRepo.save(employee);
-
-				// // reduce bus Seats
-				// bus.setAvailableSeats(bus.getAvailableSeats() - 1);
-				// busRepo.save(bus);
-
-				System.out
-						.println(topEmployee.getName() + " from waitList has been assigned busID "
-								+ topEmployee.getB().getBid());
+				System.out.println(topEmployee.getName() +
+						" from waitList has been assigned busID " +
+						topEmployee.getB().getBid());
+				
+				// ---------- Add entry to history table
+				historyService.add(new History(0L,
+						topEmployee.getEid(),
+						LocalDate.now(),
+						bus.getBid(),
+						route.getRid(),
+						routeDescription,
+						"Waitlist Remove"));
+				// -------------------------------------------
 
 			}
 
@@ -418,11 +443,23 @@ public class EmployeeController {
 		Optional optionalWaitingList = waitingListRepo.findByE(employee);
 		if (optionalWaitingList.isPresent()) {
 			WaitingList waitingList = (WaitingList) optionalWaitingList.get();
+			Bus bus = waitingList.getB();
 			message += String.format("Removed waitingList entry with WID=%d", waitingList.getWid());
 			waitingListRepo.deleteById(waitingList.getWid());
+
+			// ---------- Add entry to history table
+			Route route = bus.getR();
+			String routeDescription = arrivalTimeService.getRouteDescription(route.getRid());
+			historyService.add(new History(0L,
+					employee.getEid(),
+					LocalDate.now(),
+					bus.getBid(),
+					route.getRid(),
+					routeDescription,
+					"Waitlist Remove"));
+			// -------------------------------------------
 		}
 
-		
 		return message;
 
 	}
@@ -433,19 +470,17 @@ public class EmployeeController {
 		Employee employee = employeeService.getEmployeeById(eid);
 		employeeDashboardDetails.put("name", employee.getName());
 		employeeDashboardDetails.put("phoneNo", employee.getContactNo());
-		employeeDashboardDetails.put("email",  employee.getUser().getUserName());
-		if(employee.getB()!=null){
-			employeeDashboardDetails.put("busId", ""+employee.getB().getBid());
+		employeeDashboardDetails.put("email", employee.getUser().getUserName());
+		if (employee.getB() != null) {
+			employeeDashboardDetails.put("busId", "" + employee.getB().getBid());
 			employeeDashboardDetails.put("bookingStatus", "Bus Seat Reserved");
-		}
-		else{
+		} else {
 			employeeDashboardDetails.put("busId", "NA");
 			Optional<WaitingList> waitList = waitingListRepo.findByE(employee);
-			if(waitList.isPresent()){
+			if (waitList.isPresent()) {
 				employeeDashboardDetails.put("bookingStatus", "In Waitlist");
-			}
-			else{
-				employeeDashboardDetails.put("bookingStatus", "Not booked");	
+			} else {
+				employeeDashboardDetails.put("bookingStatus", "Not booked");
 			}
 		}
 		return employeeDashboardDetails;
@@ -461,18 +496,18 @@ public class EmployeeController {
 		String driverContactNo = "NA";
 		String busStatus = "NA";
 		System.out.println("hello");
-		if(employee.getB()!=null){
+		if (employee.getB() != null) {
 			Bus bus = employee.getB();
-			busNo = "" +bus.getBid();
+			busNo = "" + bus.getBid();
 			Driver driver = bus.getD();
-			busStatus= bus.getStartTime()!=null? bus.getStartTime().toString():"Journey Not started";
-			if(driver!=null){
+			busStatus = bus.getStartTime() != null ? bus.getStartTime().toString() : "Journey Not started";
+			if (driver != null) {
 				driverName = driver.getDriverName();
 				driverContactNo = driver.getDriverContactNo();
 			}
-			
+
 			BookingDetails bookingDetails = bookingDetailsService.findMostRecentBooking(employee, bus);
-			if(bookingDetails!=null){
+			if (bookingDetails != null) {
 				bookingId = "" + bookingDetails.getBookingId();
 			}
 		}
@@ -482,7 +517,7 @@ public class EmployeeController {
 		employeeBookingDetails.put("driverName", driverName);
 		employeeBookingDetails.put("driverContactNo", driverContactNo);
 		employeeBookingDetails.put("busStatus", busStatus);
-		return employeeBookingDetails;		
+		return employeeBookingDetails;
 	}
 
 }

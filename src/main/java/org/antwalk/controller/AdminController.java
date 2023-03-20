@@ -283,12 +283,17 @@ public class AdminController {
 		return statistics;
 	}
 
-	// GENERATE REPORT
+	// GENERATE REPORT FOR ACCOUNTS DEPARTMENT
 	@GetMapping("/analytics/downlaod-report")
 	public ResponseEntity<Resource> downloadReport() {
 		return adminService.generateReport();
 	}
 
+	// GENERATE REPORT FOR ROUTE STATISTICS
+	@GetMapping("/analytics/download-stats-report")
+	public ResponseEntity<Resource> downloadStatsReport() {
+		return adminService.generateStatsReport();
+	}
 	// DELETE EMPLOYEE
 	/*
 	 * Deletes associated-
