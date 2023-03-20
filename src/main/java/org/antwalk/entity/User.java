@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -21,10 +22,12 @@ public class User {
 	@Column(name = "id")
 	private Long id;
 
-	@Column(name = "username")
+	@Column(name = "username", unique=true)
+	@NotNull
 	private String userName;
 
 	@Column(name = "password")
+	@NotNull
 	private String password;
 
 //	@Column(name = "first_name")
@@ -37,6 +40,7 @@ public class User {
 //	private String email;
 
 	@Column(name = "role")
+	@NotNull
 	private String role;
 
 	@JsonManagedReference

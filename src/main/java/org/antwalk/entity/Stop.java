@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="stop")
@@ -19,6 +20,7 @@ public class Stop {
 	private long sid;
 	
 	@Column(name="name",unique=true)
+	@NotNull
 	private String name;
 
 	

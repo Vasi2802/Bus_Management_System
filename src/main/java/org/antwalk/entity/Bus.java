@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -27,9 +28,11 @@ public class Bus {
 	private long bid;
 	
 	@Column(name="total_seats")
+	@NotNull
 	private int totalSeats;
 	
 	@Column(name="available_seats")
+	@NotNull
 	private int availableSeats;
 	
 	@Column(name="start_time")

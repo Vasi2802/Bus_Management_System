@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -36,8 +37,9 @@ public class Employee {
 
 
 	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "auth_id", referencedColumnName = "id")
+	@JoinColumn(name = "auth_id", referencedColumnName = "id", unique=true)
 	@JsonBackReference
+	@NotNull
 	private User user;
 
 	public User getUser() {

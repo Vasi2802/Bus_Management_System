@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -34,7 +35,8 @@ public class Driver {
 
 	@JsonBackReference
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "auth_id", referencedColumnName = "id")
+	@JoinColumn(name = "auth_id", referencedColumnName = "id", unique = true)
+	@NotNull
 	private User user;
 	
 	@JsonManagedReference
