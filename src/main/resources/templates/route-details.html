@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
   integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
@@ -11,6 +12,12 @@
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
   integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
   crossorigin=""></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js" ></script>
+<script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-database.js" ></script>
+
+  <style>
+
+  </style>
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="/css/home_style.css">
      
@@ -21,31 +28,200 @@
 	<!-- from other file -->
 	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-    </script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
     </script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
     </script>
+	<script th:inline="javascript">
+        /*<![CDATA[*/
+  	  	var cutoffTimes = /*[[${arrTime}]]*/ []; 
+        /*]]>*/
 
-    <title>Route Details </title> 
+    </script>
+	<style>
+	#map{
+	margin: auto;;
+	 width: 50%;
+       border: 2px solid black;
+  padding: 10px;
+     height:500px;
+	}
+.hellotrack {
+height: 2px !important;
+background-color: #488978;
+opacity: 1;
+}
+
+.dot {
+height: 10px;
+width: 10px;
+margin-left: 3px;
+margin-right: 3px;
+margin-top: 0px;
+background-color: #488978;
+border-radius: 50%;
+display: inline-block
+}
+
+.big-dot {
+height: 25px;
+width: 25px;
+margin-left: 0px;
+margin-right: 0px;
+margin-top: 0px;
+background-color: #488978;
+border-radius: 100%;
+display: inline-block;
+}
+
+.big-dot i {
+font-size: 12px;
+}
+
+.card-stepper {
+z-index: 0
+}
+#clock{
+font-size:30px;
+color:lightgreen;
+}
+@media (max-width: 767px) {
+  span {
+    font-size: 10px;
+  }
+  #clock{
+  font-size: 25px;
+  }
+  #map{
+width: 100%;
+     height:300px;
+	}
+  }
+
+@media (max-width: 427px) {
+  span {
+    font-size: 5px;
+  }
+  }
+  
+@font-face{
+    font-family: 'Digital-7';
+    src:  url('fonts/digital-7.ttf') format('woff2'),   b ,g,mdrx
+    url('digital-7.woff') format('woff');
+}
+.clockdate-wrapper {
+    background: #141E30;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    padding:3px;
+    padding-left:50px;
+    padding-right:50px;
+    width:100%;
+    text-align:center;
+    border-radius:5px;
+    margin:0 auto;
+  
+}
+#clock{
+    font-family: Digital-7, 'sans-serif';
+    text-shadow:0px 0px 1px #fff;
+    color:#fff;
+}
+#clock span {
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow:0px 0px 1px #333;
+    font-size:15px;
+    position:relative;
+}
+</style>
+
+
+    <script>
+    //getroutebylistofstops
+           
+        console.log(eid);
+        var employee;
+        var bus;
+        setInterval(() => {
+        	  // Get the current time
+        	  const now = new Date();
+
+        	  // Format the time as hh:mm:ss
+        	  const hours = now.getHours().toString().padStart(2, '0');
+        	  const minutes = now.getMinutes().toString().padStart(2, '0');
+        	  const seconds = now.getSeconds().toString().padStart(2, '0');
+        	  const time = `${hours}:${minutes}:${seconds}`;
+        	  
+        	  $('#clock').text(time);
+        	  
+  
+      	    var ids = ["#pipe1","#pipe2","#pipe3","#pipe4","#pipe5","#pipe6","#pipe7","#pipe8","#pipe9","#pipe10","#pipe11","#pipefinal"]; // list of IDs
+      	    var threshold = new Date(); // create a new Date object for the cutoff time
+      	    threshold.setHours(12);
+
+      	    var currentTime = new Date(); // get the current time
+      	    for (var i = 0; i < cutoffTimes.length; i++) {
+      	        var cutoffTime = new Date(); // create a new Date object for the cutoff time
+
+      	        if (currentTime.getTime()<=threshold.getTime()) {
+          	        var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
+          	      .split(':');
+          	            	        var hours1 = parseInt(cutoffTimeParts[0]);
+          	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
+      	            cutoffTime.setHours(hours1);
+      	            cutoffTime.setMinutes(minutes1);
+      	            cutoffTime.setSeconds(0);
+      	            cutoffTime.setMilliseconds(0);
+      	            if (currentTime.getTime() >= cutoffTime.getTime()) {
+      	            	console.log(currentTime.getTime()+" "+cutoffTime.getTime());	
+      	                 $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
+      	            } else if(currentTime.getTime()>threshold.getTime()) {
+      	            	console.log("Remove past time");
+      	            	$(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
+      	            }
+      	        } else {
+      	        	var cutoffTimeParts = cutoffTimes[i].eveningArrivalTime
+            	      .split(':');
+            	            	        var hours1 = parseInt(cutoffTimeParts[0]);
+            	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
+      	            cutoffTime.setHours(hours1 - 12);
+      	            cutoffTime.setMinutes(minutes1);
+      	            cutoffTime.setSeconds(0);
+      	            cutoffTime.setMilliseconds(0);
+      	            cutoffTime.setTime(cutoffTime.getTime() + 12 * 60 * 60 * 1000); // add 12 hours for PM time
+      	            if (currentTime.getTime() >= cutoffTime.getTime()) {
+      	            	console.log("Way past time 2 "+ids[i]);
+      	            	$(ids[i]).addClass('track-line'); // add 'after-cutoff' class if current time is after the cutoff time
+      	            } 
+      	            else if (currentTime.getTime()>threshold.getTime()) {
+      	            	console.log("Remove past time");
+      	            	$(ids[i]).removeClass('track-line'); // add 'before-cutoff' class if current time is before the cutoff time
+      	            }
+      	        }
+      	    }
+        	}, 1000);
+        
+        $(document).ready(async () => {
+        	
+        });
+
+
+    </script>
+    <title>Employee Dashboard </title> 
 </head>
 <body>
                 <form th:action="@{/logout}" id="log" method="POST">
 						
 </form>
     <nav>
-        <div class="logo-name">
-            <div class="logo-image">
-                <img src="/images/logo.png" alt="">
-            </div>
+        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
 
-            <span class="logo_name">NRI Fintech</span>
-        </div>
-
-         <div class="menu-items">
+            <div class="menu-items ">
             <ul class="nav-links">
                 <li><a href="/driver" id="home">
                     <i class="uil uil-estate"></i>
@@ -91,60 +267,207 @@
         <div class="top">
         
             <i class="uil uil-bars sidebar-toggle"></i>
-			
-            <!-- <div class="search-box">
-                <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search here...">
-            </div> -->
+
+                
+                   <div id="clockdate">
+  <div class="clockdate-wrapper">
+    <div id="clock"></div>
+    <div id="date"></div>
+  </div>
+</div> 
+            
             	
-            	
+
             <img src="/images/profile.jpg" alt="">
            
         </div>
         
 <div style="margin-top:5%;">
-<span style="color:grey;" class="logout-mode"> >route-details </span><hr>
-<h3 style="color:grey;text-align:center;">Route Details</h3>
+<span style="color:grey;" class="logout-mode">>route</span><hr>
+	
+
 </div>
 <Br/>
 
-        <div class="card text-white ">
+<div>
+<!-- <div class="progress-bar">
+  <ul id="progress-bar-points">
+    <li id="point-1" class="active"></li>
+    <li id="point-2"></li>
+    <li id="point-3"></li>
+    <li id="point-4"></li>
+    <li id="point-5"></li>
+  </ul>
+  <div class="lines"></div>
+</div>
+            </div> -->
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col">
+        <div class="card card-stepper" style="border-radius: 10px;">
+          <div class="card-body p-4">
 
-            <div class="table-responsive table table-striped table-light">
-                <table class="table text-black">
-
-                    <tbody>
-                        <tr>
-                            <td>BookingId</td>
-                            <td th:text="${session.emp.getEmployee().getName()}"></td>
-                        </tr>
-                        <tr>
-                            <td>Bus Number</td>
-                            <td th:text="${session.emp.getEmployee().getContactNo()}"></td>
-                        </tr>
-                        <tr>
-                            <td>Stop Name</td>
-                            <td th:text="${session.emp.getUserName()}"></td>
-                        </tr>
-                        <tr>
-                            <td>Time of Bus Arrival</td>
-                            <td id="bus-id-display"></td>
-                            <!-- if in waitlist -->
-                            <!-- employee/getStatus returns assigned, not applied, in waitlist -->
-                        </tr>
-                        <tr>
-                           <td>Bus Status </td>
-                            <td id="bus-id-display"></td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="d-flex justify-content-between align-items-center ">
+              <div class="d-flex flex-column">
+                <span class="lead fw-normal">Bus Route</span>
+              
+              </div>
+          
             </div>
-        </div>
-    </div>
+            <hr class="my-4">
+            
 
+             <div class="d-flex flex-row justify-content-between align-items-center overflow-auto align-content-center">
+
+
+              
+    			<!-- Stop 2 -->
+
+              
+    			<span th:if="${#lists.size(allStops) > 1}" class="dot" ></span>
+              <hr th:if="${#lists.size(allStops) > 1}" id="pipe2" class="flex-fill">
+              
+              <!-- Stop 3 -->
+    			<span th:if="${#lists.size(allStops) > 2}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 2}" id="pipe3" class="flex-fill ">
+              
+               <!-- Stop 4 -->
+    			<span th:if="${#lists.size(allStops) > 3}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 3}" id="pipe4" class="flex-fill ">
+              
+               
+               <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 4}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 4}" id="pipe5" class="flex-fill ">
+                       
+              <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 5}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 5}" id="pipe6" class="flex-fill ">
+             
+             <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 6}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 6}" id="pipe7" class="flex-fill ">
+              
+              <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 7}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 7}" id="pipe8" class="flex-fill ">
+              
+              <span th:if="${#lists.size(allStops) > 7}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 7}" id="pipe8" class="flex-fill ">
+              
+              
+               <span th:if="${#lists.size(allStops) > 8}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 8}" id="pipe9" class="flex-fill ">
+              
+               <span th:if="${#lists.size(allStops) > 9}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) >9}" id="pipe10" class="flex-fill ">
+              
+               <span th:if="${#lists.size(allStops) > 10}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 10}" id="pipe11" class="flex-fill ">
+              
+              
+                       <span th:if="${#lists.size(allStops) > 11}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 11}" id="pipe11" class="flex-fill ">
+              
+              <!-- Final -->
+              <span
+                id="pipefinal" class="d-flex justify-content-center align-items-center big-dot dot">
+                
+                
+                <i class="fa fa-check text-white"></i></span> 
+                
+            </div>
+
+
+
+            <div class="d-flex flex-row justify-content-between align-items-center">
+              
+              <!-- Start -->
+            <!--   <div th:if="${start}" class="d-flex flex-column align-items-start">
+              <span th:text="${start}"></span>
+              </div> -->
+              
+				<!-- Stop 1 -->
+              <div th:if="${#lists.size(allStops) > 0}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[0].name}"></span><span  th:text="${arrTime[0].getEveningArrivalTime()}"> </span>
+              </div>
+
+			<!-- Stop 2 -->
+			<div th:if="${#lists.size(allStops) > 1}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[1].name}"></span><span  th:text="${arrTime[1].getEveningArrivalTime()}"> </span>
+              </div>
+            
+             <!-- Stop 3 -->
+            <div th:if="${#lists.size(allStops) > 2}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[2].name}"></span><span  th:text="${arrTime[2].getEveningArrivalTime()}"> </span>
+              </div>
+              
+              <!-- Stop 4 -->
+            <div th:if="${#lists.size(allStops) > 3}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[3].name}"></span><span  th:text="${arrTime[3].getEveningArrivalTime()}"> </span>
+              </div>
+                 
+               <!-- Extra -->
+            <div th:if="${#lists.size(allStops) > 4}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[4].name}"></span><span  th:text="${arrTime[4].getEveningArrivalTime()}"> </span>
+              </div>
+              
+              <!-- Extra -->
+            <div th:if="${#lists.size(allStops) > 5}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[5].name}"></span><span  th:text="${arrTime[5].getEveningArrivalTime()}"> </span>
+              </div>
+              <!-- Extra -->
+            <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getEveningArrivalTime()}"> </span>
+              </div>
+
+ <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getEveningArrivalTime()}"> </span>
+              </div>
+              
+              
+               <div th:if="${#lists.size(allStops) > 7}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[7].name}"></span><span  th:text="${arrTime[7].getEveningArrivalTime()}"> </span>
+              </div>
+              
+               <div th:if="${#lists.size(allStops) > 8}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[8].name}"></span><span  th:text="${arrTime[8].getEveningArrivalTime()}"> </span>
+              </div>
+              
+              
+               <div th:if="${#lists.size(allStops) > 9}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[9].name}"></span><span  th:text="${arrTime[9].getEveningArrivalTime()}"> </span>
+              </div>
+              
+              
+                <div th:if="${#lists.size(allStops) > 10}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[10].name}"></span><span  th:text="${arrTime[10].getEveningArrivalTime()}"> </span>
+              </div>
+
+ 			<div th:if="${#lists.size(allStops) > 11}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[11].name}"></span><span  th:text="${arrTime[11].getEveningArrivalTime()}"> </span>
+              </div>
+              <!-- Final -->
+            <!--   <div class="d-flex flex-column align-items-end">
+               <span th:text="${end}"></span>
+              </div>
+               -->
+              
+            </div>
+
+          </div>
+        </div>
+      </div>
+      
+    </div>
     
+  </div>
+
+    </div> 
+
+    </div>
     <!-- Book Bus -->
-   
+ 
 
     <script src="/script/home_script.js"></script>
  <!--    <script src="/script/navigation.js"></script> -->
