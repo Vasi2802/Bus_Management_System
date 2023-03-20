@@ -115,7 +115,6 @@ public class BookingDetailsService {
 		}
 		return bookingDetailsList;
     }
-
     public BookingDetails findMostRecentBooking(Employee employee, Bus bus) {
         List<BookingDetails> bookingDetailsList = bookingRepo.findByEAndBOrderByBookingIdDesc(employee, bus);
 		if(bookingDetailsList.size()>0)
