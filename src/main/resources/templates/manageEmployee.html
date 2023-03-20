@@ -44,15 +44,17 @@
 				},
 				type: "GET",
 				url: "/admin/delete/employee/" + employeeId,
+				dataType: "text",
 				success: function (response) {
 					console.log("deleted employee ");
+					alert(response)
+					window.location.href = "/admin/manageEmployee";
 				},
 				error: function () {
 					alert('Error occured in deleting employee');
 				}
 			});
 
-			window.location.href = "/admin/manageEmployee";
 
 		}
 	</script>

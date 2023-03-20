@@ -43,9 +43,9 @@
 	</style>
 
 	<script>
-		deleteBus = (event) => {
+		deleteBus = async (event) => {
 			busId = event.target.value;
-			$.ajax({
+			await $.ajax({
 				type: "GET",
 				url: "/admin/delete/bus/" + busId,
 				data:null,

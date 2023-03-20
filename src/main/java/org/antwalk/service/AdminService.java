@@ -222,22 +222,24 @@ public class AdminService {
 
 	@Transactional
 	public String deleteEmployee(long employeeId) {
+
+		// System.out.println("employee id to be deleted = "+employeeId+" " +(employeeId+1));
 		String message = "";
-		Optional<Employee> employeeOptional = employeeRepo.findById(employeeId);
+		Optional<Employee> employeeOptional = employeeRepo.findByEid(employeeId);
 		if (employeeOptional.isPresent()) {
 			Employee employee = employeeOptional.get();
 
 			// removes booking or waiting
 			employeeService.removeBooking(employee.getEid());
 			message += "Booking/Waiting removed";
+			
+			// delete booking details associated with this employee
+			bookingDetailsRepo.deleteByE(employee);
 
 			// delete employee
 			entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 0").executeUpdate();
-			entityManager.remove(employee);
+			employeeRepo.delete(employee);
 			entityManager.createNativeQuery("SET FOREIGN_KEY_CHECKS = 1").executeUpdate();
-
-			// delete booking details associated with this employee
-			bookingDetailsRepo.deleteByE(employee);
 
 			// delete user associated with this employee
 			userRepo.delete(employee.getUser());
@@ -249,6 +251,7 @@ public class AdminService {
 		return message;
 	}
 
+	@Transactional
 	public String deleteBus(long busId) {
 		Optional<Bus> busOptional = busRepo.findById(busId);
 		String message = "";
@@ -256,7 +259,7 @@ public class AdminService {
 			Bus bus = busOptional.get();
 
 			// Remove all waitingList Entry associated with this bus
-			waitingListRepo.deleteAllByB(bus);
+			waitingListRepo.deleteByB(bus);
 			message += "waitLists Removed\n";
 
 			// Remove All Employee's booking associated with this bus
@@ -286,9 +289,13 @@ public class AdminService {
 		if (routeOptional.isPresent()) {
 			Route route = routeOptional.get();
 
+			
 			// remove buses associated with the route
-			busRepo.deleteByR(route);
-			message += "buses removed += \n";
+			List<Bus> busList = busRepo.findAllByR(route);
+			for(Bus bus: busList){
+				deleteBus(bus.getBid());
+			}
+			message += "buses removed \n";
 
 			// remove time table entries associated with this route
 			arrivalTimeRepo.deleteByRouteStopId_Route(route);

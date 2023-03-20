@@ -26,7 +26,7 @@ public interface WaitingListRepo extends JpaRepository<WaitingList, Long>{
 
     public List<WaitingList> findAllByB(Bus bus);
 
-    public void deleteAllByB(Bus bus);
+    public void deleteByB(Bus bus);
 
     
 }
