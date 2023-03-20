@@ -118,7 +118,6 @@ public class BookingDetailsService {
 
     public BookingDetails findMostRecentBooking(Employee employee, Bus bus) {
         List<BookingDetails> bookingDetailsList = bookingRepo.findByEAndBOrderByBookingIdDesc(employee, bus);
-        System.out.println(bookingDetailsList.get(0).getBookingId());
 		if(bookingDetailsList.size()>0)
 			return bookingDetailsList.get(0);
 		else

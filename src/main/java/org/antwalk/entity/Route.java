@@ -86,25 +86,7 @@ public class Route {
 		this.active = active;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(active, end, rid, start);
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Route other = (Route) obj;
-		return Objects.equals(active, other.active) && Objects.equals(end, other.end) && rid == other.rid
-				&& Objects.equals(start, other.start);
-	}
-
-	
 	
 	
 }

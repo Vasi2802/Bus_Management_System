@@ -293,7 +293,6 @@ public class EmployeeController {
 		// month
 		// System.out.println(todaydate.plusMonths(1).toString());
 		Date date = Date.valueOf(todayDate);
-
 		// prevents an employee in waitingList to book a bus
 		if (waitingListRepo.findByE(employee).isPresent()) {
 			WaitingList waitingList = waitingListRepo.findByE(employee).get();
@@ -461,7 +460,7 @@ public class EmployeeController {
 		String driverName = "NA";
 		String driverContactNo = "NA";
 		String busStatus = "NA";
-		
+		System.out.println("hello");
 		if(employee.getB()!=null){
 			Bus bus = employee.getB();
 			busNo = "" +bus.getBid();
@@ -471,6 +470,7 @@ public class EmployeeController {
 				driverName = driver.getDriverName();
 				driverContactNo = driver.getDriverContactNo();
 			}
+			
 			BookingDetails bookingDetails = bookingDetailsService.findMostRecentBooking(employee, bus);
 			if(bookingDetails!=null){
 				bookingId = "" + bookingDetails.getBookingId();

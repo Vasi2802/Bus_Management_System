@@ -48,25 +48,7 @@ public class Stop {
 	public Stop(String name) {
 		super();
 		this.name = name;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(name, sid);
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Stop other = (Stop) obj;
-		return Objects.equals(name, other.name) && sid == other.sid;
-	}
-	
-	
+	}	
 	
 	
 }

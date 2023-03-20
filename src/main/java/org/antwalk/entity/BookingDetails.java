@@ -77,25 +77,7 @@ public class BookingDetails {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(b, bookingForMonth, bookingId, e);
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BookingDetails other = (BookingDetails) obj;
-		return Objects.equals(b, other.b) && Objects.equals(bookingForMonth, other.bookingForMonth)
-				&& bookingId == other.bookingId && Objects.equals(e, other.e);
-	}
-	
-	
 	
 	
 }

@@ -78,22 +78,4 @@ public class Admin {
 		this.user = user;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(aid, contactNo, user);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Admin other = (Admin) obj;
-		return aid == other.aid && Objects.equals(contactNo, other.contactNo) && Objects.equals(user, other.user);
-	}
-	
-	
 }
