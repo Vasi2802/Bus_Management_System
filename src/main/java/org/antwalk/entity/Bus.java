@@ -1,6 +1,7 @@
 package org.antwalk.entity;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -110,6 +111,34 @@ public class Bus {
 	public String toString() {
 		return "Bus [bid=" + bid + ", totalSeats=" + totalSeats + ", availableSeats=" + availableSeats + ", startTime="
 				+ startTime + ", d=" + d + ", r=" + r + "]";
+	}
+
+	public Bus(int totalSeats, int availableSeats, LocalTime startTime, Driver d, Route r) {
+		super();
+		this.totalSeats = totalSeats;
+		this.availableSeats = availableSeats;
+		this.startTime = startTime;
+		this.d = d;
+		this.r = r;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(availableSeats, bid, d, r, startTime, totalSeats);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Bus other = (Bus) obj;
+		return availableSeats == other.availableSeats && bid == other.bid && Objects.equals(d, other.d)
+				&& Objects.equals(r, other.r) && Objects.equals(startTime, other.startTime)
+				&& totalSeats == other.totalSeats;
 	}
 
 	

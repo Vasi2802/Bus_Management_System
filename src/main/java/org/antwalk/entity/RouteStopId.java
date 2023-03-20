@@ -24,10 +24,6 @@ public class RouteStopId implements Serializable {
 	public RouteStopId() {
 	}
 
-	public RouteStopId(Route route, Stop stop) {
-		this.route = route;
-		this.stop = stop;
-	}
 
 	public Route getRoute() {
 		return route;
@@ -82,5 +78,15 @@ public class RouteStopId implements Serializable {
 	public String toString() {
 		return "RouteStop [route=" + route + ", stop=" + stop + "]";
 	}
+
+	public RouteStopId(Route route, Stop stop) {
+		super();
+		this.route = route;
+		this.stop = stop;
+	}
+	
+	
+	
+	
 
 }

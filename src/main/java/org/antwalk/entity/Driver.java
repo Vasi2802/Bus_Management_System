@@ -1,5 +1,7 @@
 package org.antwalk.entity;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -92,6 +94,44 @@ public class Driver {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+	public Driver(String driverName, String driverContactNo, User user, Bus bus) {
+		super();
+		this.driverName = driverName;
+		this.driverContactNo = driverContactNo;
+		this.user = user;
+		this.bus = bus;
+	}
+	
+	
+
+	public Driver(long did, String driverName, String driverContactNo, User user) {
+		super();
+		this.did = did;
+		this.driverName = driverName;
+		this.driverContactNo = driverContactNo;
+		this.user = user;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(bus, did, driverContactNo, driverName, user);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Driver other = (Driver) obj;
+		return Objects.equals(bus, other.bus) && did == other.did
+				&& Objects.equals(driverContactNo, other.driverContactNo)
+				&& Objects.equals(driverName, other.driverName) && Objects.equals(user, other.user);
+	}
+	
 	
 	
 }

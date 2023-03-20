@@ -40,8 +40,7 @@ public class ArrivalTimeService {
 	}
 
 	public ArrivalTimeTable getArrivalTimeById(long rid, long sid) {
-		return arrivalTimeRepo.findById(new RouteStopId(routeRepo.findById(rid).get(), stopRepo.findById(sid).get()))
-				.get();
+		return arrivalTimeRepo.findById(new RouteStopId(routeRepo.findById(rid).get(), stopRepo.findById(sid).get())).get();
 	}
 
 	public String deleteArrivalTimeById(long rid, long sid) {

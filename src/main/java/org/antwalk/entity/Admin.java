@@ -1,5 +1,7 @@
 package org.antwalk.entity;
 
+import java.util.Objects;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -65,6 +67,32 @@ public class Admin {
 	public Admin() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+	
+	
+
+	public Admin(long aid, String contactNo, User user) {
+		super();
+		this.aid = aid;
+		this.contactNo = contactNo;
+		this.user = user;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(aid, contactNo, user);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Admin other = (Admin) obj;
+		return aid == other.aid && Objects.equals(contactNo, other.contactNo) && Objects.equals(user, other.user);
 	}
 	
 	

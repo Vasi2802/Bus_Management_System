@@ -20,7 +20,7 @@ public class Stop {
 	
 	@Column(name="name",unique=true)
 	private String name;
-	
+
 	
 	public long getSid() {
 		return sid;
@@ -43,6 +43,13 @@ public class Stop {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	public Stop(String name) {
+		super();
+		this.name = name;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(name, sid);

@@ -1,6 +1,7 @@
 package org.antwalk.entity;
 
 import java.time.LocalTime;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -55,4 +56,24 @@ public class ArrivalTimeTable {
 		this.eveningArrivalTime = eveningArrivalTime;
 	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(eveningArrivalTime, morningArrivalTime, routeStopId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ArrivalTimeTable other = (ArrivalTimeTable) obj;
+		return Objects.equals(eveningArrivalTime, other.eveningArrivalTime)
+				&& Objects.equals(morningArrivalTime, other.morningArrivalTime)
+				&& Objects.equals(routeStopId, other.routeStopId);
+	}
+	
+	
 }
