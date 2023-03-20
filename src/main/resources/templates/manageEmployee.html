@@ -36,9 +36,9 @@
 	</script>
 
 	<script>
-		deleteEmployee = (event) => {
+		deleteEmployee = async (event) => {
 			employeeId = event.target.value;
-			$.ajax({
+			await $.ajax({
 				headers: {
 					Accept: 'application/json', //imp
 				},

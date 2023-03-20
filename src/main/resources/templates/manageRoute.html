@@ -36,9 +36,9 @@
 	</script>
 
 	<script>
-		deleteRoute = (event)=>{
+		deleteRoute = async (event)=>{
 			routeId = event.target.value;
-			$.ajax({
+			await $.ajax({
             type: "GET",
             url: "/admin/delete/route/"+routeId,
 			data:null,
@@ -51,7 +51,8 @@
             }
         });
 
-        window.location.href = "/admin/manageRoute";
+		location.reload();
+        // window.location.href = "/admin/manageRoute";
 
 		}
 	</script>
