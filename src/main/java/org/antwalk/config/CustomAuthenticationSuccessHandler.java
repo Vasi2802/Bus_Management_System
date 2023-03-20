@@ -55,6 +55,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 		else if(role.equals("ROLE_DRIVER")) {
 			HttpSession session = request.getSession();
 			session.setAttribute("driver", theUser);
+			
 			// forward to home page
 			
 			response.sendRedirect(request.getContextPath() + "/driver");

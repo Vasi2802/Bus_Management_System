@@ -1,23 +1,27 @@
 package org.antwalk.service;
 
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.antwalk.entity.Bus;
 import org.antwalk.repository.BusRepo;
+import org.antwalk.repository.RouteRepo;
 import org.aspectj.apache.bcel.util.ByteSequence;
 import org.hibernate.id.IntegralDataTypeHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class BusService {
 
 	@Autowired
 	private BusRepo busRepo;
+	
+	@Autowired
+	private RouteRepo routeRepo;
+	
 
 	public Bus insertBus(Bus b) {
 		return busRepo.save(b);
@@ -30,6 +34,15 @@ public class BusService {
 	public Bus getBusById(long id) {
 		return busRepo.findById(id).get();
 	}
+	public String busStatus(long id) {
+		LocalTime res = busRepo.getById(id).getStartTime();
+		
+		if(res!=null)
+			return res.toString();
+		else
+			return "Journey not Started";
+	}
+	
 
 	public String deleteBusById(long id) {
 		busRepo.deleteById(id);

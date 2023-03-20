@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Entity
 @Table(name="route")
 public class Route {
