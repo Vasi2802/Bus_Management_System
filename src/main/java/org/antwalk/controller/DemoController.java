@@ -4,9 +4,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.antwalk.entity.Driver;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.User;
 import org.antwalk.repository.UserRepo;
+import org.antwalk.service.DriverService;
 import org.antwalk.service.EmployeeService;
 import org.antwalk.service.UserService;
 import org.antwalk.user.CrmUser;
@@ -24,6 +26,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class DemoController {
@@ -34,6 +37,9 @@ public class DemoController {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
+	@Autowired
+	DriverService driverService;
+	
 	@Autowired
 	EmployeeService empRepo;
 
@@ -47,8 +53,15 @@ public class DemoController {
 	}
 
 	@GetMapping("/driver")
-	public String showHome() {
-
+	public String showHome(HttpServletRequest request, Model model) {
+		
+		HttpSession session = request.getSession();
+	    User user = (User)session.getAttribute("driver");
+		Driver driver = driverService.getDriverById(user.getDriver().getDid());
+		
+		String res = driver.getBus().getR().getActive();
+		
+		model.addAttribute("res",res);
 		return "driver";
 	}
 
