@@ -431,6 +431,69 @@ width: 100%;
 
 
 
+           <div class="d-flex flex-row justify-content-between align-items-center overflow-auto align-content-center">
+
+
+              
+    			<!-- Stop 2 -->
+
+              
+    			<span th:if="${#lists.size(allStops) > 1}" class="dot" ></span>
+              <hr th:if="${#lists.size(allStops) > 1}" id="pipe2" class="flex-fill">
+              
+              <!-- Stop 3 -->
+    			<span th:if="${#lists.size(allStops) > 2}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 2}" id="pipe3" class="flex-fill ">
+              
+               <!-- Stop 4 -->
+    			<span th:if="${#lists.size(allStops) > 3}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 3}" id="pipe4" class="flex-fill ">
+              
+               
+               <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 4}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 4}" id="pipe5" class="flex-fill ">
+                       
+              <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 5}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 5}" id="pipe6" class="flex-fill ">
+             
+             <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 6}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 6}" id="pipe7" class="flex-fill ">
+              
+              <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 7}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 7}" id="pipe8" class="flex-fill ">
+              
+              <span th:if="${#lists.size(allStops) > 7}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 7}" id="pipe8" class="flex-fill ">
+              
+              
+               <span th:if="${#lists.size(allStops) > 8}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 8}" id="pipe9" class="flex-fill ">
+              
+               <span th:if="${#lists.size(allStops) > 9}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) >9}" id="pipe10" class="flex-fill ">
+              
+               <span th:if="${#lists.size(allStops) > 10}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 10}" id="pipe11" class="flex-fill ">
+              
+              
+                       <span th:if="${#lists.size(allStops) > 11}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 11}" id="pipe11" class="flex-fill ">
+              
+              <!-- Final -->
+              <span
+                id="pipefinal" class="d-flex justify-content-center align-items-center big-dot dot">
+                
+                
+                <i class="fa fa-check text-white"></i></span> 
+                
+            </div>
+
+
+
             <div class="d-flex flex-row justify-content-between align-items-center">
               
               <!-- Start -->
@@ -472,23 +535,32 @@ width: 100%;
               <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getEveningArrivalTime()}"> </span>
               </div>
 
-                 <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getEveningArrivalTime()}"> </span>
-              </div>
-              
-                 <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getEveningArrivalTime()}"> </span>
-              </div>
-              
-                 <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getEveningArrivalTime()}"> </span>
-              </div>
-              
-                 <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
+ <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
               <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getEveningArrivalTime()}"> </span>
               </div>
               
               
+               <div th:if="${#lists.size(allStops) > 7}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[7].name}"></span><span  th:text="${arrTime[7].getEveningArrivalTime()}"> </span>
+              </div>
+              
+               <div th:if="${#lists.size(allStops) > 8}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[8].name}"></span><span  th:text="${arrTime[8].getEveningArrivalTime()}"> </span>
+              </div>
+              
+              
+               <div th:if="${#lists.size(allStops) > 9}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[9].name}"></span><span  th:text="${arrTime[9].getEveningArrivalTime()}"> </span>
+              </div>
+              
+              
+                <div th:if="${#lists.size(allStops) > 10}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[10].name}"></span><span  th:text="${arrTime[10].getEveningArrivalTime()}"> </span>
+              </div>
+
+ 			<div th:if="${#lists.size(allStops) > 11}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[11].name}"></span><span  th:text="${arrTime[11].getEveningArrivalTime()}"> </span>
+              </div>
               <!-- Final -->
             <!--   <div class="d-flex flex-column align-items-end">
                <span th:text="${end}"></span>
@@ -504,6 +576,10 @@ width: 100%;
     </div>
     
   </div>
+
+    </div> 
+
+    </div>
    <div id="map"></div>
 
   <script>
