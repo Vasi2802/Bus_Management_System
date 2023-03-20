@@ -150,7 +150,7 @@
 							<th>Driver Id</th>
 							<th>Driver Name</th>
 							<th>Driver Contact Details</th>
-							<th>Delete Driver</th>
+							<th class="d-none">Delete Driver</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -158,7 +158,7 @@
 							<td th:text="${driver.did}"></td>
 							<td th:text="${driver.driverName}"></td>
 							<td th:text="${driver.driverContactNo}"></td>
-							<td>
+							<td class="d-none">
 								<form th:action="@{/admin/delete-driver/{id}(id=${driver.did})}" method="GET">
 									<input class="btn btn-danger disabled" type="hidden" value="DELETE">
 								</form>
