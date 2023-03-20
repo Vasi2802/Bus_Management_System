@@ -4,14 +4,19 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.antwalk.entity.Bus;
+import org.antwalk.entity.Driver;
+import org.antwalk.entity.Route;
 import org.antwalk.repository.BusRepo;
+import org.antwalk.repository.DriverRepo;
 import org.antwalk.repository.RouteRepo;
 import org.aspectj.apache.bcel.util.ByteSequence;
 import org.hibernate.id.IntegralDataTypeHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class BusService {
@@ -21,6 +26,9 @@ public class BusService {
 	
 	@Autowired
 	private RouteRepo routeRepo;
+
+	@Autowired
+	private DriverRepo driverRepo;
 	
 
 	public Bus insertBus(Bus b) {
@@ -140,5 +148,18 @@ public class BusService {
 		}
 		return (int)maxUsedBus.getR().getRid();
 	}
+
+    public Bus addBus(int totalSeats, long routeId, long driverId) {
+        Optional<Route> routeOptional = routeRepo.findById(routeId);
+		Optional<Driver> driverOptional = driverRepo.findById(driverId);
+		if(routeOptional.isEmpty() || driverOptional.isEmpty()){
+			return null;
+		}
+		Route route = routeOptional.get();
+		Driver driver = driverOptional.get();
+		Bus bus = new Bus(totalSeats, totalSeats, null, driver, route);
+		busRepo.save(bus);
+		return bus;
+    }
 
 }

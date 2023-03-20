@@ -91,59 +91,26 @@
 
 <script>
     async function addBus() {
+        var routeId = $("#select-route-list option:selected").attr("rid");
+        var driverId = $("#select-driver-list option:selected").attr("did");
+        var totalSeats = $("#totalSeats").val();
         url = "/admin/bus/insert";
-        var bus = {};
-        $("#add-bus-form").serializeArray().map(function (x) {
-            bus[x.name] = x.value;
-        });
-        bus.availableSeats = bus.totalSeats;
 
         await $.ajax({
             headers: {
                 Accept: 'application/json', //imp
             },
             type: "GET",
-            url: "/admin/route/getbyid/" + $("#select-route-list option:selected").attr("rid"),
-            dataType: "json",
-            contentType: "application/json", //imp
-            success: function (response) {
-                console.log("route = ", response);
-                bus.r = response;
-            },
-            error: function () {
-                alert('Error occured');
-            }
-        });
-        await $.ajax({
-            headers: {
-                Accept: 'application/json', //imp
-            },
-            type: "GET",
-            url: "/admin/driver/getbyid/" + $("#select-driver-list option:selected").attr("did"),
-            dataType: "json",
-            contentType: "application/json", //imp
-            success: function (response) {
-                console.log("driver = ", response);
-                bus.d = response;
-            },
-            error: function () {
-                alert('Error occured');
-            }
-        });
-
-        console.log("got this bus ", bus);
-
-        await $.ajax({
-            headers: {
-                Accept: 'application/json', //imp
-            },
-            type: "POST",
             url: url,
-            data: JSON.stringify(bus), // imp
+            data: {
+                "routeId":routeId,
+                "driverId":driverId,
+                "totalSeats":totalSeats,
+                },
             dataType: "json",
             contentType: "application/json", //imp
             success: function (response) {
-                console.log("added", response);
+                console.log("added bus");
             },
             error: function () {
                 alert('Error occured');
@@ -151,6 +118,8 @@
         });
 
         window.location.href = "/admin/manageBus";
+
+        
 
     }
 

@@ -620,9 +620,9 @@ public class AdminController {
 		}
 	}
 
-	@PostMapping("/bus/insert")
-	public Bus insert(@RequestBody Bus b) {
-		return busRepo.save(b);
+	@GetMapping("/bus/insert")
+	public Bus insert(@RequestParam int totalSeats, @RequestParam long routeId, @RequestParam long driverId) {
+		return busService.addBus(totalSeats, routeId, driverId);
 	}
 
 	@GetMapping("/route/getbyid/{id}")
