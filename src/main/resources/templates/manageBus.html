@@ -35,6 +35,35 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
 	</script>
 
+	<style>
+		.gradient-buttons .btn {
+			background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2) 49%, rgba(0, 0, 0, 0.15) 51%, rgba(0, 0, 0, 0.05));
+			background-repeat: repeat-x;
+		}
+	</style>
+
+	<script>
+		deleteBus = (event) => {
+			busId = event.target.value;
+			$.ajax({
+				type: "GET",
+				url: "/admin/delete/bus/" + busId,
+				data:null,
+				async:false,
+				success: function (response) {
+					alert("Bus Deleted");
+				},
+				error: function () {
+					alert('Error occured in deleting bus');
+				}
+			});
+
+			window.location.href = "/admin/manageBus";
+
+		}
+	</script>
+
+
 </head>
 
 <body class="container-fluid">
@@ -54,64 +83,67 @@
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li><a href="/employee" id="home">
+				<li>
+					<a href="/admin" id="home">
 						<i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
-					</a></li>
-				<li><a href="/admin/analytics" id="analytics">
-						<i class="uil uil-files-landscapes"></i>
-						<span class="link-name">Analytics</span>
-					</a></li>
-				<li><a href="/admin/manageBus" id = "manageBus">
+					</a>
+				</li>
+				<li>
+					<a href="/admin/manageBus" id="manageBus">
 						<i class="uil uil-chart"></i>
 						<span class="link-name">Manage Buses</span>
-					</a></li>
-				<li><a href="/admin/manageDriver" id = "manageDriver">
+					</a>
+				</li>
+				<li>
+					<a href="/admin/manageDriver" id="manageDriver">
 						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage  Drivers</span>
-					</a></li>
+						<span class="link-name">Manage Drivers</span>
+					</a>
+				</li>
 
-				<li><a href="/admin/manageEmployee" id = "manageEmployee">
+				<li>
+					<a href="/admin/manageEmployee" id="manageEmployee">
 						<i class="uil uil-thumbs-up"></i>
 						<span class="link-name">Manage Employees</span>
-					</a></li>
-				
-				<li><a href="/admin/manageRoute" id = "manageRoute">
+					</a>
+				</li>
+
+				<li>
+					<a href="/admin/manageRoute" id="manageRoute">
 						<i class="uil uil-thumbs-up"></i>
 						<span class="link-name">Manage Routes</span>
-					</a></li>
+					</a>
+				</li>
 
-				<li><a href="/admin/manageStop" id = "manageStop">
+				<li>
+					<a href="/admin/manageStop" id="manageStop">
 						<i class="uil uil-thumbs-up"></i>
 						<span class="link-name">Manage Stops</span>
-					</a></li>
-				
-				<!--                <li><a href="#">
-                    <i class="uil uil-share"></i>
-                    <span class="link-name">Share</span>
-                </a></li> -->
-			</ul>
-
-			<ul class="logout-mode">
-				<li><a href="#" onclick="document.getElementById('log').submit()">
-						<i class="uil uil-signout"></i>
-
-						<span class="link-name">Logout</span>
-					</a></li>
-
-				<li class="mode">
-					<a href="#">
-						<i class="uil uil-moon"></i>
-						<span class="link-name">Dark Mode</span>
 					</a>
-
-					<div class="mode-toggle">
-						<span class="switch"></span>
-					</div>
 				</li>
-			</ul>
+
+				<ul class="logout-mode">
+					<li><a href="#" onclick="document.getElementById('log').submit()">
+							<i class="uil uil-signout"></i>
+
+							<span class="link-name">Logout</span>
+						</a></li>
+
+					<li class="mode">
+						<a href="#">
+							<i class="uil uil-moon"></i>
+							<span class="link-name">Dark Mode</span>
+						</a>
+
+						<div class="mode-toggle">
+							<span class="switch"></span>
+						</div>
+					</li>
+				</ul>
 		</div>
 	</nav>
+
 
 
 	<!-- RIGHT AREA-->
@@ -127,8 +159,8 @@
 			<img src="images/profile.jpg" alt="">
 		</div>
 
-		<div class="dash-content">
-			<div class="overview">
+		<div class="dash-content ">
+			<div class="overview justify-content-between flex-row border-bottom mb-3">
 				<div class="title">
 					<i class="uil uil-tachometer-fast-alt"></i>
 					<span class="text">MANAGE BUSES</span>
@@ -136,69 +168,44 @@
 			</div>
 
 			<!-- MAIN AREA -->
-            <div class="display: flex; justify-content: space-between; width: 100%;">
-                <table align="center">
-					<tr>
-					<td>
-					<form action="/admin/addBus" Method="GET">
-						<button type="submit"  class="btn btn-primary" >Add A Bus</button>
-					</form>
-					</td>
-					</tr>
-					<tr>
-					<td>
-					<!-- <form action="/admin/viewBus" Method="GET">
-						<button type="submit" class="btn btn-primary" >View Buses</button>
-					</form> -->
-					</td>
-					</tr>
-					<tr>
-					<td>
-					<form action="/admin/deleteBus" Method="GET">
-						<button type="submit" class="btn btn-primary" >Delete A Bus</button>
-					</form>
-					</td>
-					</tr>
-            </div>
+			<div class="row mb-3">
+				<a href="/admin/addbus">
+					<button type="submit" class="btn btn-primary">Add Bus</button>
+				</a>
+			</div>
+			<div class="row">
+
+				<table class="table table-striped table-responsive-lg ">
+					<thead class="thead-dark">
+						<tr>
+							<th scope="col">Bus ID</td>
+							<th>Total Seats</td>
+							<th>Available Seats</td>
+							<th>Start</td>
+							<th>Delete</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="bus : ${list}">
+							<td th:text="${bus.bid}"></td>
+							<td th:text="${bus.totalSeats}"></td>
+							<td th:text="${bus.availableSeats}"></td>
+							<td th:text="${bus.startTime}"></td>
+							<td>
+								<button class="btn btn-danger" onclick="deleteBus(event)"
+									th:value="${bus.bid}">Delete</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
 
 
 
 
 		</div>
 	</section>
-
-
-
-
-	<!-- <div id="chart_div" style="width: 80vw; align-items: center; justify-content: center; display: flex;"> -->
-
-
-	<!-- <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
-            <table class="columns">
-                <tr>
-                    <td>
-                        <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                    <td>
-                        <div id="route-barchart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                    <td>
-                        <div id="bus-barchart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-                <tr>
-                
-                    <td>
-                        <div id="booking-line-chart" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-            </table> -->
-	</div>
 
 
 	<script src="/script/home_script.js"></script>

@@ -155,7 +155,7 @@ public class AdminController {
 
 	@GetMapping("addbus")
 	public ModelAndView addBusPage() {
-		ModelAndView modelAndView = new ModelAndView("addBusPage");
+		ModelAndView modelAndView = new ModelAndView("addBus");
 		return modelAndView;
 	}
 
@@ -241,7 +241,7 @@ public class AdminController {
 	// PASSENGER COUNT FOR EACH BUS
 
 	@GetMapping("/analytics/passenger-count-per-bus")
-	public Map<String, Integer> passengerCoutntPerBus() {
+	public Map<String, Integer> passengerCountPerBus() {
 		Map<Bus, Integer> busFreq = busService.getPassesngersPerBus();
 		Map<String, Integer> busFreqWithDesc = new HashMap<>();
 		for (Bus bus : busFreq.keySet()) {
@@ -271,6 +271,14 @@ public class AdminController {
 		statistics.put("totalBuses", busService.getAllBus().size());
 		statistics.put("totalSeats", busService.getTotalSeatsOfAll());
 		statistics.put("totalSeatsBooked", busService.getTotalBookedSeats());
+
+		statistics.put("mostWaitlistedRoute", adminService.getMostWaitlistedRoute());
+		statistics.put("mostWaitlistedBus", adminService.getMostWaitlistedBus());
+		statistics.put("totalInWaitlist", adminService.getTotalInWaitlist());
+		
+		statistics.put("totalPassengers", busService.getTotalBookedSeats());
+		statistics.put("mostUsedBus", (int)busService.getMostUsedBus());
+		statistics.put("mostUsedRoute", (int)busService.getMostUsedRoute());
 
 		return statistics;
 	}
@@ -311,8 +319,8 @@ public class AdminController {
 	 * buses
 	 * arrival timetable
 	 */
-	@PostMapping("/delete/route")
-	public String deleteRoute(@RequestBody long routeId) {
+	@GetMapping("/delete/route/{routeId}")
+	public String deleteRoute(@PathVariable long routeId) {
 		return adminService.deleteRoute(routeId);
 	}
 	
@@ -325,12 +333,18 @@ public class AdminController {
 	@GetMapping("/manageBus")
 	public ModelAndView manageBus() {
 		ModelAndView modelAndView = new ModelAndView("manageBus");
+		List<Bus> result = busService.getAllBus();
+		modelAndView.addObject("list",result);
 		return modelAndView;
 	}
 
 	@GetMapping("/manageDriver")
 	public ModelAndView manageDriver() {
+		String uri = "http://localhost:8080/admin/driver/getall";
+		RestTemplate restTemplate = new RestTemplate();
+		List<Driver> drivers = driverRepo.findAll();
 		ModelAndView modelAndView = new ModelAndView("manageDriver");
+		modelAndView.addObject("drivers", drivers);
 		return modelAndView;
 	}
 
@@ -338,6 +352,8 @@ public class AdminController {
 	@GetMapping("/manageRoute")
 	public ModelAndView manageRoute() {
 		ModelAndView modelAndView = new ModelAndView("manageRoute");
+		List<Route> routes = routeRepo.findAll();
+		modelAndView.addObject("routes", routes);
 		return modelAndView;
 	}
 
@@ -486,12 +502,11 @@ public class AdminController {
 	@RequestMapping("/manageEmployee")
 	public ModelAndView manageEmployee() {
 		ModelAndView mv = new ModelAndView("manageEmployee");
-		String uri = "http://localhost:8080/admin/emp/getall"; 
-		RestTemplate restTemplate = new RestTemplate();
-	    String result = restTemplate.getForObject(uri, String.class); 
-	    List<Employee> result1 = employeeService.getAllEmployees();
-//	    System.out.println(restTemplate.getForObject(uri, List.class));
-		mv.addObject("list",result1);
+		// String uri = "http://localhost:8080/admin/emp/getall"; 
+		// RestTemplate restTemplate = new RestTemplate();
+	    // String result = restTemplate.getForObject(uri, String.class); 
+	    List<Employee> employees = employeeService.getAllEmployees();
+		mv.addObject("employees",employees);
 		return mv;
 	}
 
@@ -568,11 +583,11 @@ public class AdminController {
 		return driverService.insertDriver(d);	
 	}
 
-	@GetMapping("/addBus")
-	public ModelAndView AddBus(){
-		ModelAndView mv = new ModelAndView("addBus");
-		return mv;
-	}
+	// @GetMapping("/addBus")
+	// public ModelAndView AddBus(){
+	// 	ModelAndView mv = new ModelAndView("addBus");
+	// 	return mv;
+	// }
 
 	@GetMapping("/getallroutesasstopslist")
 	public Map<Long, List<Stop>> getAllRoutesAsListOfStop() {
@@ -639,7 +654,7 @@ public class AdminController {
 	@GetMapping("/bus/deletebyidnew/{id}")
 	public ModelAndView deleteById2(@PathVariable("id") long id) {
 		busService.deleteBusById(id);
-		return deleteBus();
+		return manageBus();
 	}
 	
 }
