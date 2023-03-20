@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="booking_details")
@@ -23,13 +24,16 @@ public class BookingDetails {
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "emp_id", referencedColumnName = "eid")
+	@NotNull
 	private Employee e;
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "bus_id", referencedColumnName = "bid")
+	@NotNull
 	private Bus b;
 	
 	@Column(name="booking_for_month")
+	@NotNull
 	private Date bookingForMonth;
 
 	public long getBookingId() {

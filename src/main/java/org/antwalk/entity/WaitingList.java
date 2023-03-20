@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name="waiting_list")
@@ -23,10 +24,12 @@ public class WaitingList {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "emp_id", referencedColumnName = "eid")
+	@NotNull
 	private Employee e;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "bus_id", referencedColumnName = "bid")
+	@NotNull
 	private Bus b;
 
 	public long getWid() {

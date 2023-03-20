@@ -120,7 +120,6 @@
                     bus = employee?.b;
                 },
                 error: function (response) {
-                    alert('Error occured ', response.statusText);
                 }
             });
             $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
