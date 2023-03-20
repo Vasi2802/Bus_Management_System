@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -25,11 +26,13 @@ public class Admin {
 	private long aid;
 	
 	@Column(name="contactNo")
+	@NotNull
 	private String contactNo;
 	
 	@JsonBackReference
 	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "auth_id", referencedColumnName = "id")
+	@JoinColumn(name = "auth_id", referencedColumnName = "id", unique = true)
+	@NotNull
 	private User user;
 	
 	

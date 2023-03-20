@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,10 +26,12 @@ public class Route {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "start", referencedColumnName = "sid")
+	@NotNull
 	private Stop start;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "end", referencedColumnName = "sid")
+	@NotNull
 	private Stop end;
 	
 	@Column(name="active")

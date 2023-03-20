@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "time")
@@ -16,9 +17,11 @@ public class ArrivalTimeTable {
 	private RouteStopId routeStopId;
 
 	@Column(name = "morning_arrival_time")
+	@NotNull
 	private LocalTime morningArrivalTime;
 
 	@Column(name = "evening_arrival_time")
+	@NotNull
 	private LocalTime eveningArrivalTime;
 
 	public ArrivalTimeTable() {
