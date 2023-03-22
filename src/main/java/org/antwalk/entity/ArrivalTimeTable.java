@@ -59,6 +59,16 @@ public class ArrivalTimeTable {
 		this.eveningArrivalTime = eveningArrivalTime;
 	}
 
+	public LocalTime getCurrentTime() {
+		LocalTime currentTime = LocalTime.now();
+        LocalTime onePM = LocalTime.of(13, 0); // 1 PM
+        
+        if (currentTime.isAfter(onePM)) {
+            return eveningArrivalTime;
+        } else {
+        	return morningArrivalTime;
+        }
+    }
+	}
 
-	
-}
+

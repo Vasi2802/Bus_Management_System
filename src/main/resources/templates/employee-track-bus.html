@@ -268,7 +268,7 @@ width: 100%;
     <nav>
         <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
 
-            <div class="menu-items">
+          <div class="menu-items">
           
             <ul class="nav-links">
                 <li><a href="/employee" id="home">
@@ -280,7 +280,7 @@ width: 100%;
                     <span class="link-name">Book Bus</span>
                 </a></li>
                 <li><a href="/employee/trackbus" id="track-bus-link">
-                    <i class="uil uil-chart"></i>
+                    <i class="uil uil-car-sideview"></i>
                     <span class="link-name">Track Bus</span>
                 </a></li>
                 <li><a href="/employee/showbookingdetails">
@@ -288,15 +288,15 @@ width: 100%;
                     <span class="link-name">Booking Details</span>
                 </a></li>
                 <li><a href="/employee/editprofile">
-                    <i class="uil uil-thumbs-up"></i>
+                    <i class="uil uil-pen"></i>
                     <span class="link-name">Edit Profile</span>
                 </a></li>
                 <li><a href="/employee/releaseseat">
-                <i class="uil uil-chart-down"></i>
+                <i class="uil uil-lock-open-alt"></i>
                 <span class="link-name">Release Seat</span>
             </a></li>
             <li><a href="/employee/sos">
-                <i class="uil uil-chart-down"></i>
+                <i class="uil uil-band-aid"></i>
                 <span class="link-name">SOS</span>
             </a></li>
  <!--                <li><a href="#">
@@ -454,63 +454,63 @@ width: 100%;
               
 				<!-- Stop 1 -->
               <div th:if="${#lists.size(allStops) > 0}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[0].name}"></span><span  th:text="${arrTime[0].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[0].name}"></span><span  th:text="${arrTime[0].getCurrentTime()}"> </span>
               </div>
 
 			<!-- Stop 2 -->
 			<div th:if="${#lists.size(allStops) > 1}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[1].name}"></span><span  th:text="${arrTime[1].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[1].name}"></span><span  th:text="${arrTime[1].getCurrentTime()}"> </span>
               </div>
             
              <!-- Stop 3 -->
             <div th:if="${#lists.size(allStops) > 2}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[2].name}"></span><span  th:text="${arrTime[2].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[2].name}"></span><span  th:text="${arrTime[2].getCurrentTime()}"> </span>
               </div>
               
               <!-- Stop 4 -->
             <div th:if="${#lists.size(allStops) > 3}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[3].name}"></span><span  th:text="${arrTime[3].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[3].name}"></span><span  th:text="${arrTime[3].getCurrentTime()}"> </span>
               </div>
                  
                <!-- Extra -->
             <div th:if="${#lists.size(allStops) > 4}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[4].name}"></span><span  th:text="${arrTime[4].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[4].name}"></span><span  th:text="${arrTime[4].getCurrentTime()}"> </span>
               </div>
               
               <!-- Extra -->
             <div th:if="${#lists.size(allStops) > 5}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[5].name}"></span><span  th:text="${arrTime[5].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[5].name}"></span><span  th:text="${arrTime[5].getCurrentTime()}"> </span>
               </div>
               <!-- Extra -->
             <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getCurrentTime()}"> </span>
               </div>
 
  <div th:if="${#lists.size(allStops) > 7}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[7].name}"></span><span  th:text="${arrTime[7].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[7].name}"></span><span  th:text="${arrTime[7].getCurrentTime()}"> </span>
               </div>
               
               
                <div th:if="${#lists.size(allStops) > 8}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[8].name}"></span><span  th:text="${arrTime[8].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[8].name}"></span><span  th:text="${arrTime[8].getCurrentTime()}"> </span>
               </div>
               
                <div th:if="${#lists.size(allStops) > 9}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[9].name}"></span><span  th:text="${arrTime[9].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[9].name}"></span><span  th:text="${arrTime[9].getCurrentTime()}"> </span>
               </div>
               
               
                <div th:if="${#lists.size(allStops) > 10}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[10].name}"></span><span  th:text="${arrTime[10].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[10].name}"></span><span  th:text="${arrTime[10].getCurrentTime()}"> </span>
               </div>
               
               
                 <div th:if="${#lists.size(allStops) > 11}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[11].name}"></span><span  th:text="${arrTime[11].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[11].name}"></span><span  th:text="${arrTime[11].getCurrentTime()}"> </span>
               </div>
 
  			<div th:if="${#lists.size(allStops) > 12}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[12].name}"></span><span  th:text="${arrTime[12].getEveningArrivalTime()}"> </span>
+              <span th:text="${allStops[12].name}"></span><span  th:text="${arrTime[12].getCurrentTime()}"> </span>
               </div>
               <!-- Final -->
             <!--   <div class="d-flex flex-column align-items-end">
@@ -636,9 +636,7 @@ const locationRef = firebase.database()
         alert("Geolocation is not supported by this browser.");
       }
 </script>
-    </div> 
 
-    </div>
     <!-- Book Bus -->
  
 

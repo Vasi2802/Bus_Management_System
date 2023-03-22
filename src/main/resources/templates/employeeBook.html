@@ -150,7 +150,7 @@ font-size:30px;
             buses.forEach(bus => {
                 busTable.innerHTML += `<tr>
                                     <td class="col-sm-auto">
-                                        <a class="btn btn-primary" onclick="bookBus(${bus.bid})">
+                                        <a class="btn btn-info" onclick="bookBus(${bus.bid})">
                                             ${bus.availableSeats > 0 ? "Book This Bus" : "Add to waitlist"}
                                         </a>
                                     </td>
@@ -233,7 +233,7 @@ font-size:30px;
                     document.
                         getElementById('routes-table').
                         innerHTML += `<tr>
-                                        <td><a class="btn btn-primary" onclick="getBuses(${routeId})" routeid=` + routeId + `>View Buses On this Route</a></td>
+                                        <td><a class="btn btn-info" onclick="getBuses(${routeId})" routeid=` + routeId + `>View Buses On this Route</a></td>
                                         <td>
                                             Morning Pickup: ${startWithTime?.morningArrivalTime} <br>
                                             Evening Drop-off: ${startWithTime?.eveningArrivalTime}
@@ -288,7 +288,7 @@ font-size:30px;
     <nav>
         <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
 
-              <div class="menu-items">
+           <div class="menu-items">
           
             <ul class="nav-links">
                 <li><a href="/employee" id="home">
@@ -300,7 +300,7 @@ font-size:30px;
                     <span class="link-name">Book Bus</span>
                 </a></li>
                 <li><a href="/employee/trackbus" id="track-bus-link">
-                    <i class="uil uil-chart"></i>
+                    <i class="uil uil-car-sideview"></i>
                     <span class="link-name">Track Bus</span>
                 </a></li>
                 <li><a href="/employee/showbookingdetails">
@@ -308,15 +308,15 @@ font-size:30px;
                     <span class="link-name">Booking Details</span>
                 </a></li>
                 <li><a href="/employee/editprofile">
-                    <i class="uil uil-thumbs-up"></i>
+                    <i class="uil uil-pen"></i>
                     <span class="link-name">Edit Profile</span>
                 </a></li>
                 <li><a href="/employee/releaseseat">
-                <i class="uil uil-chart-down"></i>
+                <i class="uil uil-lock-open-alt"></i>
                 <span class="link-name">Release Seat</span>
             </a></li>
             <li><a href="/employee/sos">
-                <i class="uil uil-chart-down"></i>
+                <i class="uil uil-band-aid"></i>
                 <span class="link-name">SOS</span>
             </a></li>
  <!--                <li><a href="#">
@@ -332,7 +332,7 @@ font-size:30px;
                      <span class="link-name">Logout</span> 
                 </a></li>
 
-                <li class="mode">
+              <!--   <li class="mode">
                     <a href="#">
                         <i class="uil uil-moon"></i>
                     <span class="link-name">Dark Mode</span>
@@ -341,9 +341,10 @@ font-size:30px;
                 <div class="mode-toggle">
                   <span class="switch"></span>
                 </div>
-            </li>
+            </li> -->
             </ul>
-        </div>    </nav>
+        </div>
+           </nav>
 
 
 
@@ -394,8 +395,8 @@ font-size:30px;
 
 
         <div style="margin-top:5%;">
-            <span style="color:grey;" class="logout-mode"> >bookbus </span><hr>
-            <h3 style="color:grey;text-align:center;">Bus Book Form</h3>
+            <span style="color:grey;" class="logout-mode">>bookbus </span><hr>
+            <h3 style="color:grey;text-align:center;">Book a bus</h3>
 
             </div>
         <div class="align-items-center justify-content-center d-flex p-5">
