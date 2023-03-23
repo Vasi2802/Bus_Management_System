@@ -326,11 +326,14 @@ p {
                     document.getElementById("busId").innerText = employeeDashboardDetails?.busId;
                     document.getElementById("bookingStatus").innerText = employeeDashboardDetails?.bookingStatus;
                     if(employeeDashboardDetails?.bookingStatus==="Bus Seat Reserved"){
+                    	$("#bookbtn").hide();
                     	document.getElementById("bookingStatus").style.color = "green";
                     }
                     else if(employeeDashboardDetails?.bookingStatus==="Not booked"){
                     	document.getElementById("bookingStatus").style.color = "red";
+                    	$("#bookbtn").show();
                     }
+
                 },
                 error: function (response) {
                     alert('Error occured ', response.statusText);
@@ -522,7 +525,7 @@ p {
                                                                 
                                                                 <a href="#" style="color:white;"class="f-w-400">Edit Profile<i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
                                                             </a>
-                                                            <button class="glow-on-hover" type="button">Book a Bus</button>
+                                                            <button class="glow-on-hover mt-5" id="bookbtn" style="display:none;"type="button">Book a Bus</button>
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-8">
