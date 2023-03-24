@@ -60,7 +60,7 @@ public class Route {
 	}
 
 
-	public Route(long rid, Stop start, Stop end, String active) {
+	public Route(long rid, Stop start, Stop end) {
 		super();
 		this.rid = rid;
 		this.start = start;
@@ -72,7 +72,7 @@ public class Route {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Route(Stop start, Stop end, String active) {
+	public Route(Stop start, Stop end) {
 		super();
 		this.start = start;
 		this.end = end;
