@@ -34,8 +34,6 @@ public class Route {
 	@NotNull
 	private Stop end;
 	
-	@Column(name="active")
-	private String active;
 
 	public long getRid() {
 		return rid;
@@ -61,20 +59,12 @@ public class Route {
 		this.end = end;
 	}
 
-	public String getActive() {
-		return active;
-	}
-
-	public void setActive(String active) {
-		this.active = active;
-	}
 
 	public Route(long rid, Stop start, Stop end, String active) {
 		super();
 		this.rid = rid;
 		this.start = start;
 		this.end = end;
-		this.active = active;
 	}
 
 	public Route() {
@@ -86,7 +76,6 @@ public class Route {
 		super();
 		this.start = start;
 		this.end = end;
-		this.active = active;
 	}
 
 

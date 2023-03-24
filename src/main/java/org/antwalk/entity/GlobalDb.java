@@ -46,6 +46,4 @@ public class GlobalDb {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
-	
 }

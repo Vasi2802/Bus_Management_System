@@ -189,16 +189,18 @@ public class RegistrationController {
         
         Boolean exist =false;
         for(GlobalDb gb : all) {
+        	System.out.println(gb.getEmail());
         	if(gb.getEmail().equals(userName)) {
+        	
         		exist = true;
-        		break;
+        		theModel.addAttribute("notauser", "Invalid email");
+
+            	return "registration-form";
         	}
         }
         
         if(exist==true) {
-        	theModel.addAttribute("notauser", "Invalid email");
-
-        	return "registration-form";
+        	
         }
         theModel.addAttribute("confirmregister","Successfully Registered");
         userService.save(theCrmUser);

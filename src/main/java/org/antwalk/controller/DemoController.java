@@ -59,7 +59,7 @@ public class DemoController {
 	    User user = (User)session.getAttribute("driver");
 		Driver driver = driverService.getDriverById(user.getDriver().getDid());
 		
-		String res = driver.getBus().getR().getActive();
+		String res = driver.getBus().getActive();
 		
 		model.addAttribute("res",res);
 		return "driver";
