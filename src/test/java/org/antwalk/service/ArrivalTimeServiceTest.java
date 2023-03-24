@@ -39,11 +39,11 @@ class ArrivalTimeServiceTest {
 	@MockBean
 	private StopRepo stopRepo;
 	
-	Route r;
-	Stop s;
-	LocalTime morning;
-	LocalTime evening;
-	RouteStopId composite;
+	private Route r;
+	private Stop s;
+	private LocalTime morning;
+	private LocalTime evening;
+	private RouteStopId composite;
 	
 	@BeforeEach
 	void setUp() {
