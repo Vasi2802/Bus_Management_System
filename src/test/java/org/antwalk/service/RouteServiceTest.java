@@ -30,18 +30,18 @@ class RouteServiceTest {
 	
 	private Stop start;
 	private Stop end;
-	private String active;
+	//private String active;
 	
 	@BeforeEach
 	void setUp() {
 		start = new Stop(1,"s1");
 		end = new Stop(10, "s10");
-		active = "yes";
+		//active = "yes";
 	}
 	
 	@Test
 	void testInsertRoute() {
-		Route expected = new Route(1, start, end,active);
+		Route expected = new Route(1, start, end);
 		when(routeRepo.save(expected)).thenReturn(expected);
 		
 		Route actual = routeService.insertRoute(expected);
@@ -51,8 +51,8 @@ class RouteServiceTest {
 	@Test
 	void testGetAllRoutes() {
 		List<Route> expected = new ArrayList<>();
-		Route r1 = new Route(1, start, end,active);
-		Route r2 = new Route(2, new Stop(2,"s2"), new Stop(8, "s8"), active);
+		Route r1 = new Route(1, start, end);
+		Route r2 = new Route(2, new Stop(2,"s2"), new Stop(8, "s8"));
 		expected.add(r1);
 		expected.add(r2);
 
@@ -68,7 +68,7 @@ class RouteServiceTest {
 	@Test
 	void testGetRouteById() {
 		long id = 5;
-		Route expected = new Route(id, start, end,active);
+		Route expected = new Route(id, start, end);
 		when(routeRepo.findById(id)).thenReturn(Optional.of(expected));
 		
 		Route actual = routeService.getRouteById(id);
@@ -77,7 +77,7 @@ class RouteServiceTest {
 
 	@Test
 	void testDeleteRouteById() {
-		Route r = new Route(8, start, end,active);
+		Route r = new Route(8, start, end);
 		routeService.deleteRouteById(8);
 		
 		verify(routeRepo, times(1)).deleteById((long) 8);
@@ -89,11 +89,11 @@ class RouteServiceTest {
 		String expected2 = "Route exists but your input id does not match with the existing route id";
 		String expected3 = "Route does not exist";
 		
-		Route r = new Route(15, start, end,active);
+		Route r = new Route(15, start, end);
 		List<Route> routeList = new ArrayList<>();
 		routeList.add(r);
 		
-		r.setActive("no");
+		r.setEnd(new Stop(8, "s8"));
 		
 		when(routeRepo.findAll()).thenReturn(routeList);
 		when(routeRepo.save(r)).thenReturn(r);
@@ -101,12 +101,12 @@ class RouteServiceTest {
 		String actual1 = routeService.updateRouteById(r, 15);
 		assertEquals(expected1, actual1);
 		
-		when(routeRepo.save(new Route(17, start, end,active))).thenReturn(new Route(17, start, end,active));
-		String actual2 = routeService.updateRouteById(new Route(17, start, end,active), 15);
+		when(routeRepo.save(new Route(17, start, end))).thenReturn(new Route(17, start, end));
+		String actual2 = routeService.updateRouteById(new Route(17, start, end), 15);
 		assertEquals(expected2, actual2);
 		
-		when(routeRepo.save(new Route(20, start, end,active))).thenReturn(new Route(20, start, end,active));
-		String actual3 = routeService.updateRouteById(new Route(20, start, end,active), 20);
+		when(routeRepo.save(new Route(20, start, end))).thenReturn(new Route(20, start, end));
+		String actual3 = routeService.updateRouteById(new Route(20, start, end), 20);
 		assertEquals(expected3, actual3);
 	}
 
