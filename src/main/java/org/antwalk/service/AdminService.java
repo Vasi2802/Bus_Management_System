@@ -3,7 +3,6 @@ package org.antwalk.service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -235,11 +234,11 @@ public class AdminService {
 		Map<Long, String> routeDescriptionMap = new HashMap<>();
 		Map<Long, Integer> routeDemandMap = new HashMap<>();
 
-		for(History history: historyList){
-			if(history.getTransactionType().contains("Add")){
+		for (History history : historyList) {
+			if (history.getTransactionType().contains("Add")) {
 				long routeId = history.getRouteId();
 				int prevValue = routeDemandMap.getOrDefault(routeId, 0);
-				routeDemandMap.put(routeId, prevValue+1);
+				routeDemandMap.put(routeId, prevValue + 1);
 				routeDescriptionMap.putIfAbsent(routeId, history.getRouteDescription());
 			}
 		}
@@ -252,7 +251,6 @@ public class AdminService {
 		sheet.setColumnWidth(0, 4000);
 		sheet.setColumnWidth(1, 20000);
 		sheet.setColumnWidth(2, 5000);
-
 
 		// =================================== Header Creation
 		// =======================================
@@ -287,7 +285,7 @@ public class AdminService {
 
 		// ======================= TABLE CREATION ================================
 
-		int rowNum = 2;
+		int rowNum = 1;
 		for (long routeId : routeDemandMap.keySet()) {
 			CellStyle style = workbook.createCellStyle();
 			style.setWrapText(false);
@@ -299,7 +297,7 @@ public class AdminService {
 			cell.setCellStyle(style);
 
 			cell = row.createCell(1);
-			cell.setCellValue(routeDescriptionMap.getOrDefault(routeId, "Route ID"+routeId));
+			cell.setCellValue(routeDescriptionMap.getOrDefault(routeId, "Route ID" + routeId));
 			cell.setCellStyle(style);
 
 			cell = row.createCell(2);
@@ -435,18 +433,18 @@ public class AdminService {
 			mostWaitlistedRoute = routeCount.entrySet().stream()
 					.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();
 			count = routeCount.entrySet().stream()
-			.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getValue();
-			System.out.println("count = "+count);
-			System.out.println("most = "+mostWaitlistedRoute.getRid());
+					.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getValue();
+			System.out.println("count = " + count);
+			System.out.println("most = " + mostWaitlistedRoute.getRid());
 		} catch (Exception e) {
 			System.out.println("error");
 			return 0;
 		}
 		if (count != 0) {
-			System.out.println("count ="+count);
+			System.out.println("count =" + count);
 			return (int) mostWaitlistedRoute.getRid();
 		}
-		return (int)mostWaitlistedRoute.getRid();
+		return (int) mostWaitlistedRoute.getRid();
 
 	}
 
@@ -461,7 +459,8 @@ public class AdminService {
 		if (waitingPerBus.size() == 0) {
 			return 0;
 		}
-		return (int)waitingPerBus.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
+		return (int) waitingPerBus.entrySet().stream()
+				.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
 				.get().getKey().getBid();
 	}
 
