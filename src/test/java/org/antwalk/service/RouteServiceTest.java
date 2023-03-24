@@ -93,8 +93,10 @@ class RouteServiceTest {
 		List<Route> routeList = new ArrayList<>();
 		routeList.add(r);
 		
+
 		r.setEnd(new Stop(8, "s8"));
 		
+
 		when(routeRepo.findAll()).thenReturn(routeList);
 		when(routeRepo.save(r)).thenReturn(r);
 		
