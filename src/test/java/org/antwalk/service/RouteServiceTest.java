@@ -93,7 +93,7 @@ class RouteServiceTest {
 		List<Route> routeList = new ArrayList<>();
 		routeList.add(r);
 		
-		r.setActive("no");
+		
 		
 		when(routeRepo.findAll()).thenReturn(routeList);
 		when(routeRepo.save(r)).thenReturn(r);

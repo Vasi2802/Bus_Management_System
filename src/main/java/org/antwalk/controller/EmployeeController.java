@@ -18,19 +18,14 @@ import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
-import java.util.List;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.antwalk.entity.BookingDetails;
-import org.antwalk.entity.Bus;
+import org.antwalk.entity.EditProfile;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.History;
 import org.antwalk.entity.Route;
 import org.antwalk.entity.Stop;
 import org.antwalk.entity.User;
 import org.antwalk.entity.WaitingList;
+import org.antwalk.repository.ArrivalTimeRepo;
 import org.antwalk.repository.BookingDetailsRepo;
 import org.antwalk.repository.BusRepo;
 import org.antwalk.repository.EmployeeRepo;
@@ -43,19 +38,12 @@ import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.EmployeeService;
 import org.antwalk.service.HistoryService;
 import org.antwalk.service.RouteService;
+import org.antwalk.service.UserService;
 import org.antwalk.service.WaitingListService;
-import org.antwalk.user.CrmUser;
-import org.antwalk.user.UpdateProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.antwalk.repository.StopRepo;
-import org.antwalk.repository.UserRepo;
-import org.antwalk.repository.WaitingListRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -63,6 +51,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -89,6 +78,12 @@ public class EmployeeController {
 	StopRepo stopRepo;
 
 	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
+	
+	@Autowired
 	BookingDetailsRepo bookingDetailsRepo;
 
 	@Autowired
@@ -111,6 +106,9 @@ public class EmployeeController {
 
 	@Autowired
 	ArrivalTimeService arrivalTimeService;
+	
+	@Autowired
+	ArrivalTimeRepo arrivalTimeRepo;
 
 	@PostMapping("/insert")
 	public Employee insert(@RequestBody Employee e) {
@@ -227,7 +225,31 @@ public class EmployeeController {
 		ModelAndView modelAndView = new ModelAndView("employee-track-bus");
 		return modelAndView;
 	}
-
+	
+	
+	
+	@PostMapping("/updateprofile")
+	public ResponseEntity<String> update(@RequestParam("eid") long eid,
+            @RequestParam("name") String name,
+            @RequestParam("contactNo") String contactNo,
+            @RequestParam("password") String password,
+            HttpServletRequest request) {
+		HttpSession session =request.getSession(); 
+		  User emp1 = (User)session.getAttribute("emp");
+		  
+		  User userv = userService.findByUserName(emp1.getUserName()); 
+		  
+		  if(!password.equals("")) { 
+		  userService.findByUserName(emp1.getUserName()).setPassword(passwordEncoder.
+		  encode(password));
+		  
+		  }
+		
+		employeeService.updateEmployeeById(eid,contactNo,name);
+		
+		
+		return ResponseEntity.ok("Profile Updated Successfully");
+	}
 	@GetMapping("/book")
 	public ModelAndView book() {
 		ModelAndView modelAndView = new ModelAndView("employeeBook");
@@ -283,7 +305,27 @@ public class EmployeeController {
 
 		return null;
 	}
-
+	@GetMapping("/viewStops")
+	public List<ArrivalTimeTable> getAllStopsWithTimeByRouteid(@RequestParam Long rid, @RequestParam String shift) {
+		try {
+			Route route = routeRepo.findById(rid).get();
+			List<ArrivalTimeTable> arrivalTimeTableList;
+			if (shift.equalsIgnoreCase("morning")) {
+				arrivalTimeTableList = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
+			} else {
+				arrivalTimeTableList = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
+			}
+//			ModelAndView modelAndView = new ModelAndView("viewStops");
+			// System.out.println(arrivalTimeTableList);
+//			modelAndView.addObject("arrivalTimeTableList", arrivalTimeTableList);
+			return arrivalTimeTableList;
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return null;
+		}
+	}
+	
+	
 	@PostMapping(value = "/bookABusByBusId/{busId}")
 	public ResponseEntity<String> bookABusByBusId(@RequestBody Long eid, @PathVariable long busId,
 			HttpServletRequest request) {

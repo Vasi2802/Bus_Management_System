@@ -46,9 +46,9 @@
                     console.log(response);
                     employee = response;
                     bus = employee?.bus;
-                    time = employee?.bus?.startTime;
-                    $("#timedata").text(time?time:"Not Started");
-                    $("#togglebtn").text(time?"End Journey":"Start the Journey");
+                    time = employee?.bus?.active;
+                    $("#timedata").text(active);
+                    $("#togglebtn").text(time==="YES"?"End Journey":"Start the Journey");
                     console.log(time);
                 },
                 error: function (response) {
@@ -193,7 +193,7 @@
                         
                     </tbody>
                 </table>
-                <button onclick="startJourney()" id="togglebtn" class="btn btn-primary">
+                <button onclick="startJourney()" id="togglebtn" class="btn btn-primary"></button>
             </div>
         </div>
 

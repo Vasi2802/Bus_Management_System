@@ -5,13 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="/css/home_style.css">
-
+	<link rel="stylesheet" href="/css/ticket.css">
     <!----===== Iconscout CSS ===== -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
@@ -87,6 +84,178 @@
             font-size: 15px;
             position: relative;
         }
+/* html,
+body {
+height: 100%;
+margin: 0;
+}
+
+body {
+font-family: 'Ubuntu', sans-serif;
+background-color: #3f32e5;
+height: 100%;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+text-align: center;
+color: #1c1c1c;
+display: flex;
+justify-content: center;
+} */
+
+.ticket-system {
+max-width: 385px;
+}
+
+.ticket-system .top {
+display: flex;
+align-items: center;
+flex-direction: column;
+}
+
+/* .ticket-system .top .title {
+font-weight: normal;
+font-size: 1.6em;
+text-align: left;
+margin-left: 20px;
+margin-bottom: 50px;
+color: #fff;
+} */
+
+.ticket-system .top .printer {
+width: 90%;
+height: 20px;
+border: 5px solid #fff;
+border-radius: 10px;
+box-shadow: 1px 3px 3px 0px rgba(0, 0, 0, 0.2);
+}
+
+.ticket-system .receipts-wrapper {
+overflow: hidden;
+margin-top: -10px;
+padding-bottom: 10px;
+}
+
+.ticket-system .receipts {
+width: 100%;
+display: flex;
+align-items: center;
+flex-direction: column;
+animation-duration: 2.5s;
+animation-delay: 500ms;
+animation-name: print;
+animation-fill-mode: forwards;
+}
+
+.ticket-system .receipts .receipt {
+padding: 25px 30px;
+text-align: left;
+min-height: 200px;
+width: 88%;
+background-color: #fff;
+box-shadow: 1px 3px 8px 3px rgba(0, 0, 0, 0.2);
+}
+
+.ticket-system .receipts .receipt .airliner-logo {
+max-width: 80px;
+}
+
+.ticket-system .receipts .receipt .route {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin: 30px 0;
+}
+
+.ticket-system .receipts .receipt .route .plane-icon {
+width: 30px;
+height: 30px;
+transform: rotate(90deg);
+}
+
+.ticket-system .receipts .receipt .route h2 {
+font-weight: 300;
+font-size: 2.2em;
+margin: 0;
+}
+
+.ticket-system .receipts .receipt .details {
+display: flex;
+justify-content: space-between;
+flex-wrap: wrap;
+}
+
+.ticket-system .receipts .receipt .details .item {
+display: flex;
+flex-direction: column;
+min-width: 70px;
+}
+
+.ticket-system .receipts .receipt .details .item span {
+font-size: 0.8em;
+color: rgba(28, 28, 28, 0.7);
+font-weight: 500;
+}
+
+.ticket-system .receipts .receipt .details .item h3 {
+margin-top: 10px;
+margin-bottom: 25px;
+}
+.ticket-system .receipts .receipt.qr-code {
+  height: 110px;
+  min-height: unset;
+  position: relative;
+  border-radius: 20px 20px 10px 10px;
+  display: flex;
+  align-items: center;
+}
+
+.ticket-system .receipts .receipt.qr-code::before {
+  content: '';
+  background: linear-gradient(to right, #fff 50%, #3f32e5 50%);
+  background-size: 22px 4px, 100% 4px;
+  height: 4px;
+  width: 90%;
+  display: block;
+  left: 0;
+  right: 0;
+  top: -1px;
+  position: absolute;
+  margin: auto;
+}
+
+.ticket-system .receipts .receipt.qr-code .qr {
+  width: 70px;
+  height: 70px;
+}
+
+.ticket-system .receipts .receipt.qr-code .description {
+  margin-left: 20px;
+}
+
+.ticket-system .receipts .receipt.qr-code .description h2 {
+  margin: 0 0 5px 0;
+  font-weight: 500;
+}
+
+.ticket-system .receipts .receipt.qr-code .description p {
+  margin: 0;
+  font-weight: 400;
+}
+
+@keyframes print {
+  0% {
+    transform: translateY(-510px);
+  }
+  35% {
+    transform: translateY(-395px);
+  }
+  70% {
+    transform: translateY(-140px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
     </style>
     <script>
         console.log(eid);
@@ -94,65 +263,25 @@
         var bus;
 
         setInterval(() => {
-            // Get the current time
             const now = new Date();
 
-            // Format the time as hh:mm:ss
             const hours = now.getHours().toString().padStart(2, '0');
             const minutes = now.getMinutes().toString().padStart(2, '0');
             const seconds = now.getSeconds().toString().padStart(2, '0');
             const time = `${hours}:${minutes}:${seconds}`;
-
             $('#clock').text(time);
 
-            console.log(cutoffTimes);
-            var ids = ["#pipe1", "#pipe2", "#pipe3", "#pipe4", "#pipe5", "#pipe6", "#pipe7", "#pipe8", "#pipefinal"]; // list of IDs
-            var threshold = new Date(); // create a new Date object for the cutoff time
-            threshold.setHours(12);
-
-            var currentTime = new Date(); // get the current time
-            for (var i = 0; i < cutoffTimes.length; i++) {
-                var cutoffTime = new Date(); // create a new Date object for the cutoff time
-
-                if (currentTime.getTime() <= threshold.getTime()) {
-                    var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
-                        .split(':');
-                    var hours1 = parseInt(cutoffTimeParts[0]);
-                    var minutes1 = parseInt(cutoffTimeParts[1]);
-                    cutoffTime.setHours(hours1);
-                    cutoffTime.setMinutes(minutes1);
-                    cutoffTime.setSeconds(0);
-                    cutoffTime.setMilliseconds(0);
-                    if (currentTime.getTime() >= cutoffTime.getTime()) {
-                        console.log(currentTime.getTime() + " " + cutoffTime.getTime());
-                        $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
-                    } else if (currentTime.getTime() > threshold.getTime()) {
-                        console.log("Remove past time");
-                        $(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
-                    }
-                } else {
-                    var cutoffTimeParts = cutoffTimes[i].eveningArrivalTime
-                        .split(':');
-                    var hours1 = parseInt(cutoffTimeParts[0]);
-                    var minutes1 = parseInt(cutoffTimeParts[1]);
-                    cutoffTime.setHours(hours1 - 12);
-                    cutoffTime.setMinutes(minutes1);
-                    cutoffTime.setSeconds(0);
-                    cutoffTime.setMilliseconds(0);
-                    cutoffTime.setTime(cutoffTime.getTime() + 12 * 60 * 60 * 1000); // add 12 hours for PM time
-                    if (currentTime.getTime() >= cutoffTime.getTime()) {
-                        console.log("Way past time 2 " + ids[i]);
-                        $(ids[i]).addClass('track-line'); // add 'after-cutoff' class if current time is after the cutoff time
-                    }
-                    else if (currentTime.getTime() > threshold.getTime()) {
-                        console.log("Remove past time");
-                        $(ids[i]).removeClass('track-line'); // add 'before-cutoff' class if current time is before the cutoff time
-                    }
-                }
-            }
         }, 1000);
         var employeeBookingDetails;
         $(document).ready(async () => {
+        	 $('tr').hover(function() {
+                 $(this).addClass('table-active');
+             }, function() {
+                 $(this).removeClass('table-active');
+             });
+
+             // Animate the cell values when they are updated
+
             url = "/employee/get-booking-details/" + eid;
             await $.ajax({
                 type: "GET",
@@ -161,11 +290,14 @@
                     console.log(response);
                     employeeBookingDetails = response;
                     bus = employee?.b;
-                    document.getElementById("bookingId").innerText = employeeBookingDetails?.bookingId;
-                    document.getElementById("busNo").innerText = employeeBookingDetails?.busNo;
-                    document.getElementById("driverName").innerText = employeeBookingDetails?.driverName;
-                    document.getElementById("driverContactNo").innerText = employeeBookingDetails?.driverContactNo;
-                    document.getElementById("busStatus").innerText = employeeBookingDetails?.busStatus;
+                    $('tr').hide().fadeIn(1000);
+                    $('#bookingId').text(employeeBookingDetails?.bookingId).hide().fadeIn(1000);
+                    $('#busNo').text(employeeBookingDetails?.busNo).hide().delay(500).fadeIn(1000);
+                    $('#driverName').text(employeeBookingDetails?.driverName).hide().delay(1000).fadeIn(1000);
+                    $('#driverContactNo').text(employeeBookingDetails?.driverContactNo).hide().delay(1500).fadeIn(1000);
+                    $('#busStatus').text(employeeBookingDetails?.busStatus).hide().delay(2000).fadeIn(1000);
+                    
+                  
                 },
                 error: function (response) {
                     alert('Error occured ', response.statusText);
@@ -296,42 +428,103 @@
             <hr>
             <h3 style="color:grey;text-align:center;">Booking Details</h3>
         </div>
+        
         <Br />
 
-        <div class="card text-white ">
 
-            <div class="table-responsive table table-striped table-light">
-                <table class="table text-black">
 
-                    <tbody>
 
-                        <tr>
-                            <td>Booking Id</td>
-                            <td id="bookingId">13</td>
-                        </tr>
 
-                        <tr>
-                            <td>Bus Number</td>
-                            <td id="busNo"></td>
-                        </tr>
-                        <tr>
 
-                            <td>Driver Name</td>
-                            <td id="driverName"></td>
-                        </tr>
-                        <tr>
-                            <td>Driver Contact Number</td>
-                            <td id="driverContactNo"></td>
-                        </tr>
 
-                        <tr>
-                            <td>Bus Start Time </td>
-                            <td id="busStatus"></td>
-                        </tr>
-                    </tbody>
-                </table>
+
+
+
+
+<!--            <div class="table-responsive">
+    <table class="table">
+        <tbody>
+            <tr>
+                <th scope="row">Booking Id</th>
+                <td id="bookingId"></td>
+            </tr>
+            <tr>
+                <th scope="row">Bus Number</th>
+                <td id="busNo"></td>
+            </tr>
+            <tr>
+                <th scope="row">Driver Name</th>
+                <td id="driverName"></td>
+            </tr>
+            <tr>
+                <th scope="row">Driver Contact Number</th>
+                <td id="driverContactNo"></td>
+            </tr>
+            <tr>
+                <th scope="row">Bus Start Time</th>
+                <td id="busStatus"></td>
+            </tr>
+        </tbody>
+    </table>
+</div> -->
+       
+        <div>
+        <main class="ticket-system">
+   <div class="top">
+   <h1 class="title">Wait a second, your Booking Details is being generated</h1> 
+   <div class="printer">
+   </div>
+   <div class="receipts-wrapper">
+      <div class="receipts">
+         <div class="receipt">
+            <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" />
+               
+            <div class="route">
+               <h2>NYC</h2>
+               <svg class="plane-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 510 510">
+                  <path fill="#3f32e5" d="M497.25 357v-51l-204-127.5V38.25C293.25 17.85 275.4 0 255 0s-38.25 17.85-38.25 38.25V178.5L12.75 306v51l204-63.75V433.5l-51 38.25V510L255 484.5l89.25 25.5v-38.25l-51-38.25V293.25l204 63.75z"/>
+               </svg>
+               <h2>ATL</h2>
             </div>
-        </div>
+            <div class="details">
+               <div class="item">
+                  <span>Passanger</span>
+                  <h3>69Pixels</h3>
+               </div>
+               <div class="item">
+                  <span>Flight No.</span>
+                  <h3>US6969</h3>
+               </div>
+               <div class="item">
+                  <span>Departure</span>
+                  <h3>08/26/2018 15:33</h3>
+               </div>
+               <div class="item">
+                  <span>Gate Closes</span>
+                  <h3>15:03</h3>
+               </div>
+               <div class="item">
+                  <span>Luggage</span>
+                  <h3>Hand Luggage</h3>
+               </div>
+               <div class="item">
+                  <span>Seat</span>
+                  <h3>69P</h3>
+               </div>
+            </div>
+         </div>
+         <div class="receipt qr-code">
+            
+            <div class="description">
+               <h2>69Pixels</h2>
+               <p>Show QR-code when requested</p>
+            </div>
+         </div>
+      </div>
+      </div>
+   </div>
+</main></div>
+
     </div>
 
 
