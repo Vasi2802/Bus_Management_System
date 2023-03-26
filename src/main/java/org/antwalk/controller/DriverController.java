@@ -1,21 +1,29 @@
 package org.antwalk.controller;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.antwalk.entity.ArrivalTimeTable;
+import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
+import org.antwalk.entity.Employee;
+import org.antwalk.entity.Route;
 import org.antwalk.entity.Stop;
 import org.antwalk.entity.User;
 import org.antwalk.repository.DriverRepo;
 import org.antwalk.service.ArrivalTimeService;
+import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
 import org.antwalk.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +46,10 @@ public class DriverController {
 	
 	
 	@Autowired
-	ArrivalTimeService timeserv;
+	ArrivalTimeService arrivalTimeService;
+
+	@Autowired
+	private BookingDetailsService bookingDetailsService;
 	
 	
 	@Autowired
@@ -88,14 +99,11 @@ public class DriverController {
 	
 	@GetMapping("/routedetails")
 	public ModelAndView booking(HttpServletRequest request) {
-		System.out.println("Working");
 		HttpSession session = request.getSession();
 	    User user = (User)session.getAttribute("driver");
 		Driver driver = driverService.getDriverById(user.getDriver().getDid());
 		
-		
 		ModelAndView modelAndView = new ModelAndView("route-details");
-//		modelAndView.addObject("stops",driver.getBus().getR()); //name value
 		 if(driver.getBus()==null) {
 		    	modelAndView = new ModelAndView("error-track-bus");
 		    	return modelAndView;
@@ -109,16 +117,16 @@ public class DriverController {
 	    
 		
 		  if (currentTime.isBefore(noon)) { List<Stop> stops=
-		  timeserv.getStopsByRouteId(rid, "morning"); List<ArrivalTimeTable> aAndS =
-		  timeserv.getAllStopsWithTimeByRouteId(rid, "morning");
+		  arrivalTimeService.getStopsByRouteId(rid, "morning"); List<ArrivalTimeTable> aAndS =
+		  arrivalTimeService.getAllStopsWithTimeByRouteId(rid, "morning");
 		  
 		  modelAndView.addObject("arrTime", aAndS);
 		  
 //		  modelAndView.addObject("end", "NRIFINTECH");
 		  modelAndView.addObject("allStops", stops); } else {
 		 
-	    	List<Stop> stops= timeserv.getStopsByRouteId(rid, "evening");
-	    	List<ArrivalTimeTable> aAndS = timeserv.getAllStopsWithTimeByRouteId(rid, "evening");
+	    	List<Stop> stops= arrivalTimeService.getStopsByRouteId(rid, "evening");
+	    	List<ArrivalTimeTable> aAndS = arrivalTimeService.getAllStopsWithTimeByRouteId(rid, "evening");
 	    
 	    	modelAndView.addObject("arrTime", aAndS);
 	    	modelAndView.addObject("start", "NRIFINTECH");
@@ -146,6 +154,15 @@ public class DriverController {
 		
 		
 		return null;
+	}
+
+	@GetMapping("get-all-passengers") 
+	public ResponseEntity<List<HashMap<String,List<Employee>>>> getAllPassengers(HttpServletRequest httpServletRequest){
+		User user = (User)httpServletRequest.getSession().getAttribute("driver");
+		Driver driver = user.getDriver();
+		List<HashMap<String,List<Employee>>> passengers = driverService.getAllPassengers(driver);
+
+		return ResponseEntity.status(HttpStatus.OK).body(passengers);
 	}
 	
 }

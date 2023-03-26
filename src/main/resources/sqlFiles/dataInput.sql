@@ -290,20 +290,20 @@ insert into employee(name, contact_no, bus_id, auth_id) values
 -- desc booking_details;
 -- select * from booking_details;
 
-insert into booking_details(emp_id, bus_id, booking_for_month) values
-(1, 1, '2023-03-25'),
-(2, 3, '2023-03-25'),
-(3, 7, '2023-03-26'),
-(4, 9, '2023-03-27'),
-(5, 9, '2023-03-25'),
-(6, 3, '2023-03-26'),
-(7, 4, '2023-03-27'),
-(8, 1, '2023-03-28');
+insert into booking_details(emp_id, bus_id, booking_for_month, stop_id) values
+(1, 1, '2023-03-25', 3),
+(2, 3, '2023-03-25', 8),
+(3, 7, '2023-03-26', 9),
+(4, 9, '2023-03-27', 12),
+(5, 9, '2023-03-25', 35),
+(6, 3, '2023-03-26', 1),
+(7, 4, '2023-03-27', 6),
+(8, 1, '2023-03-28', 2);
 
 -- data for waiting list table
 
 -- select * from waiting_list;
 
-insert into waiting_list(emp_id, bus_id) values
-(9,4),
-(10,4);
+insert into waiting_list(emp_id, bus_id, stop_id) values
+(9,4, 6),
+(10,4, 6);

@@ -296,6 +296,7 @@ margin-bottom: 25px;
                     $('#driverName').text(employeeBookingDetails?.driverName).hide().delay(1000).fadeIn(1000);
                     $('#driverContactNo').text(employeeBookingDetails?.driverContactNo).hide().delay(1500).fadeIn(1000);
                     $('#busStatus').text(employeeBookingDetails?.busStatus).hide().delay(2000).fadeIn(1000);
+                    $('#homeStopName').text(employeeBookingDetails?.homeStopName).hide().delay(2000).fadeIn(1000);
                     
                   
                 },
@@ -502,6 +503,10 @@ margin-bottom: 25px;
                <div class="item">
                   <span>Gate Closes</span>
                   <h3>15:03</h3>
+               </div>
+               <div class="item" >
+                  <span > Home Stop</span>
+                  <h3 id="homeStopName"></h3>
                </div>
                <div class="item">
                   <span>Luggage</span>
