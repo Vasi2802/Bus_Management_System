@@ -47,6 +47,18 @@ public class Bus {
 	@JoinColumn(name = "bus_route", referencedColumnName = "rid")
 	private Route r;
 
+	@Column(name="active")
+	private String active;
+	
+
+	public String getActive() {
+		return active;
+	}
+
+	public void setActive(String active) {
+		this.active = active;
+	}
+	
 	public long getBid() {
 		return bid;
 	}

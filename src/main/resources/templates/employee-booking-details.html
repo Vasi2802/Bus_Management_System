@@ -5,13 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="/css/home_style.css">
-
+	<link rel="stylesheet" href="/css/ticket.css">
     <!----===== Iconscout CSS ===== -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
@@ -87,6 +84,9 @@
             font-size: 15px;
             position: relative;
         }
+        .highlight {
+        background-color: #ffcc66;
+    }
     </style>
     <script>
         console.log(eid);
@@ -153,6 +153,14 @@
         }, 1000);
         var employeeBookingDetails;
         $(document).ready(async () => {
+        	 $('tr').hover(function() {
+                 $(this).addClass('highlight');
+             }, function() {
+                 $(this).removeClass('highlight');
+             });
+
+             // Animate the cell values when they are updated
+
             url = "/employee/get-booking-details/" + eid;
             await $.ajax({
                 type: "GET",
@@ -161,11 +169,13 @@
                     console.log(response);
                     employeeBookingDetails = response;
                     bus = employee?.b;
-                    document.getElementById("bookingId").innerText = employeeBookingDetails?.bookingId;
-                    document.getElementById("busNo").innerText = employeeBookingDetails?.busNo;
-                    document.getElementById("driverName").innerText = employeeBookingDetails?.driverName;
-                    document.getElementById("driverContactNo").innerText = employeeBookingDetails?.driverContactNo;
-                    document.getElementById("busStatus").innerText = employeeBookingDetails?.busStatus;
+                    $('#bookingId').text(employeeBookingDetails?.bookingId).hide().fadeIn(1000);
+                    $('#busNo').text(employeeBookingDetails?.busNo).hide().delay(500).fadeIn(1000);
+                    $('#driverName').text(employeeBookingDetails?.driverName).hide().delay(1000).fadeIn(1000);
+                    $('#driverContactNo').text(employeeBookingDetails?.driverContactNo).hide().delay(1500).fadeIn(1000);
+                    $('#busStatus').text(employeeBookingDetails?.busStatus).hide().delay(2000).fadeIn(1000);
+                    
+                  
                 },
                 error: function (response) {
                     alert('Error occured ', response.statusText);
@@ -213,8 +223,7 @@
     </form>
     <nav>
         <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" />
-
-           <div class="menu-items">
+<div class="menu-items">
           
             <ul class="nav-links">
                 <li><a href="/employee" id="home">
@@ -226,7 +235,7 @@
                     <span class="link-name">Book Bus</span>
                 </a></li>
                 <li><a href="/employee/trackbus" id="track-bus-link">
-                    <i class="uil uil-chart"></i>
+                    <i class="uil uil-car-sideview"></i>
                     <span class="link-name">Track Bus</span>
                 </a></li>
                 <li><a href="/employee/showbookingdetails">
@@ -234,15 +243,15 @@
                     <span class="link-name">Booking Details</span>
                 </a></li>
                 <li><a href="/employee/editprofile">
-                    <i class="uil uil-thumbs-up"></i>
+                    <i class="uil uil-pen"></i>
                     <span class="link-name">Edit Profile</span>
                 </a></li>
                 <li><a href="/employee/releaseseat">
-                <i class="uil uil-chart-down"></i>
+                <i class="uil uil-lock-open-alt"></i>
                 <span class="link-name">Release Seat</span>
             </a></li>
             <li><a href="/employee/sos">
-                <i class="uil uil-chart-down"></i>
+                <i class="uil uil-band-aid"></i>
                 <span class="link-name">SOS</span>
             </a></li>
  <!--                <li><a href="#">
@@ -258,7 +267,7 @@
                      <span class="link-name">Logout</span> 
                 </a></li>
 
-                <li class="mode">
+               <!--  <li class="mode">
                     <a href="#">
                         <i class="uil uil-moon"></i>
                     <span class="link-name">Dark Mode</span>
@@ -267,10 +276,10 @@
                 <div class="mode-toggle">
                   <span class="switch"></span>
                 </div>
-            </li>
+            </li> -->
             </ul>
         </div>
-    </nav>
+           </nav>
 
 
 
@@ -299,38 +308,39 @@
         </div>
         <Br />
 
-        <div class="card text-white ">
+       <div class="text-white ">
 
-            <div class="table-responsive table table-striped table-light">
+            <div class="table-responsive">
                 <table class="table text-black">
 
                     <tbody>
 
                         <tr>
-                            <td>Booking Id</td>
-                            <td id="bookingId">13</td>
+                            <th>Booking Id</th>
+                            <td id="bookingId"></td>
                         </tr>
 
                         <tr>
-                            <td>Bus Number</td>
+                            <th>Bus Number</th>
                             <td id="busNo"></td>
                         </tr>
                         <tr>
 
-                            <td>Driver Name</td>
+                            <th>Driver Name</th>
                             <td id="driverName"></td>
                         </tr>
                         <tr>
-                            <td>Driver Contact Number</td>
+                            <th>Driver Contact Number</th>
                             <td id="driverContactNo"></td>
                         </tr>
 
                         <tr>
-                            <td>Bus Status </td>
+                            <th>Bus Start Time </th>
                             <td id="busStatus"></td>
                         </tr>
                     </tbody>
                 </table>
+ 
             </div>
         </div>
     </div>

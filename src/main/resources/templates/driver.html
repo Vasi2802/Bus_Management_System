@@ -46,9 +46,9 @@
                     console.log(response);
                     employee = response;
                     bus = employee?.bus;
-                    time = employee?.bus?.startTime;
-                    $("#timedata").text(time?time:"Not Started");
-                    $("#togglebtn").text(time?"End Journey":"Start the Journey");
+                    time = employee?.bus?.active;
+                    $("#timedata").text(time);
+                    $("#togglebtn").text(time=="YES"?"End Journey":"Start the Journey");
                     console.log(time);
                 },
                 error: function (response) {
@@ -122,7 +122,7 @@
                      <span class="link-name">Logout</span> 
                 </a></li>
 
-                <li class="mode">
+              <!--   <li class="mode">
                     <a href="#">
                         <i class="uil uil-moon"></i>
                     <span class="link-name">Dark Mode</span>
@@ -131,7 +131,7 @@
                 <div class="mode-toggle">
                   <span class="switch"></span>
                 </div>
-            </li>
+            </li> -->
             </ul>
         </div>
     </nav>
@@ -187,13 +187,13 @@
                             <!-- employee/getStatus returns assigned, not applied, in waitlist -->
                         </tr>
                         <tr>
-                           <td>Trip start time </td>
-                            <td id="timedata"></button></td>
+                           <td>ACTIVE </td>
+                            <td id="timedata"></td>
                         </tr>
                         
                     </tbody>
                 </table>
-                <button onclick="startJourney()" id="togglebtn" class="btn btn-primary">
+                <button onclick="startJourney()" id="togglebtn" class="btn btn-primary"></button>
             </div>
         </div>
 

@@ -44,7 +44,7 @@ class BusServiceTest {
 		availableSeats = 10;
 		startTime = LocalTime.of(7, 0);
 		d = new Driver(3, "Kanai", "2345678901", new User((long) 1, "kanai@driver.nrifintech.com", "fun123", "ROLE_DRIVER"));
-		r = new Route(2, new Stop(2,"s2"), new Stop(8, "s8"), "yes");
+		r = new Route(2, new Stop(2,"s2"), new Stop(8, "s8"));
 	}
 	
 	@Test

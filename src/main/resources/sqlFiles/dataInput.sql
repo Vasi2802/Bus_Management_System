@@ -57,20 +57,20 @@ insert into stop(name) values
 -- desc route;
 -- select * from route;
 
-insert into route(active,start,end) values
-('YES', 1, 12);
+insert into route(start,end) values
+(1, 12);
 
-insert into route(active,start,end) values
-('YES', 13, 12);
+insert into route(start,end) values
+(13, 12);
 
-insert into route(active,start,end) values
-('YES', 18, 12);
+insert into route(start,end) values
+(18, 12);
 
-insert into route(active,start,end) values
-('YES', 26, 12);
+insert into route(start,end) values
+(26, 12);
 
-insert into route(active,start,end) values
-('YES', 35, 12);
+insert into route(start,end) values
+(35, 12);
 
 
 -- data for time table

@@ -59,7 +59,7 @@ public class DemoController {
 	    User user = (User)session.getAttribute("driver");
 		Driver driver = driverService.getDriverById(user.getDriver().getDid());
 		
-		String res = driver.getBus().getR().getActive();
+		String res = driver.getBus().getActive();
 		
 		model.addAttribute("res",res);
 		return "driver";
@@ -161,11 +161,11 @@ public class DemoController {
 			
 			  System.out.println(user.getContactNo());
 			  System.out.println(user.getFullName());
-			  System.out.println(user.getPassword()); HttpSession session =
-			  request.getSession(); User emp = (User)session.getAttribute("emp");
+			  System.out.println(user.getPassword()); 
+			  HttpSession session =request.getSession(); 
+			  User emp = (User)session.getAttribute("emp");
 			  
-			  User userv = userService.findByUserName(emp.getUserName()); Employee empp =
-			  empRepo.getEmployeeById(emp.getEmployee().getEid());
+			  User userv = userService.findByUserName(emp.getUserName());
 			  
 			  if(!user.getPassword().equals("")) { 
 			  userService.findByUserName(emp.getUserName()).setPassword(passwordEncoder.
