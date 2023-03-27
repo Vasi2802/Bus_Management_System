@@ -34,7 +34,7 @@ public class Bus {
 	@Column(name="available_seats")
 	@NotNull
 	private int availableSeats;
-	
+
 	@Column(name="start_time")
 	private LocalTime startTime;
 	

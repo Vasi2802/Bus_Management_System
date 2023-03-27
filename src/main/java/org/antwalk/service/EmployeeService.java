@@ -11,6 +11,7 @@ import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.History;
 import org.antwalk.entity.Route;
+import org.antwalk.entity.Stop;
 import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.BookingDetailsRepo;
 import org.antwalk.repository.BusRepo;
@@ -53,6 +54,9 @@ public class EmployeeService {
 
 	@Autowired
 	private HistoryService historyService;
+
+	@Autowired
+	private StopService stopService;
 
 	public Employee insertEmployee(Employee e) {
 		return empRepo.save(e);
@@ -123,7 +127,10 @@ public class EmployeeService {
 				// get the employee
 				Employee topEmployee = waitingList.getE();
 
-				String messageForBooking = bookABusByBusId(topEmployee.getEid(), bus.getBid());
+				// get stop of top employee
+				Stop stop = waitingList.getStop();
+
+				String messageForBooking = bookABusByBusId(topEmployee.getEid(), bus.getBid(), stop.getSid());
 
 				System.out.println(messageForBooking);
 
@@ -167,12 +174,13 @@ public class EmployeeService {
 		return message;
 	}
 
-	public String bookABusByBusId(long eid, long busId) {
+	public String bookABusByBusId(long eid, long busId, long stopId) {
 
 		System.out.println("Booking Bus For ==============");
 		System.out.println("bus id =" + busId + "  empId = " + eid + "=============");
 		Bus bus = busRepo.findById(busId).get();
 		Employee employee = empRepo.findById(eid).get();
+		Stop stop = stopService.getStopById(stopId);
 		LocalDate todayDate = LocalDate.now();
 		Date date = Date.valueOf(todayDate);
 
@@ -196,7 +204,7 @@ public class EmployeeService {
 
 		// employee tries to book a filled bus
 		if (bus.getAvailableSeats() <= 0) {
-			WaitingList waitingList = new WaitingList(0, employee, bus);
+			WaitingList waitingList = new WaitingList(0, employee, bus, stop);
 			waitingListRepo.save(waitingList);
 
 			// ---------- Add entry to history table
@@ -218,7 +226,7 @@ public class EmployeeService {
 		// seats available and employee doesnt have any bus assigned
 		bus.setAvailableSeats(bus.getAvailableSeats() - 1);
 		busRepo.save(bus);
-		BookingDetails bookingDetails = new BookingDetails(0, employee, bus, date);
+		BookingDetails bookingDetails = new BookingDetails(0, employee, bus, date, stop);
 		bookingDetailsRepo.save(bookingDetails); // add to bookingDetails
 		employee.setB(bus);
 		System.out.println("======================================");

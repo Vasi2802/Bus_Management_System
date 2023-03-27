@@ -2,355 +2,369 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
-  crossorigin=""/>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+    integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
-  crossorigin=""></script>
-    <!----======== CSS ======== -->
-    <link rel="stylesheet" href="/css/home_style.css">
-     <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-    <!----===== Iconscout CSS ===== -->
-    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+  <!----======== CSS ======== -->
+  <link rel="stylesheet" href="/css/home_style.css">
+  <link href="https://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+  <!----===== Iconscout CSS ===== -->
+  <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
 
-	<!-- from other file -->
-	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <!-- from other file -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
-    </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+  </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
-    </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+  </script>
 
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
-    </script>
-<style>
-@media (max-width: 767px) {
-  span {
-    font-size: 10px;
-  }
-  #clock{
-  font-size: 25px;
-  }
-  }
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+  </script>
+  <style>
+    @media (max-width: 767px) {
+      span {
+        font-size: 10px;
+      }
 
-@media (max-width: 427px) {
-  span {
-    font-size: 7px;
-  }
-  }
-  
-@font-face{
-    font-family: 'Digital-7';
-    src:  url('fonts/digital-7.ttf') format('woff2'),   b ,g,mdrx
-    url('digital-7.woff') format('woff');
-}
-.clockdate-wrapper {
-    background: #141E30;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    padding:3px;
-    padding-left:50px;
-    padding-right:50px;
-    width:100%;
-    text-align:center;
-    border-radius:5px;
-    margin:0 auto;
-  
-}
-#clock{
-font-size:30px;
-    font-family: Digital-7, 'sans-serif';
-    text-shadow:0px 0px 1px #fff;
-    color:#fff;
-}
-#clock span {
-    color: rgba(255, 255, 255, 0.8);
-    text-shadow:0px 0px 1px #333;
-    font-size:15px;
-    position:relative;
-}
+      #clock {
+        font-size: 25px;
+      }
+    }
 
-#toast{
+    @media (max-width: 427px) {
+      span {
+        font-size: 7px;
+      }
+    }
 
-	margin-top:2%;
-	margin-left:80%;
-	position:absolute;
-}
+    @font-face {
+      font-family: 'Digital-7';
+      src: url('fonts/digital-7.ttf') format('woff2'), b, g, mdrx url('digital-7.woff') format('woff');
+    }
+
+    .clockdate-wrapper {
+      background: #141E30;
+      /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #243B55, #141E30);
+      /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #243B55, #141E30);
+      /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      padding: 3px;
+      padding-left: 50px;
+      padding-right: 50px;
+      width: 100%;
+      text-align: center;
+      border-radius: 5px;
+      margin: 0 auto;
+
+    }
+
+    #clock {
+      font-size: 30px;
+      font-family: Digital-7, 'sans-serif';
+      text-shadow: 0px 0px 1px #fff;
+      color: #fff;
+    }
+
+    #clock span {
+      color: rgba(255, 255, 255, 0.8);
+      text-shadow: 0px 0px 1px #333;
+      font-size: 15px;
+      position: relative;
+    }
+
+    #toast {
+
+      margin-top: 2%;
+      margin-left: 80%;
+      position: absolute;
+    }
 
 
-#toasta{
-	margin-top:2%;
-	margin-left:85%;
-	position:absolute;
-}
+    #toasta {
+      margin-top: 2%;
+      margin-left: 85%;
+      position: absolute;
+    }
 
 
-.box {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+    .box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
 
-.box select {
-  background-color: #0563af;
-  color: white;
-  padding: 12px;
-  width: 250px;
-  border: none;
-  font-size: 20px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-  -webkit-appearance: button;
-  appearance: button;
-  outline: none;
-}
+    .box select {
+      background-color: #0563af;
+      color: white;
+      padding: 12px;
+      width: 250px;
+      border: none;
+      font-size: 20px;
+      box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+      -webkit-appearance: button;
+      appearance: button;
+      outline: none;
+    }
 
-.box::before {
-  content: "\f13a";
-  font-family: FontAwesome;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 20%;
-  height: 100%;
-  text-align: center;
-  font-size: 28px;
-  line-height: 45px;
-  color: rgba(255, 255, 255, 0.5);
-  background-color: rgba(255, 255, 255, 0.1);
-  pointer-events: none;
-}
+    .box::before {
+      content: "\f13a";
+      font-family: FontAwesome;
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 20%;
+      height: 100%;
+      text-align: center;
+      font-size: 28px;
+      line-height: 45px;
+      color: rgba(255, 255, 255, 0.5);
+      background-color: rgba(255, 255, 255, 0.1);
+      pointer-events: none;
+    }
 
-.box:hover::before {
-  color: rgba(255, 255, 255, 0.6);
-  background-color: rgba(255, 255, 255, 0.2);
-}
+    .box:hover::before {
+      color: rgba(255, 255, 255, 0.6);
+      background-color: rgba(255, 255, 255, 0.2);
+    }
 
-.box select option {
-  padding: 30px;
-}
+    .box select option {
+      padding: 30px;
+    }
 
-select {
-  margin-bottom: 1em;
-  padding: .25em;
-  border: 0;
-  border-bottom: 2px solid currentcolor; 
-  font-weight: bold;
-  letter-spacing: .15em;
-  border-radius: 0;
-}
-select:focus, select:active {
-    outline: 0;
-    border-bottom-color: red;
-  }
-.bn632-hover {
-  width: 160px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  cursor: pointer;
-  margin: 20px;
-  height: 55px;
-  text-align:center;
-  border: none;
-  background-size: 300% 100%;
-  border-radius: 50px;
-  moz-transition: all .4s ease-in-out;
-  -o-transition: all .4s ease-in-out;
-  -webkit-transition: all .4s ease-in-out;
-  transition: all .4s ease-in-out;
-}
+    select {
+      margin-bottom: 1em;
+      padding: .25em;
+      border: 0;
+      border-bottom: 2px solid currentcolor;
+      font-weight: bold;
+      letter-spacing: .15em;
+      border-radius: 0;
+    }
 
-.bn632-hover:hover {
-  background-position: 100% 0;
-  moz-transition: all .4s ease-in-out;
-  -o-transition: all .4s ease-in-out;
-  -webkit-transition: all .4s ease-in-out;
-  transition: all .4s ease-in-out;
-}
+    select:focus,
+    select:active {
+      outline: 0;
+      border-bottom-color: red;
+    }
 
-.bn632-hover:focus {
-  outline: none;
-}
+    .bn632-hover {
+      width: 160px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      margin: 20px;
+      height: 55px;
+      text-align: center;
+      border: none;
+      background-size: 300% 100%;
+      border-radius: 50px;
+      moz-transition: all .4s ease-in-out;
+      -o-transition: all .4s ease-in-out;
+      -webkit-transition: all .4s ease-in-out;
+      transition: all .4s ease-in-out;
+    }
 
-.bn632-hover.bn27 {
-  background-image: linear-gradient(
-    to right,
-    #ed6ea0,
-    #ec8c69,
-    #f7186a,
-    #fbb03b
-  );
-  box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
-} 
+    .bn632-hover:hover {
+      background-position: 100% 0;
+      moz-transition: all .4s ease-in-out;
+      -o-transition: all .4s ease-in-out;
+      -webkit-transition: all .4s ease-in-out;
+      transition: all .4s ease-in-out;
+    }
 
-body {
-/* 	background: #e1e1e1; */
-}
+    .bn632-hover:focus {
+      outline: none;
+    }
 
-/* The icon */
-.help-tip{
-	position: absolute;
-	left: 5%;
-	transform: translate(-50%, -50%);
-	margin: auto;
-	text-align: center;
-	border: 2px solid #444;
-	border-radius: 50%;
-	width: 40px;
-	height: 40px;
-	font-size: 24px;
-	line-height: 42px;
-	cursor: default;
-}
+    .bn632-hover.bn27 {
+      background-image: linear-gradient(to right,
+          #ed6ea0,
+          #ec8c69,
+          #f7186a,
+          #fbb03b);
+      box-shadow: 0 4px 15px 0 rgba(236, 116, 149, 0.75);
+    }
 
-.help-tip:before{
-    content:'?';
-    font-family: sans-serif;
-    font-weight: normal;
-    color:#444;
-}
+    body {
+      /* 	background: #e1e1e1; */
+    }
 
-.help-tip:hover p{
-    display:block;
-    transform-origin: 100% 0%;
-    -webkit-animation: fadeIn 0.3s ease;
-    animation: fadeIn 0.3s ease;
-}
+    /* The icon */
+    .help-tip {
+      position: absolute;
+      left: 5%;
+      transform: translate(-50%, -50%);
+      margin: auto;
+      text-align: center;
+      border: 2px solid #444;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 24px;
+      line-height: 42px;
+      cursor: default;
+    }
 
-/* The tooltip */
-.help-tip p {    
-	display: none;
-	font-family: sans-serif;
-	text-rendering: optimizeLegibility;
-	-webkit-font-smoothing: antialiased;
-	text-align: center;
-	background-color: #FFFFFF;
-	padding: 12px 16px;
-	width: 178px;
-	height: auto;
-	position: absolute;
-	left: 50%;
-	transform: translate(-50%, 5%);
-	border-radius: 3px;
-/* 	border: 1px solid #E0E0E0; */
-	box-shadow: 0 0px 20px 0 rgba(0,0,0,0.1);
-	color: #37393D;
-	font-size: 12px;
-	line-height: 18px;
-	z-index: 99;
-}
+    .help-tip:before {
+      content: '?';
+      font-family: sans-serif;
+      font-weight: normal;
+      color: #444;
+    }
 
-.help-tip p a {
-	color: #067df7;
-	text-decoration: none;
-}
+    .help-tip:hover p {
+      display: block;
+      transform-origin: 100% 0%;
+      -webkit-animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.3s ease;
+    }
 
-.help-tip p a:hover {
-	text-decoration: underline;
-}
+    /* The tooltip */
+    .help-tip p {
+      display: none;
+      font-family: sans-serif;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+      text-align: center;
+      background-color: #FFFFFF;
+      padding: 12px 16px;
+      width: 178px;
+      height: auto;
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 5%);
+      border-radius: 3px;
+      /* 	border: 1px solid #E0E0E0; */
+      box-shadow: 0 0px 20px 0 rgba(0, 0, 0, 0.1);
+      color: #37393D;
+      font-size: 12px;
+      line-height: 18px;
+      z-index: 99;
+    }
 
-/* The pointer of the tooltip */
-.help-tip p:before { 
-	position: absolute;
-	content: '';
-	width: 0;
-	height: 0;
-	border: 10px solid transparent;
-	border-bottom-color:#FFFFFF;
-	top: -9px;
-	left: 50%;
-	transform: translate(-50%, -50%);
-}
+    .help-tip p a {
+      color: #067df7;
+      text-decoration: none;
+    }
 
- /* Prevents the tooltip from being hidden */
-.help-tip p:after {
-	width: 10px;
-	height: 40px;
-	content:'';
-	position: absolute;
-	top: -40px;
-	left: 0;
-}
+    .help-tip p a:hover {
+      text-decoration: underline;
+    }
 
-/* CSS animation */
-@-webkit-keyframes fadeIn {
-    0% { opacity:0; }
-    100% { opacity:100%; }
-}
+    /* The pointer of the tooltip */
+    .help-tip p:before {
+      position: absolute;
+      content: '';
+      width: 0;
+      height: 0;
+      border: 10px solid transparent;
+      border-bottom-color: #FFFFFF;
+      top: -9px;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
 
-@keyframes fadeIn {
-    0% { opacity:0; }
-    100% { opacity:100%; }
-}
+    /* Prevents the tooltip from being hidden */
+    .help-tip p:after {
+      width: 10px;
+      height: 40px;
+      content: '';
+      position: absolute;
+      top: -40px;
+      left: 0;
+    }
 
-</style>
-    
+    /* CSS animation */
+    @-webkit-keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
 
-    <script th:inline="javascript">
+      100% {
+        opacity: 100%;
+      }
+    }
 
-        /*<![CDATA[*/
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
 
-        var eid = /*[[${session.emp.getEmployee().getEid()}]]*/ 'default';
+      100% {
+        opacity: 100%;
+      }
+    }
+  </style>
 
-        /*]]>*/
-		setInterval(() => {
-      	  // Get the current time
-      	  const now = new Date();
 
-      	  // Format the time as hh:mm:ss
-      	  const hours = now.getHours().toString().padStart(2, '0');
-      	  const minutes = now.getMinutes().toString().padStart(2, '0');
-      	  const seconds = now.getSeconds().toString().padStart(2, '0');
-      	  const time = `${hours}:${minutes}:${seconds}`;
-      	  
-      	  $('#clock').text(time);
-      	  
-      	
-      	}, 1000);
-        function getBuses(routeId) {
-            // console.log(event.target.getAttribute("routeid"));
-            // var routeId = event.target.getAttribute("routeid");
-            // console.log("clicked" + routeId);
-            const busTable = $('#bus-table').get(0);
-            busTable.innerHTML = `<tr>
+  <script th:inline="javascript">
+
+    /*<![CDATA[*/
+
+    var eid = /*[[${session.emp.getEmployee().getEid()}]]*/ 'default';
+
+    /*]]>*/
+    setInterval(() => {
+      // Get the current time
+      const now = new Date();
+
+      // Format the time as hh:mm:ss
+      const hours = now.getHours().toString().padStart(2, '0');
+      const minutes = now.getMinutes().toString().padStart(2, '0');
+      const seconds = now.getSeconds().toString().padStart(2, '0');
+      const time = `${hours}:${minutes}:${seconds}`;
+
+      $('#clock').text(time);
+
+
+    }, 1000);
+    function getBuses(routeId) {
+      // console.log(event.target.getAttribute("routeid"));
+      // var routeId = event.target.getAttribute("routeid");
+      // console.log("clicked" + routeId);
+      const busTable = $('#bus-table').get(0);
+      busTable.innerHTML = `<tr>
                             
                             <th class="col-sm-auto" style="text-align:center;">Bus ID</th>
                             <th class="col-sm-auto" style="text-align:center;">Total Seats</th>
                             <th class="col-sm-auto" style="text-align:center;">Available Seats</th>
                             <th class="col-sm-auto" style="text-align:center;">Select a Bus</th>
                         </tr><br>`;
-            let buses = [];
-            $.ajax({
-                type: "GET",
-                url: "/bus/getByRouteId/" + routeId,
-                data: null,
-                async: false,
-                success: function (response) {
-                    buses = response;
-                    return response;
-                },
-                error: function () {
-                    alert('Buses could not be fetched');
-                }
-            });
+      let buses = [];
+      $.ajax({
+        type: "GET",
+        url: "/bus/getByRouteId/" + routeId,
+        data: null,
+        async: false,
+        success: function (response) {
+          buses = response;
+          return response;
+        },
+        error: function () {
+          alert('Buses could not be fetched');
+        }
+      });
 
-            // console.log("Buses fetched = ", buses);
-            // if(buses){
-            //     $('#bus-table-container').append($('<h5>Buses on this route are</h5>'));
-            // }
-            // else{
-            //     $('#bus-table-container').append($('<h5>Bus unavilable on this route</h5>'));
-            // }
+      // console.log("Buses fetched = ", buses);
+      // if(buses){
+      //     $('#bus-table-container').append($('<h5>Buses on this route are</h5>'));
+      // }
+      // else{
+      //     $('#bus-table-container').append($('<h5>Bus unavilable on this route</h5>'));
+      // }
 
-            buses.forEach(bus => {
-                busTable.innerHTML += `<tr>
+      buses.forEach(bus => {
+        busTable.innerHTML += `<tr>
                                     
                                     <td class="col-sm-auto" style="text-align:center;">`+ bus.bid + `</td>
                                     <td class="col-sm-auto" style="text-align:center;">`+ bus.totalSeats + `</td>
@@ -362,114 +376,115 @@ body {
                                 </td>
                                 </tr>
                                 <br>`;
-            });
+      });
 
 
-        }
-        const empty = () =>{
-        	 $('#stops-detail tbody').text('');
-        }
-        
-        const showModal = (routeid) =>{
-        	console.log(routeid);
-        	$("#exampleModal").modal("toggle");
-        	$.ajax({
-        	    type: "GET",
-        	    url: "/employee/viewStops",
-        	    data: {
-        	        rid: routeid,
-        	        shift: "morning"
-        	    },
-        	    dataType: "json",
-        	    success: function(response) {
-        	    	console.log(response);
-        	    	$.each(response, function(i, item) {
-        	    		
-                        $('#stops-detail tbody').append('<tr><td>'+item.routeStopId.stop.name+
-                        		'</td><td>'+item.morningArrivalTime+
-                        		'</td><td>'+item.eveningArrivalTime+
-                        		'</td></tr>');
-                    });
-        	        
-        	    },
-        	    error: function(xhr, status, error) {
-        	        console.log("False");
-        	    }
-        	});
-        }
-        const bookBus = (busId) => {
-            url = "/employee/bookABusByBusId/" + busId;
-            console.log("the bus Id selected = ", busId);
-            console.log("the eid Id selected = ", eid);
-            $.ajax({
-                headers: {
-                    Accept: 'application/json', //imp
-                },
-                type: "POST",
-                url: url,
-                data: JSON.stringify(eid), // imp
-                contentType: "application/json", //imp
-                dataType: "text",
-                async: false,
-                success: function (response) {
-                	 $('#toast').toast({
-                		    delay: 2000, // 10 seconds
-                		  });
-                    $('#toast').toast('show');
-                },
-                error: function (response) {
-                	$('#toasta').toast({
-            		    delay: 2000, // 10 seconds
-            		  });
-                $('#responseData').text(response.responseText);
-                $('#toasta').toast('show');
-                }
-            });
-         
-        }
-    </script>
+    }
+    const empty = () => {
+      $('#stops-detail tbody').text('');
+    }
 
-    <!-- script to add onchange function and create routes table -->
-    <script>
-        $(document).ready(() => {
-        	
-            console.log("on change function added to select");
-            $('#list-select-stop').on('change', function () {
-                var stopId = $('#list-select-stop option:selected').attr("value");
-                console.log("select stop id = " + stopId);
+    const showModal = (routeid) => {
+      console.log(routeid);
+      $("#exampleModal").modal("toggle");
+      $.ajax({
+        type: "GET",
+        url: "/employee/viewStops",
+        data: {
+          rid: routeid,
+          shift: "morning"
+        },
+        dataType: "json",
+        success: function (response) {
+          console.log(response);
+          $.each(response, function (i, item) {
 
-                var routesMap;
-                $.ajax({
-                    type: "GET",
-                    url: "/arrivaltime/viewroutesas2stops/?stopId=" + stopId + "&shift=morning", //getallroutes/{stopId}
-                    data: null,
-                    async: false,
-                    success: function (response) {
-                        routesMap = response;
-                        return response;
-                    },
-                    error: function () {
-                        alert('Error occured in fetching routes');
-                    }
-                });
-                console.log(routesMap);
-                // let [startWithTime, endWithTime] = Object.values(routesMap)[0];
-                // // console.log(startWithTime);
-                // // var homeStop = startWithTime?.routeStop?.stop.name;
-                // // var officeStop = endWithTime?.routeStop?.stop.name;
-                document.getElementById('routes-table').innerHTML = `<tr>
+            $('#stops-detail tbody').append('<tr><td>' + item.routeStopId.stop.name +
+              '</td><td>' + item.morningArrivalTime +
+              '</td><td>' + item.eveningArrivalTime +
+              '</td></tr>');
+          });
+
+        },
+        error: function (xhr, status, error) {
+          console.log("False");
+        }
+      });
+    }
+    const bookBus = (busId) => {
+      var stopId = $('#list-select-stop option:selected').attr("value");
+      url = "/employee/bookABusByBusId/" + busId + "/" + stopId;
+      console.log("the bus Id selected = ", busId);
+      console.log("the eid Id selected = ", eid);
+      $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "POST",
+        url: url,
+        data: JSON.stringify(eid), // imp
+        contentType: "application/json", //imp
+        dataType: "text",
+        async: false,
+        success: function (response) {
+          $('#toast').toast({
+            delay: 2000, // 10 seconds
+          });
+          $('#toast').toast('show');
+        },
+        error: function (response) {
+          $('#toasta').toast({
+            delay: 2000, // 10 seconds
+          });
+          $('#responseData').text(response.responseText);
+          $('#toasta').toast('show');
+        }
+      });
+
+    }
+  </script>
+
+  <!-- script to add onchange function and create routes table -->
+  <script>
+    $(document).ready(() => {
+
+      console.log("on change function added to select");
+      $('#list-select-stop').on('change', function () {
+        var stopId = $('#list-select-stop option:selected').attr("value");
+        console.log("select stop id = " + stopId);
+
+        var routesMap;
+        $.ajax({
+          type: "GET",
+          url: "/arrivaltime/viewroutesas2stops/?stopId=" + stopId + "&shift=morning", //getallroutes/{stopId}
+          data: null,
+          async: false,
+          success: function (response) {
+            routesMap = response;
+            return response;
+          },
+          error: function () {
+            alert('Error occured in fetching routes');
+          }
+        });
+        console.log(routesMap);
+        // let [startWithTime, endWithTime] = Object.values(routesMap)[0];
+        // // console.log(startWithTime);
+        // // var homeStop = startWithTime?.routeStop?.stop.name;
+        // // var officeStop = endWithTime?.routeStop?.stop.name;
+        document.getElementById('routes-table').innerHTML = `<tr>
                                                                         <th class="col-sm-auto" style="text-align:center;">Route Info</th>
                                                                         <th class="col-sm-auto" style="text-align:center;">Home Stop</th>
                                                                         <th class="col-sm-auto" style="text-align:center;">Office Stop</th>
                                                                         <th class="col-sm-auto" style="text-align:center;"></th>
                                                                     </tr>`;
-                document.getElementById('bus-table').innerHTML = "";
-                Object.keys(routesMap).forEach((routeId) => {
-                    let [startWithTime, endWithTime] = routesMap[routeId];
-                    // console.log(routeId, startWithTime, endWithTime);
-                    document.
-                        getElementById('routes-table').
-                        innerHTML += `<tr>
+        document.getElementById('bus-table').innerHTML = "";
+        Object.keys(routesMap).forEach((routeId) => {
+          let [startWithTime, endWithTime] = routesMap[routeId];
+          // console.log(routeId, startWithTime, endWithTime);
+          document.
+            getElementById('routes-table').
+            innerHTML += `<tr>
                     <td class="col-sm-auto" style="text-align:center;">
                     	<a href="#" onclick="showModal(${routeId})"><img src="/images/info.png" width="40" height="40"></a>
                     	
@@ -485,97 +500,97 @@ body {
                                         <a class="btn btn-info" style="color:white;" onclick="getBuses(${routeId})" routeid=` + routeId + `>Select Route</a>
                                         </td>
                                     </tr><br><br>`;
-                });
-
-            })
-
-
         });
 
-        const removeBooking = () => {
-            console.log("the eid Id selected = ", eid);
-            // $(function () {
-            //     var token = $("meta[name='_csrf']").attr("content");
-            //     var header = $("meta[name='_csrf_header']").attr("content");
-            //     $(document).ajaxSend(function (e, xhr, options) {
-            //         xhr.setRequestHeader(header, token);
-            //     });
-            // });
-            $.ajax({
-                headers: {
-                    Accept: 'application/json', //imp
-                },
-                type: "POST",
-                url: "/employee/removebooking",
-                data: JSON.stringify(eid), // imp
-                dataType: "text",
-                contentType: "application/json", //imp
-                async: false,
-                success: function (response) {
-                	 
-                },
-                error: function (response) {
-					
-                }
-            });
-        };
-    </script>
+      })
+
+
+    });
+
+    const removeBooking = () => {
+      console.log("the eid Id selected = ", eid);
+      // $(function () {
+      //     var token = $("meta[name='_csrf']").attr("content");
+      //     var header = $("meta[name='_csrf_header']").attr("content");
+      //     $(document).ajaxSend(function (e, xhr, options) {
+      //         xhr.setRequestHeader(header, token);
+      //     });
+      // });
+      $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "POST",
+        url: "/employee/removebooking",
+        data: JSON.stringify(eid), // imp
+        dataType: "text",
+        contentType: "application/json", //imp
+        async: false,
+        success: function (response) {
+
+        },
+        error: function (response) {
+
+        }
+      });
+    };
+  </script>
 
 
 </head>
 
 <body>
-    <form th:action="@{/logout}" id="log" method="POST">
+  <form th:action="@{/logout}" id="log" method="POST">
 
-    </form>
-    <nav>
-        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
+  </form>
+  <nav>
+    <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" />
 
-           <div class="menu-items">
-          
-            <ul class="nav-links">
-                <li><a href="/employee" id="home">
-                    <i class="uil uil-estate"></i>
-                    <span class="link-name">Dashboard</span>
-                </a></li>
-                <li><a href="/employee/book" id="bookbus">
-                    <i class="uil uil-files-landscapes"></i>
-                    <span class="link-name">Book Bus</span>
-                </a></li>
-                <li><a href="/employee/trackbus" id="track-bus-link">
-                    <i class="uil uil-car-sideview"></i>
-                    <span class="link-name">Track Bus</span>
-                </a></li>
-                <li><a href="/employee/showbookingdetails">
-                    <i class="uil uil-thumbs-up"></i>
-                    <span class="link-name">Booking Details</span>
-                </a></li>
-                <li><a href="/employee/editprofile">
-                    <i class="uil uil-pen"></i>
-                    <span class="link-name">Edit Profile</span>
-                </a></li>
-                <li><a href="/employee/releaseseat">
-                <i class="uil uil-lock-open-alt"></i>
-                <span class="link-name">Release Seat</span>
-            </a></li>
-            <li><a href="/employee/sos">
-                <i class="uil uil-band-aid"></i>
-                <span class="link-name">SOS</span>
-            </a></li>
- <!--                <li><a href="#">
+    <div class="menu-items">
+
+      <ul class="nav-links">
+        <li><a href="/employee" id="home">
+            <i class="uil uil-estate"></i>
+            <span class="link-name">Dashboard</span>
+          </a></li>
+        <li><a href="/employee/book" id="bookbus">
+            <i class="uil uil-files-landscapes"></i>
+            <span class="link-name">Book Bus</span>
+          </a></li>
+        <li><a href="/employee/trackbus" id="track-bus-link">
+            <i class="uil uil-car-sideview"></i>
+            <span class="link-name">Track Bus</span>
+          </a></li>
+        <li><a href="/employee/showbookingdetails">
+            <i class="uil uil-thumbs-up"></i>
+            <span class="link-name">Booking Details</span>
+          </a></li>
+        <li><a href="/employee/editprofile">
+            <i class="uil uil-pen"></i>
+            <span class="link-name">Edit Profile</span>
+          </a></li>
+        <li><a href="/employee/releaseseat">
+            <i class="uil uil-lock-open-alt"></i>
+            <span class="link-name">Release Seat</span>
+          </a></li>
+        <li><a href="/employee/sos">
+            <i class="uil uil-band-aid"></i>
+            <span class="link-name">SOS</span>
+          </a></li>
+        <!--                <li><a href="#">
                     <i class="uil uil-share"></i>
                     <span class="link-name">Share</span>
                 </a></li> -->
-            </ul>
-            
-            <ul class="logout-mode">
-                <li><a href="#" onclick="document.getElementById('log').submit()">
-                    <i class="uil uil-signout"></i>
-    
-                     <span class="link-name">Logout</span> 
-                </a></li>
+      </ul>
 
-              <!--   <li class="mode">
+      <ul class="logout-mode">
+        <li><a href="#" onclick="document.getElementById('log').submit()">
+            <i class="uil uil-signout"></i>
+
+            <span class="link-name">Logout</span>
+          </a></li>
+
+        <!--   <li class="mode">
                     <a href="#">
                         <i class="uil uil-moon"></i>
                     <span class="link-name">Dark Mode</span>
@@ -585,134 +600,135 @@ body {
                   <span class="switch"></span>
                 </div>
             </li> -->
-            </ul>
-        </div>
-           </nav>
+      </ul>
+    </div>
+  </nav>
 
 
 
 
-<!-- Employee Dashboard-->
-    <div class="dashboard" id="homeContent">
-        <div class="top">
-        
-            <i class="uil uil-bars sidebar-toggle"></i>
+  <!-- Employee Dashboard-->
+  <div class="dashboard" id="homeContent">
+    <div class="top">
 
-                
-                   <div id="clockdate">
-  <div class="clockdate-wrapper">
-    <div id="clock"></div>
-    <div id="date"></div>
-  </div>
-</div> 
-            
- 
-
-            <img src="/images/profile.jpg" alt="">
-    
-    <div id="toast" class="toast bg-success text-white" role="alert">
-  <div class="toast-header bg-black">
-    <strong class="mr-auto">Booking Successful</strong>
-    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="toast-body">
-    You have successfully booked your seat.
-  </div>
-</div>
-
- <div id="toasta" class="toast bg-danger text-white" role="alert">
-  <div class="toast-header bg-black">
-    <strong class="mr-auto">Booking Failed</strong>
-    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="toast-body" id="responseData">
-    
-  </div>
-</div>
-       
-        </div>            
+      <i class="uil uil-bars sidebar-toggle"></i>
 
 
-        <div style="margin-top:5%;">
-            <span style="color:grey;" class="logout-mode">>bookbus </span><hr>
-            <!-- <h3 style="color:grey;text-align:center;">Book a bus</h3> -->
-
-            </div>
-        <div class="align-items-center justify-content-center d-flex p-5">
-
-            <!--Card-->
-            <div class="card shadow mb-5 bg-white rounded w-75">
-
-                <!--Card-Body-->
-                <div class="card-body" style="">
-
-                    <!--Card-Title-->
-<span class="lead fw-normal" ><b>Book a Bus</b></span>
-                    <hr>
-                    <br />
-                    <p class="searchText "><strong>Select your pickup stop</strong></p>
-                    <!-- <div class="col-sm-6"> -->
-                    <select class="mb-4" id="list-select-stop">
-                        <option value="" disabled="" selected="">Select stop</option>
-                        <option th:each="stop : ${stops}" th:value="${stop.getSid()}" th:text="${stop.getName()}">
-                        </option>
-                    </select>
-
-                    <!--Second Row to display list of routes on selected stop -->
-                    <div class="pt-5 d-flex align-content-center justify-content-center w-100 pl-5">
-                    	
-                        <table id="routes-table" class=" justify-content-center w-100">
-                        </table>
-                        
-                        
-                    </div>
-
-                    <!--Third Row to display list of buses on selected route -->
-                    <div class="pt-5 d-flex align-content-center justify-content-center w-100" id="bus-table-container">
-                        <table id="bus-table" class="justify-content-center w-100">
-                        
-                        </table>
-                        
-                    </div>
- 
-                </div>
-	
-
-            </div>
-
-        </div>
-
-
-        <!-- MOdal-->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header float-right">
-        <h5>Stop details</h5>
-        <div class="text-right">
-          <i data-dismiss="modal" aria-label="Close" class="fa fa-close"></i>
+      <div id="clockdate">
+        <div class="clockdate-wrapper">
+          <div id="clock"></div>
+          <div id="date"></div>
         </div>
       </div>
-      <div class="modal-body">
-          
 
 
-        <div>
-          
-          <table class="table table-bordered" id="stops-detail">
-  <thead>
-    <tr>
-      <th scope="col">Stop Name</th>
-      <th scope="col">Morning Arrival Time</th>
-      <th scope="col">Evening Arrival Time</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- <tr>
+
+      <img src="/images/profile.jpg" alt="">
+
+      <div id="toast" class="toast bg-success text-white" role="alert">
+        <div class="toast-header bg-black">
+          <strong class="mr-auto">Booking Successful</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="toast-body">
+          You have successfully booked your seat.
+        </div>
+      </div>
+
+      <div id="toasta" class="toast bg-danger text-white" role="alert">
+        <div class="toast-header bg-black">
+          <strong class="mr-auto">Booking Failed</strong>
+          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="toast-body" id="responseData">
+
+        </div>
+      </div>
+
+    </div>
+
+
+    <div style="margin-top:5%;">
+      <span style="color:grey;" class="logout-mode">>bookbus </span>
+      <hr>
+      <!-- <h3 style="color:grey;text-align:center;">Book a bus</h3> -->
+
+    </div>
+    <div class="align-items-center justify-content-center d-flex p-5">
+
+      <!--Card-->
+      <div class="card shadow mb-5 bg-white rounded w-75">
+
+        <!--Card-Body-->
+        <div class="card-body" style="">
+
+          <!--Card-Title-->
+          <span class="lead fw-normal"><b>Book a Bus</b></span>
+          <hr>
+          <br />
+          <p class="searchText "><strong>Select your pickup stop</strong></p>
+          <!-- <div class="col-sm-6"> -->
+          <select class="mb-4" id="list-select-stop">
+            <option value="" disabled="" selected="">Select stop</option>
+            <option th:each="stop : ${stops}" th:value="${stop.getSid()}" th:text="${stop.getName()}">
+            </option>
+          </select>
+
+          <!--Second Row to display list of routes on selected stop -->
+          <div class="pt-5 d-flex align-content-center justify-content-center w-100 pl-5">
+
+            <table id="routes-table" class=" justify-content-center w-100">
+            </table>
+
+
+          </div>
+
+          <!--Third Row to display list of buses on selected route -->
+          <div class="pt-5 d-flex align-content-center justify-content-center w-100" id="bus-table-container">
+            <table id="bus-table" class="justify-content-center w-100">
+
+            </table>
+
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+    <!-- MOdal-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header float-right">
+            <h5>Stop details</h5>
+            <div class="text-right">
+              <i data-dismiss="modal" aria-label="Close" class="fa fa-close"></i>
+            </div>
+          </div>
+          <div class="modal-body">
+
+
+
+            <div>
+
+              <table class="table table-bordered" id="stops-detail">
+                <thead>
+                  <tr>
+                    <th scope="col">Stop Name</th>
+                    <th scope="col">Morning Arrival Time</th>
+                    <th scope="col">Evening Arrival Time</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- <tr>
       <th scope="row">1</th>
       <td>Samso</td>
       <td>Natto</td>
@@ -730,26 +746,26 @@ body {
       <td>Bully</td>
       <td>@myth_tobo</td>
     </tr> -->
-  </tbody>
-</table>
+                </tbody>
+              </table>
 
+            </div>
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="empty()" data-dismiss="modal">Close</button>
+          </div>
         </div>
-
-
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" onclick="empty()" data-dismiss="modal">Close</button>
       </div>
     </div>
+
   </div>
-</div>
 
-</div>
+  <script src="/script/home_script.js"></script>
+  <!--    <script src="/script/navigation.js"></script> -->
 
-        <script src="/script/home_script.js"></script>
-        <!--    <script src="/script/navigation.js"></script> -->
-        
-        
+
 </body>
 
 </html>

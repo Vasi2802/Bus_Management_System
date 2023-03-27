@@ -153,36 +153,39 @@
         }, 1000);
         var employeeBookingDetails;
         $(document).ready(async () => {
-        	 $('tr').hover(function() {
-                 $(this).addClass('highlight');
-             }, function() {
-                 $(this).removeClass('highlight');
-             });
-
-             // Animate the cell values when they are updated
-
-            url = "/employee/get-booking-details/" + eid;
-            await $.ajax({
-                type: "GET",
-                url: url,
-                success: function (response) {
-                    console.log(response);
-                    employeeBookingDetails = response;
-                    bus = employee?.b;
-                    $('#bookingId').text(employeeBookingDetails?.bookingId).hide().fadeIn(1000);
-                    $('#busNo').text(employeeBookingDetails?.busNo).hide().delay(500).fadeIn(1000);
-                    $('#driverName').text(employeeBookingDetails?.driverName).hide().delay(1000).fadeIn(1000);
-                    $('#driverContactNo').text(employeeBookingDetails?.driverContactNo).hide().delay(1500).fadeIn(1000);
-                    $('#busStatus').text(employeeBookingDetails?.busStatus).hide().delay(2000).fadeIn(1000);
-                    
-                  
-                },
-                error: function (response) {
-                    alert('Error occured ', response.statusText);
-                }
+       	 $('tr').hover(function() {
+                $(this).addClass('table-active');
+            }, function() {
+                $(this).removeClass('table-active');
             });
-            $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
-        });
+
+            // Animate the cell values when they are updated
+
+           url = "/employee/get-booking-details/" + eid;
+           await $.ajax({
+               type: "GET",
+               url: url,
+               success: function (response) {
+                   console.log(response);
+                   employeeBookingDetails = response;
+                   bus = employee?.b;
+                   $('tr').hide().fadeIn(1000);
+                   $('#bookingId').text(employeeBookingDetails?.bookingId).hide().fadeIn(1000);
+                   $('#busNo').text(employeeBookingDetails?.busNo).hide().delay(500).fadeIn(1000);
+                   $('#driverName').text(employeeBookingDetails?.driverName).hide().delay(1000).fadeIn(1000);
+                   $('#driverContactNo').text(employeeBookingDetails?.driverContactNo).hide().delay(1500).fadeIn(1000);
+                   $('#busStatus').text(employeeBookingDetails?.busStatus).hide().delay(2000).fadeIn(1000);
+                   $('#homeStopName').text(employeeBookingDetails?.homeStopName).hide().delay(2000).fadeIn(1000);
+                   
+                 
+               },
+               error: function (response) {
+                   alert('Error occured ', response.statusText);
+               }
+           });
+           $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
+       });
+
 
         const removeBooking = () => {
             console.log("the eid Id selected = ", eid);
@@ -337,6 +340,10 @@
                         <tr>
                             <th>Bus Start Time </th>
                             <td id="busStatus"></td>
+                        </tr>
+                        <tr>
+                            <th>Pickup Stop </th>
+                            <td id="homeStopName"></td>
                         </tr>
                     </tbody>
                 </table>
