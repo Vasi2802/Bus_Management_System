@@ -40,15 +40,22 @@
     var cutoffTimes = /*[[${arrTime}]]*/[];
     /*]]>*/
 
+    var passengersPerStop;
+    var nextStop = {
+      sid: -1,
+      name: "Dunlop Bridge",
+    };
+    var nextPassengers = [];
+
     // get passengers
-    $(document).ready(() => {
-      $.ajax({
+    $(document).ready( () => {
+       $.ajax({
         type: "GET",
         url: "/driver/get-all-passengers",
         data: null,
         dataType: "json",
         success: function (response) {
-          // console.log(response);
+          console.log(response);
           passengersPerStop = response;
           const tableBody = $('#passenger-table-body');
           var html = "";
@@ -83,6 +90,30 @@
         }
       });
     });
+
+    // function to get passengers of next stop
+    getNextPassengers = () => {
+      console.log("passengers = ");
+      console.log(passengersPerStop);
+      passengersPerStop.forEach((map)=>{
+        stopName = Object.keys(map)[0];
+        employees = Object.values(map)[0]
+        if(stopName==nextStop.name){
+          nextPassengers = employees;
+        }
+      });
+      // nextPassengers = passengersPerStop?.nextStop?.stopName || [];
+      html = "";
+      nextPassengersTable = $('#next-passengers-table')
+      nextPassengers.forEach(({ eid, name, contactNo }) => {
+        html += `<tr ">
+                    <td>${eid}</td>
+                    <td>${name}</td>
+                    <td>${contactNo}</td>
+                  </tr>`;
+      });
+      nextPassengersTable.html(html)
+    };
 
   </script>
   <style>
@@ -231,7 +262,7 @@
           cutoffTime.setSeconds(0);
           cutoffTime.setMilliseconds(0);
           if (currentTime.getTime() >= cutoffTime.getTime()) {
-            console.log(currentTime.getTime() + " " + cutoffTime.getTime());
+            // console.log(currentTime.getTime() + " " + cutoffTime.getTime());
             $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
           } else if (currentTime.getTime() > threshold.getTime()) {
             console.log("Remove past time");
@@ -519,13 +550,43 @@
 
         </div>
 
+        <!-- PASSENGERS OF NEXT STOP -->
+
+        <div class="row  d-flex justify-content-center align-items-center h-100">
+          <div class="card container mt-5 mx-2 " style="border-radius: 20px;">
+            <div class="card-header mt-2" style="background-color: white;">
+              <span class="small">Next Stop</span>
+              <h3 id="nextStopName"></h3>
+            </div>
+            <div class="card-header mt-2" style="background-color: white;">
+              <h4>Passengers Waiting in this Stop</h4>
+              <button onclick="getNextPassengers()">Get Passengers in next Stop</button>
+            </div>
+            <div class="card-body">
+              <table class="table table-responsive-lg rounded-lg" style="border: 1px solid #141E30;">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>Passenger ID</th>
+                    <th>Passenger Name</th>
+                    <th>Contact No</th>
+                  </tr>
+                </thead>
+                <tbody id="next-passengers-table">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ALL PASSENGERS -->
+
         <div class="row  d-flex justify-content-center align-items-center h-100">
           <div class="card container mt-5 mx-2 " style="border-radius: 20px;">
             <div class="card-header mt-2" style="background-color: white;">
               <h3>Passengers Of Your Bus</h3>
               <span class="small">shows stops with passengers only</span>
             </div>
-            <div class="card-body " >
+            <div class="card-body ">
               <table class="table table-responsive-lg rounded-lg" style="border: 1px solid #141E30;">
                 <thead class="thead-dark">
                   <tr>
