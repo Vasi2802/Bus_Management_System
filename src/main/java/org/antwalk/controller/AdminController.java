@@ -350,6 +350,14 @@ public class AdminController {
 		List<Driver> drivers = driverRepo.findAll();
 		ModelAndView modelAndView = new ModelAndView("manageDriver");
 		modelAndView.addObject("drivers", drivers);
+		
+		CrmUser user = new CrmUser();
+		user.setPassword("NRIFINTECH");
+		user.setMatchingPassword("NRIFINTECH");
+		modelAndView.addObject("crmUser", user);
+
+		modelAndView.addObject("defaultpass", "NRIFINTECH");
+		
 		return modelAndView;
 	}
 

@@ -59,7 +59,11 @@ public class DemoController {
 	    User user = (User)session.getAttribute("driver");
 		Driver driver = driverService.getDriverById(user.getDriver().getDid());
 		
-		String res = driver.getBus().getActive();
+		String res;
+		if(driver.getBus()==null)
+			res=" ";
+		else
+				res = driver.getBus().getActive();
 		
 		model.addAttribute("res",res);
 		return "driver";
@@ -99,10 +103,12 @@ public class DemoController {
 //	logger.info("Processing registration form for: " + userName);
 
 		// form validation
+		theModel.addAttribute("showModal", "yes");
 		if (theBindingResult.hasErrors()) {
-			return "registration-form-driver";
+			
+			return "manageDriver";
 		}
-
+		
 		// check the database if user already exists
 		User existing = userService.findByUserName(userName);
 
@@ -111,7 +117,7 @@ public class DemoController {
 			theModel.addAttribute("registrationError", "User name already exists.");
 
 //		logger.warning("User name already exists.");
-			return "registration-form-driver";
+			return "manageDriver";
 		}
 		/*
 		 * String userEmail = theCrmUser.getEmail(); System.out.println(userEmail); User

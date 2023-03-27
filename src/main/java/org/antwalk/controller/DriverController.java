@@ -21,9 +21,11 @@ import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
 import org.antwalk.service.DriverService;
+import org.antwalk.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -44,13 +47,18 @@ public class DriverController {
 	@Autowired
 	DriverService driverService;
 	
-	
+
+	@Autowired
+	private UserService userService;
+
 	@Autowired
 	ArrivalTimeService arrivalTimeService;
 
 	@Autowired
 	private BookingDetailsService bookingDetailsService;
 	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 	
 	@Autowired
 	BusService buserv;
@@ -152,6 +160,26 @@ public class DriverController {
 		
 		
 		return null;
+	}
+	
+	@PostMapping("/updateprofile")
+	public ResponseEntity<String> update(@RequestParam("eid") long eid,
+			@RequestParam("contactNo") String contactNo,
+			@RequestParam("password") String password,
+			HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		User emp1 = (User) session.getAttribute("driver");
+
+		User userv = userService.findByUserName(emp1.getUserName());
+
+		if (!password.equals("")) {
+			userService.findByUserName(emp1.getUserName()).setPassword(passwordEncoder.encode(password));
+
+		}
+
+		driverService.updateDriverById(eid, contactNo);
+
+		return ResponseEntity.ok("Profile Updated Successfully");
 	}
 
 	@GetMapping("get-all-passengers") 
