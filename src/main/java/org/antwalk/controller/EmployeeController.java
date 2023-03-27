@@ -82,7 +82,7 @@ public class EmployeeController {
 
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	BookingDetailsRepo bookingDetailsRepo;
 
@@ -106,7 +106,7 @@ public class EmployeeController {
 
 	@Autowired
 	ArrivalTimeService arrivalTimeService;
-	
+
 	@Autowired
 	ArrivalTimeRepo arrivalTimeRepo;
 
@@ -225,31 +225,28 @@ public class EmployeeController {
 		ModelAndView modelAndView = new ModelAndView("employee-track-bus");
 		return modelAndView;
 	}
-	
-	
-	
+
 	@PostMapping("/updateprofile")
 	public ResponseEntity<String> update(@RequestParam("eid") long eid,
-            @RequestParam("name") String name,
-            @RequestParam("contactNo") String contactNo,
-            @RequestParam("password") String password,
-            HttpServletRequest request) {
-		HttpSession session =request.getSession(); 
-		  User emp1 = (User)session.getAttribute("emp");
-		  
-		  User userv = userService.findByUserName(emp1.getUserName()); 
-		  
-		  if(!password.equals("")) { 
-		  userService.findByUserName(emp1.getUserName()).setPassword(passwordEncoder.
-		  encode(password));
-		  
-		  }
-		
-		employeeService.updateEmployeeById(eid,contactNo,name);
-		
-		
+			@RequestParam("name") String name,
+			@RequestParam("contactNo") String contactNo,
+			@RequestParam("password") String password,
+			HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		User emp1 = (User) session.getAttribute("emp");
+
+		User userv = userService.findByUserName(emp1.getUserName());
+
+		if (!password.equals("")) {
+			userService.findByUserName(emp1.getUserName()).setPassword(passwordEncoder.encode(password));
+
+		}
+
+		employeeService.updateEmployeeById(eid, contactNo, name);
+
 		return ResponseEntity.ok("Profile Updated Successfully");
 	}
+
 	@GetMapping("/book")
 	public ModelAndView book() {
 		ModelAndView modelAndView = new ModelAndView("employeeBook");
@@ -305,6 +302,7 @@ public class EmployeeController {
 
 		return null;
 	}
+
 	@GetMapping("/viewStops")
 	public List<ArrivalTimeTable> getAllStopsWithTimeByRouteid(@RequestParam Long rid, @RequestParam String shift) {
 		try {
@@ -315,24 +313,23 @@ public class EmployeeController {
 			} else {
 				arrivalTimeTableList = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
 			}
-//			ModelAndView modelAndView = new ModelAndView("viewStops");
-			// System.out.println(arrivalTimeTableList);
-//			modelAndView.addObject("arrivalTimeTableList", arrivalTimeTableList);
 			return arrivalTimeTableList;
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return null;
 		}
 	}
-	
-	
-	@PostMapping(value = "/bookABusByBusId/{busId}")
+
+	@PostMapping(value = "/bookABusByBusId/{busId}/{stopId}")
 	public ResponseEntity<String> bookABusByBusId(@RequestBody Long eid, @PathVariable long busId,
+			@PathVariable long stopId,
 			HttpServletRequest request) {
 
+
 		System.out.println("Booking Bus For ==============");
-		System.out.println("bus id =" + busId + "  empId = " + eid + "=============");
+		System.out.println("bus id =" + busId + "  empId = " + eid + "stopId = " + stopId + "=============");
 		Bus bus = busRepo.findById(busId).get();
+		Stop stop = stopRepo.findById(stopId).get();
 		Employee employee = empRepo.findById(eid).get();
 		LocalDate todayDate = LocalDate.now();
 
@@ -349,20 +346,15 @@ public class EmployeeController {
 
 		// prevents an employee to book more than 1 bus/seat for current month
 		if (employee.getB() != null) {
-			// return String.format("Sorry %s. \nYou can book only 1 bus seat in a month.
-			// \nYour current bus ID is %s",
-			// employee.getName(), employee.getB().getBid());
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You can only book 1 seat");
 
 		}
 
 		// employee tries to book a filled bus
 		if (bus.getAvailableSeats() <= 0) {
-			WaitingList waitingList = new WaitingList(0, employee, bus);
+			WaitingList waitingList = new WaitingList(0, employee, bus, stop);
 			waitingListRepo.save(waitingList);
-			// return String.format("Hi %s!\nYou have been added to waitlist for bus with
-			// id=%d.\n Your waitlist id=%d",
-			// employee.getName(), bus.getBid(), waitingList.getWid());
+
 
 			// ---------- Add entry to history table
 			Route route = bus.getR();
@@ -383,7 +375,7 @@ public class EmployeeController {
 		// seats available and employee doesnt have any bus assigned
 		bus.setAvailableSeats(bus.getAvailableSeats() - 1);
 		busRepo.save(bus);
-		BookingDetails bookingDetails = new BookingDetails(0, employee, bus, date);
+		BookingDetails bookingDetails = new BookingDetails(0, employee, bus, date, stop);
 		bookingDetailsRepo.save(bookingDetails); // add to bookingDetails
 		employee.setB(bus);
 		System.out.println("======================================");
@@ -460,13 +452,16 @@ public class EmployeeController {
 				// get the employee
 				Employee topEmployee = waitingList.getE();
 
+				// stop of the Top employee
+				Stop stop = waitingList.getStop();
+
 				// book bus for top employee
-				employeeService.bookABusByBusId(topEmployee.getEid(), bus.getBid());
+				employeeService.bookABusByBusId(topEmployee.getEid(), bus.getBid(), stop.getSid());
 
 				System.out.println(topEmployee.getName() +
 						" from waitList has been assigned busID " +
 						topEmployee.getB().getBid());
-				
+
 				// ---------- Add entry to history table
 				historyService.add(new History(0L,
 						topEmployee.getEid(),
@@ -537,6 +532,7 @@ public class EmployeeController {
 		String driverName = "NA";
 		String driverContactNo = "NA";
 		String busStatus = "NA";
+		String homeStopName = "NA";
 		System.out.println("hello");
 		if (employee.getB() != null) {
 			Bus bus = employee.getB();
@@ -551,6 +547,8 @@ public class EmployeeController {
 			BookingDetails bookingDetails = bookingDetailsService.findMostRecentBooking(employee, bus);
 			if (bookingDetails != null) {
 				bookingId = "" + bookingDetails.getBookingId();
+				homeStopName = bookingDetails.getStop().getName();
+				
 			}
 		}
 
@@ -559,6 +557,7 @@ public class EmployeeController {
 		employeeBookingDetails.put("driverName", driverName);
 		employeeBookingDetails.put("driverContactNo", driverContactNo);
 		employeeBookingDetails.put("busStatus", busStatus);
+		employeeBookingDetails.put("homeStopName", homeStopName);
 		return employeeBookingDetails;
 	}
 

@@ -35,6 +35,33 @@ public class BookingDetails {
 	@Column(name="booking_for_month")
 	@NotNull
 	private Date bookingForMonth;
+	
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name="stop_id", referencedColumnName = "sid")
+	private Stop stop;
+
+	
+	public BookingDetails() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	public BookingDetails(long bookingId, Employee e, Bus b, Date bookingForMonth) {
+		super();
+		this.bookingId = bookingId;
+		this.e = e;
+		this.b = b;
+		this.bookingForMonth = bookingForMonth;
+	}
+
+	public BookingDetails(long bookingId, @NotNull Employee e, @NotNull Bus b, @NotNull Date bookingForMonth,
+			Stop stop) {
+		this.bookingId = bookingId;
+		this.e = e;
+		this.b = b;
+		this.bookingForMonth = bookingForMonth;
+		this.stop = stop;
+	}
 
 	public long getBookingId() {
 		return bookingId;
@@ -68,20 +95,12 @@ public class BookingDetails {
 		this.bookingForMonth = bookingForMonth;
 	}
 
-	public BookingDetails(long bookingId, Employee e, Bus b, Date bookingForMonth) {
-		super();
-		this.bookingId = bookingId;
-		this.e = e;
-		this.b = b;
-		this.bookingForMonth = bookingForMonth;
+	public Stop getStop() {
+		return stop;
 	}
 
-	public BookingDetails() {
-		super();
-		// TODO Auto-generated constructor stub
+	public void setStop(Stop stop) {
+		this.stop = stop;
 	}
-
-
-	
 	
 }
