@@ -12,13 +12,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookingDetailsRepo extends JpaRepository<BookingDetails, Long>{
 
-    public List<BookingDetails> findAllByEAndBookingForMonthGreaterThanEqual(Employee employee, Date date);
+    public List<BookingDetails> findAllByEAndBookingForMonthGreaterThanEqual(Employee employee, Date date);		//after that date
     
-    public List<BookingDetails> findAllByBookingForMonthGreaterThanEqualOrderByBookingForMonth(Date date);
+    public List<BookingDetails> findAllByBookingForMonthGreaterThanEqualOrderByBookingForMonth(Date date);		//for all emp
     
-    public List<BookingDetails> findAllByEAndBookingForMonth(Employee employee, Date date);
+    public List<BookingDetails> findAllByEAndBookingForMonth(Employee employee, Date date);		//for that date only		redundant
     
-    public Optional<BookingDetails> findByEAndBookingForMonth(Employee employee, Date date);
+    public Optional<BookingDetails> findByEAndBookingForMonth(Employee employee, Date date);		//returns emp
 
     public List<BookingDetails> findByEAndBOrderByBookingForMonthAsc(Employee employee, Bus bus);
 
