@@ -47,8 +47,8 @@
                     employee = response;
                     bus = employee?.bus;
                     time = employee?.bus?.active;
-                    $("#timedata").text(active);
-                    $("#togglebtn").text(time==="YES"?"End Journey":"Start the Journey");
+                    $("#timedata").text(time);
+                    $("#togglebtn").text(time=="YES"?"End Journey":"Start the Journey");
                     console.log(time);
                 },
                 error: function (response) {
@@ -187,8 +187,8 @@
                             <!-- employee/getStatus returns assigned, not applied, in waitlist -->
                         </tr>
                         <tr>
-                           <td>Trip start time </td>
-                            <td id="timedata"></button></td>
+                           <td>ACTIVE </td>
+                            <td id="timedata"></td>
                         </tr>
                         
                     </tbody>

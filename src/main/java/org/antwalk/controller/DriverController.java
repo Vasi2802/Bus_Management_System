@@ -131,15 +131,13 @@ public class DriverController {
 	@PostMapping("/changestatus/{bid}")
 	public String insert1(@PathVariable long bid) {
 		String msg;
-		
+		System.out.println(bid);
 		Bus bus = buserv.getBusById(bid);
-		if(bus.getStartTime()!=null) {
-			bus.setStartTime(null);
-			msg="Journey stopped";
+		if(bus.getActive().equals("NO")){
+			bus.setActive("YES");
 		}
 		else {
-			bus.setStartTime(LocalTime.now());
-			msg="Journey started at "+ bus.getStartTime();
+			bus.setActive("NO");
 		}
 		
 		buserv.updateBusById(bus, bid);
