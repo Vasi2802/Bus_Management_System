@@ -2,16 +2,18 @@ package org.antwalk.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.antwalk.entity.Admin;
+import org.antwalk.entity.ArrivalTimeTable;
+import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
-import org.antwalk.entity.Route;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.Route;
 import org.antwalk.entity.RouteStopId;
@@ -31,18 +33,13 @@ import org.antwalk.service.AdminService;
 import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
-import org.antwalk.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
-import org.antwalk.service.ArrivalTimeService;
-import org.antwalk.service.BookingDetailsService;
-import org.antwalk.service.BusService;
 import org.antwalk.service.DriverService;
 import org.antwalk.service.EmployeeService;
 import org.antwalk.service.RouteService;
-import org.antwalk.service.StopService;
+import org.antwalk.user.CrmUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,16 +47,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.validation.BindingResult;
-import org.antwalk.user.CrmUser;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.antwalk.entity.ArrivalTimeTable;
-import org.springframework.ui.Model;
-import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 @RequestMapping("/admin")
@@ -511,7 +502,10 @@ public class AdminController {
 	}
 
 
-
+	@GetMapping("/employees")
+	public List<Employee> manageEmploye(){
+		return employeeService.getAllEmployees();
+	}
 	@RequestMapping("/manageEmployee")
 	public ModelAndView manageEmployee() {
 		ModelAndView mv = new ModelAndView("manageEmployee");
@@ -551,11 +545,11 @@ public class AdminController {
 		}
 
 	 @GetMapping("/employee/deletebyidnew/{id}")
-	public ModelAndView deleteByIdEmployee(@PathVariable("id") long id) {
+	public String deleteByIdEmployee(@PathVariable("id") long id) {
 		employeeService.deleteemployee(id);
 		
 		
-		return manageEmployee();
+		return "Successful";
 	}
 
 	@GetMapping("/editDriver")
@@ -670,4 +664,10 @@ public class AdminController {
 		return manageBus();
 	}
 	
+	@GetMapping("/bus/getallEmployees")
+	public List<BookingDetails> getAllEmp(@RequestParam Long bid){
+		
+		
+		return busService.getAllpassinBus(bid);
+	}
 }

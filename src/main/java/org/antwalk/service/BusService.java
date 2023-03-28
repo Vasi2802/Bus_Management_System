@@ -1,19 +1,20 @@
 package org.antwalk.service;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
+import org.antwalk.entity.Employee;
 import org.antwalk.entity.Route;
 import org.antwalk.repository.BusRepo;
 import org.antwalk.repository.DriverRepo;
 import org.antwalk.repository.RouteRepo;
-import org.aspectj.apache.bcel.util.ByteSequence;
-import org.hibernate.id.IntegralDataTypeHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,12 +26,18 @@ public class BusService {
 	private BusRepo busRepo;
 	
 	@Autowired
+	private BookingDetailsService bookserv;
+	
+	
+	@Autowired
 	private RouteRepo routeRepo;
 
 	@Autowired
 	private DriverRepo driverRepo;
 	
-
+	@Autowired
+	private EmployeeService employeeService;
+	
 	public Bus insertBus(Bus b) {
 		return busRepo.save(b);
 	}
@@ -162,4 +169,14 @@ public class BusService {
 		return bus;
     }
 
+    
+	public List<BookingDetails> getAllpassinBus(Long bid) {
+		
+		
+		Bus bus = busRepo.getById(bid);
+		
+		
+		return bookserv.findAllByB(bus);
+	}
 }
+
