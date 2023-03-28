@@ -63,9 +63,11 @@
 		      tr.appendChild(tdContactNo);
 
 		      const tdBid = document.createElement('td');
-		      if (emp.b) {
+		      if (emp?.b) {
+		    	
 		        tdBid.textContent = emp.b.bid;
 		      } else {
+		    	  console.log(emp);
 		        tdBid.textContent = 'NA';
 		      }
 		      tr.appendChild(tdBid);

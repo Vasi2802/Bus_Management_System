@@ -33,7 +33,6 @@ public class Employee {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "bus_id", referencedColumnName = "bid")
-	@JsonBackReference
 	private Bus b;
 
 
