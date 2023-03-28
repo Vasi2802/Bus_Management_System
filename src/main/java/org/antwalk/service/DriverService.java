@@ -66,7 +66,7 @@ public class DriverService {
 		
 	}
 
-	public List<HashMap<String,List<Employee>>> getAllPassengers(Driver driver){
+	public List<HashMap<String,Object>> getAllPassengers(Driver driver){
 		Bus bus = driver.getBus();
 		Route route = bus.getR();
 		LocalTime curTime = LocalTime.now();
@@ -74,21 +74,36 @@ public class DriverService {
 		
 		List<BookingDetails> bookingDetailsList = bookingDetailsService.findAllByB(bus);
 		List<ArrivalTimeTable> arrivalTimeTables = arrivalTimeService.getAllStopsWithTimeByRouteId(route.getRid(), shift);
-		List<HashMap<String,List<Employee>>> passengers = new ArrayList<>();
+		List<HashMap<String,Object>> passengers = new ArrayList<>();
 		for(ArrivalTimeTable arrivalTimeTable: arrivalTimeTables){
-			HashMap<String,List<Employee>> stopMap = new HashMap<>();
-			List<Employee> employees = new ArrayList<>();
+			HashMap<String,Object> stopMap = new HashMap<>();
+			List<Object> employees = new ArrayList<>();
 			Stop stop = arrivalTimeTable.getRouteStopId().getStop();
+			stopMap.put("stop", stop);
 			for(BookingDetails bookingDetails: bookingDetailsList){
 				if(bookingDetails.getStop().getSid()==stop.getSid()){
-					employees.add(bookingDetails.getE());
+					HashMap<String, String> employee = new HashMap<>();
+					employee.put("name",bookingDetails.getE().getName());
+					employee.put("eid", "" + bookingDetails.getE().getEid());
+					employee.put("contactNo",bookingDetails.getE().getContactNo());
+					employee.put("boardingStatus","" + bookingDetails.getIsBoarded());
+					employees.add(employee);
 				}
 			}
+			stopMap.put("employees", employees);
 			if(employees.size()>0){
-				stopMap.put(stop.getName(), employees);
 				passengers.add(stopMap);
 			}
 		}
 		return passengers;
+	}
+	
+	// call during end journey
+	public void clearBoardingStatus(){
+		List<BookingDetails> bookingDetailsList = bookingDetailsService.getAllBookingDetails();
+		for(BookingDetails bookingDetails : bookingDetailsList){
+			bookingDetails.setIsBoarded(false);
+			bookingDetailsService.insertBookingDetails(bookingDetails);
+		}
 	}
 }

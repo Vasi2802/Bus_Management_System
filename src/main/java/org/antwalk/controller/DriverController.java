@@ -1,5 +1,6 @@
 package org.antwalk.controller;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.antwalk.entity.ArrivalTimeTable;
+import org.antwalk.entity.Attendance;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
@@ -18,9 +20,11 @@ import org.antwalk.entity.Stop;
 import org.antwalk.entity.User;
 import org.antwalk.repository.DriverRepo;
 import org.antwalk.service.ArrivalTimeService;
+import org.antwalk.service.AttendanceService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
 import org.antwalk.service.DriverService;
+import org.antwalk.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +54,12 @@ public class DriverController {
 
 	@Autowired
 	private BookingDetailsService bookingDetailsService;
+
+	@Autowired
+	private EmployeeService employeeService;
+
+	@Autowired
+	private AttendanceService attendanceService;
 	
 	
 	@Autowired
@@ -155,12 +165,29 @@ public class DriverController {
 	}
 
 	@GetMapping("get-all-passengers") 
-	public ResponseEntity<List<HashMap<String,List<Employee>>>> getAllPassengers(HttpServletRequest httpServletRequest){
+	public ResponseEntity<Object> getAllPassengers(HttpServletRequest httpServletRequest){
 		User user = (User)httpServletRequest.getSession().getAttribute("driver");
 		Driver driver = user.getDriver();
-		List<HashMap<String,List<Employee>>> passengers = driverService.getAllPassengers(driver);
-
-		return ResponseEntity.status(HttpStatus.OK).body(passengers);
+		Object passengers = driverService.getAllPassengers(driver);
+		return ResponseEntity.status(HttpStatus.OK).body((Object)passengers);
 	}
+
+	@GetMapping("/onboard-passenger/{employeeId}/{stopId}")
+	public String onboardPassenger(@PathVariable long employeeId, @PathVariable long stopId) {
+		Employee employee = employeeService.getEmployeeById(employeeId);
+		BookingDetails bookingDetails = bookingDetailsService.getBookingDetailsByE(employee);
+		bookingDetails.setIsBoarded(true);
+		
+		// update boarding status in booking details
+		bookingDetailsService.insertBookingDetails(bookingDetails);
+
+		// save in attendance table
+		LocalDate today = LocalDate.now();
+		Attendance attendance = new Attendance(null,null, employee, today);
+		attendanceService.save(attendance);
+		return "Successful";
+	}
+
+
 	
 }

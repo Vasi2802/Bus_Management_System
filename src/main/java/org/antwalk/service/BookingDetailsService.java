@@ -127,5 +127,9 @@ public class BookingDetailsService {
         return bookingRepo.findAllByB(bus);
     }
 
+    public BookingDetails getBookingDetailsByE(Employee employee) {
+        return bookingRepo.findByE(employee);
+    }
+
 
 }
