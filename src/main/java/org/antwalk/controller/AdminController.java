@@ -1,5 +1,7 @@
 package org.antwalk.controller;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -34,6 +36,7 @@ import org.antwalk.service.BusService;
 import org.antwalk.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
@@ -57,6 +60,7 @@ import org.antwalk.user.CrmUser;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.antwalk.entity.ArrivalTimeTable;
+import org.antwalk.entity.Attendance;
 import org.springframework.ui.Model;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -660,6 +664,26 @@ public class AdminController {
 	public ModelAndView deleteById2(@PathVariable("id") long id) {
 		busService.deleteBusById(id);
 		return manageBus();
+	}
+
+	@GetMapping("/analytics/attendance")
+	public ResponseEntity<List<Attendance>> getAttendanceAnalytics(@RequestParam String startDate, String endDate){
+		LocalDate startLocalDate = LocalDate.parse(startDate);
+		LocalDate endLocalDate = LocalDate.parse(endDate);
+		List<Attendance> attendanceList = adminService.getAttendanceAnalytics(startLocalDate, endLocalDate);
+
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(attendanceList);
+	}
+
+	@GetMapping("/attendance")
+	public ModelAndView attendancView(){
+		return new ModelAndView("attendance");
+	}
+
+	// GENERATE REPORT FOR ROUTE STATISTICS
+	@GetMapping("/analytics/download-attendance-report")
+	public ResponseEntity<Resource> downloadAttendanceReport() {
+		return adminService.generateAttendanceReport();
 	}
 	
 }

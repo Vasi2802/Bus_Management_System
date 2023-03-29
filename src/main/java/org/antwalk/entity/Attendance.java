@@ -18,6 +18,12 @@ public class Attendance {
 
     private Long employeeId;
 
+    private String employeeName;
+
+    private String stopName;
+    
+    private String shift;
+
     private LocalDate attendanceDate;
 
     public Attendance() {
@@ -27,6 +33,19 @@ public class Attendance {
         this.attendanceId = attendanceId;
         this.busId = busId;
         this.employeeId = employeeId;
+        this.attendanceDate = attendanceDate;
+    }
+
+    
+
+    public Attendance(Long attendanceId, Long busId, Long employeeId, String employeeName, String stopName, String shift,
+            LocalDate attendanceDate) {
+        this.attendanceId = attendanceId;
+        this.busId = busId;
+        this.employeeId = employeeId;
+        this.employeeName = employeeName;
+        this.stopName = stopName;
+        this.shift = shift;
         this.attendanceDate = attendanceDate;
     }
 
@@ -60,6 +79,30 @@ public class Attendance {
 
     public void setAttendanceDate(LocalDate attendanceDate) {
         this.attendanceDate = attendanceDate;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
+
+    public String getStopName() {
+        return stopName;
+    }
+
+    public void setStopName(String stopName) {
+        this.stopName = stopName;
+    }
+
+    public String getShift() {
+        return shift;
+    }
+
+    public void setShift(String shift) {
+        this.shift = shift;
     }
 
     

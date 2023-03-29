@@ -177,13 +177,21 @@ public class DriverController {
 		Employee employee = employeeService.getEmployeeById(employeeId);
 		BookingDetails bookingDetails = bookingDetailsService.getBookingDetailsByE(employee);
 		bookingDetails.setIsBoarded(true);
+		String stopName = bookingDetails.getStop().getName();
+		String employeeName = bookingDetails.getE().getName();
+		String shift = "Morning";
+		LocalTime now = LocalTime.now();
+		if(now.getHour()>12){
+			shift = "Evening";
+		}
+
 		
 		// update boarding status in booking details
 		bookingDetailsService.insertBookingDetails(bookingDetails);
 
 		// save in attendance table
 		LocalDate today = LocalDate.now();
-		Attendance attendance = new Attendance(null,null, employee.getEid(), today);
+		Attendance attendance = new Attendance(null,bookingDetails.getB().getBid(), employee.getEid(), employeeName, stopName, shift, today);
 		attendanceService.save(attendance);
 		return "Successful";
 	}
@@ -192,5 +200,5 @@ public class DriverController {
 	public void clearOnboarding(){
 		driverService.clearBoardingStatus();
 	}
-	
+
 }
