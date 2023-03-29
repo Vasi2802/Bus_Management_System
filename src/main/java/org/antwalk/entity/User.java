@@ -165,7 +165,14 @@ public class User {
 		this.role = role;
 	}
 
-
+	public User(Long id, String userName, String password, String role,Employee emp) {
+		super();
+		this.id = id;
+		this.userName = userName;
+		this.password = password;
+		this.role = role;
+		this.employee = emp;
+	}
 //	public void setRoles(Collection<Role> roles) {
 //		this.roles = roles;
 //	}
