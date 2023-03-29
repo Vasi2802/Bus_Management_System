@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+  crossorigin=""></script>
+    <!----======== CSS ======== -->
+    <link rel="stylesheet" href="/css/home_style.css">
+     
+    <!----===== Iconscout CSS ===== -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+	<!-- from other file -->
+	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+    </script>
+    
+
+
+
+    <script>
+        setInterval(() => {
+        	  // Get the current time
+        	  const now = new Date();
+
+        	  // Format the time as hh:mm:ss
+        	  const hours = now.getHours().toString().padStart(2, '0');
+        	  const minutes = now.getMinutes().toString().padStart(2, '0');
+        	  const seconds = now.getSeconds().toString().padStart(2, '0');
+        	  const time = `${hours}:${minutes}:${seconds}`;
+        	  
+        	  $('#clock').text(time);
+        	  
+        	 
+        	}, 1000);
+        
+    </script>
+    
+    
+    <title>Employee Dashboard </title> 
+</head>
+<body>
+                <form th:action="@{/logout}" id="log" method="POST">
+						
+</form>
+    <nav>
+        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
+
+        <div class="menu-items">
+          
+            <ul class="nav-links">
+                <li><a href="/employee" id="home">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dashboard</span>
+                </a></li>
+                <li><a href="/employee/book" id="bookbus">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Book Bus</span>
+                </a></li>
+                <li><a href="/employee/trackbus" id="track-bus-link">
+                    <i class="uil uil-car-sideview"></i>
+                    <span class="link-name">Track Bus</span>
+                </a></li>
+                <li><a href="/employee/showbookingdetails">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Booking Details</span>
+                </a></li>
+                <li><a href="/employee/editprofile">
+                    <i class="uil uil-pen"></i>
+                    <span class="link-name">Edit Profile</span>
+                </a></li>
+                <li><a href="/employee/releaseseat">
+                <i class="uil uil-lock-open-alt"></i>
+                <span class="link-name">Release Seat</span>
+            </a></li>
+            <li><a href="/employee/sos">
+                <i class="uil uil-band-aid"></i>
+                <span class="link-name">SOS</span>
+            </a></li>
+ <!--                <li><a href="#">
+                    <i class="uil uil-share"></i>
+                    <span class="link-name">Share</span>
+                </a></li> -->
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="#" onclick="document.getElementById('log').submit()">
+                    <i class="uil uil-signout"></i>
+    
+                     <span class="link-name">Logout</span> 
+                </a></li>
+
+              <!--   <li class="mode">
+                    <a href="#">
+                        <i class="uil uil-moon"></i>
+                    <span class="link-name">Dark Mode</span>
+                </a>
+
+                <div class="mode-toggle">
+                  <span class="switch"></span>
+                </div>
+            </li> -->
+            </ul>
+        </div>
+    </nav>
+
+
+
+
+<!-- Employee Dashboard-->
+    <div class="dashboard" id="homeContent">
+        <div class="top">
+        
+            <i class="uil uil-bars sidebar-toggle"></i>
+
+                
+                   <div id="clockdate">
+  <div class="clockdate-wrapper">
+    <div id="clock"></div>
+    <div id="date"></div>
+  </div>
+</div> 
+            	
+
+            <img src="/images/profile.jpg" alt="">
+           
+        </div>
+        
+<div style="margin-top:5%;">
+<span style="color:grey;" class="logout-mode">> release-seat</span><hr>
+<h3 style="color:grey;text-align:center;" id="test">Release seat</h3>
+
+</div>
+<Br/>
+
+<div>
+<!-- <div class="progress-bar">
+  <ul id="progress-bar-points">
+    <li id="point-1" class="active"></li>
+    <li id="point-2"></li>
+    <li id="point-3"></li>
+    <li id="point-4"></li>
+    <li id="point-5"></li>
+  </ul>
+  <div class="lines"></div>
+</div>
+            </div> -->
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col">
+        <div class="card card-stepper" style="border-radius: 10px;">
+          <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex flex-column">
+                <span class="lead fw-normal">Warning</span>
+              
+              </div>
+          
+            </div>
+            <hr class="my-4">
+ 					
+ 				 <div
+					class="alert alert-danger col-xs-offset-1 col-xs-10">
+											You need to book a bus first
+						</div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+     <ul>
+    <li th:each="object : ${allStops}">
+        <span th:text="${object.name}" style="color:red;"></span>
+
+    </li>
+</ul>
+   </div>
+   </div>
+</div>
+
+
+
+</body>
+</html>

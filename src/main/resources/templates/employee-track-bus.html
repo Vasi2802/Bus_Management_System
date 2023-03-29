@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+  crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+  integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+  crossorigin=""></script>
+    <script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-app.js" ></script>
+<script src="https://www.gstatic.com/firebasejs/7.19.1/firebase-database.js" ></script>
+
+  <style>
+
+  </style>
+    <!----======== CSS ======== -->
+    <link rel="stylesheet" href="/css/home_style.css">
+     
+    <!----===== Iconscout CSS ===== -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+	<!-- from other file -->
+	   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+  
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+    </script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+    </script>
+	<script th:inline="javascript">
+        /*<![CDATA[*/
+        var phno = /*[[${session.emp.getEmployee().getName()}]]*/ 'default';
+        var bus = /*[[${session.emp.getEmployee().getB()}]]*/ 'default';
+        var eid = /*[[${session.emp.getEmployee().getEid()}]]*/ 'default';
+  	  	var cutoffTimes = /*[[${arrTime}]]*/ []; 
+        /*]]>*/
+
+    </script>
+	<style>
+	#map{
+	margin: auto;;
+	 width: 50%;
+       border: 2px solid black;
+  padding: 10px;
+     height:500px;
+	}
+.hellotrack {
+height: 2px !important;
+background-color: #488978;
+opacity: 1;
+}
+
+.dot {
+height: 10px;
+width: 10px;
+margin-left: 3px;
+margin-right: 3px;
+margin-top: 0px;
+background-color: #488978;
+border-radius: 50%;
+display: inline-block
+}
+
+.big-dot {
+height: 25px;
+width: 25px;
+margin-left: 0px;
+margin-right: 0px;
+margin-top: 0px;
+background-color: #488978;
+border-radius: 100%;
+display: inline-block;
+}
+
+.big-dot i {
+font-size: 12px;
+}
+
+.card-stepper {
+z-index: 0
+}
+#clock{
+font-size:30px;
+color:lightgreen;
+}
+@media (max-width: 767px) {
+  span {
+    font-size: 10px;
+  }
+  #clock{
+  font-size: 25px;
+  }
+  #map{
+width: 100%;
+     height:300px;
+	}
+  }
+
+@media (max-width: 427px) {
+  span {
+    font-size: 7px;
+  }
+  }
+  
+@font-face{
+    font-family: 'Digital-7';
+    src:  url('fonts/digital-7.ttf') format('woff2'),   b ,g,mdrx
+    url('digital-7.woff') format('woff');
+}
+.clockdate-wrapper {
+    background: #141E30;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #243B55, #141E30);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #243B55, #141E30); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    padding:3px;
+    padding-left:50px;
+    padding-right:50px;
+    width:100%;
+    text-align:center;
+    border-radius:5px;
+    margin:0 auto;
+  
+}
+#clock{
+    font-family: Digital-7, 'sans-serif';
+    text-shadow:0px 0px 1px #fff;
+    color:#fff;
+}
+#clock span {
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow:0px 0px 1px #333;
+    font-size:15px;
+    position:relative;
+}
+</style>
+
+
+    <script>
+    //getroutebylistofstops
+           
+        console.log(eid);
+        var employee;
+        var bus;
+        setInterval(() => {
+        	  // Get the current time
+        	  const now = new Date();
+
+        	  // Format the time as hh:mm:ss
+        	  const hours = now.getHours().toString().padStart(2, '0');
+        	  const minutes = now.getMinutes().toString().padStart(2, '0');
+        	  const seconds = now.getSeconds().toString().padStart(2, '0');
+        	  const time = `${hours}:${minutes}:${seconds}`;
+        	  
+        	  $('#clock').text(time);
+        	  
+  
+      	    var ids = ["#pipe1","#pipe2","#pipe3","#pipe4","#pipe5","#pipe6","#pipe7","#pipe8","#pipe9","#pipe10","#pipe11","#pipe12","#pipe13"]; // list of IDs
+      	    var threshold = new Date(); // create a new Date object for the cutoff time
+      	    threshold.setHours(12);
+
+      	    var currentTime = new Date(); // get the current time
+      	    for (var i = 0; i < cutoffTimes.length; i++) {
+      	        var cutoffTime = new Date(); // create a new Date object for the cutoff time
+
+      	        if (currentTime.getTime()<=threshold.getTime()) {
+          	        var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
+          	      .split(':');
+          	            	        var hours1 = parseInt(cutoffTimeParts[0]);
+          	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
+      	            cutoffTime.setHours(hours1);
+      	            cutoffTime.setMinutes(minutes1);
+      	            cutoffTime.setSeconds(0);
+      	            cutoffTime.setMilliseconds(0);
+      	            if (currentTime.getTime() >= cutoffTime.getTime()) {
+      	            	console.log(currentTime.getTime()+" "+cutoffTime.getTime());	
+      	                 $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
+      	            } else if(currentTime.getTime()>threshold.getTime()) {
+      	            	console.log("Remove past time");
+      	            	$(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
+      	            }
+      	        } else {
+      	        	var cutoffTimeParts = cutoffTimes[i].eveningArrivalTime
+            	      .split(':');
+            	            	        var hours1 = parseInt(cutoffTimeParts[0]);
+            	            	        var minutes1 = parseInt(cutoffTimeParts[1]);
+      	            cutoffTime.setHours(hours1 - 12);
+      	            cutoffTime.setMinutes(minutes1);
+      	            cutoffTime.setSeconds(0);
+      	            cutoffTime.setMilliseconds(0);
+      	            cutoffTime.setTime(cutoffTime.getTime() + 12 * 60 * 60 * 1000); // add 12 hours for PM time
+      	            if (currentTime.getTime() >= cutoffTime.getTime()) {
+      	            	console.log("Way past time 2 "+ids[i]);
+      	            	$(ids[i]).addClass('track-line'); // add 'after-cutoff' class if current time is after the cutoff time
+      	            } 
+      	            else if (currentTime.getTime()>threshold.getTime()) {
+      	            	console.log("Remove past time");
+      	            	$(ids[i]).removeClass('track-line'); // add 'before-cutoff' class if current time is before the cutoff time
+      	            }
+      	        }
+      	    }
+        	}, 1000);
+        
+        $(document).ready(async () => {
+        	
+            url = "/employee/getbyid/" + eid;
+            await $.ajax({
+                type: "GET",
+                url: url,
+                success: function (response) {
+                    console.log("The employee is");
+                    console.log(response);
+                    employee = response;
+                    bus = employee?.b;
+                },
+                error: function (response) {
+                    alert('Error occured ', response.statusText);
+                }
+            });
+            $("#bus-id-display").append(`${bus? bus.bid : "NA"}`);
+        });
+
+      
+        const removeBooking = () => {
+            console.log("the eid Id selected = ", eid);
+            // $(function () {
+            //     var token = $("meta[name='_csrf']").attr("content");
+            //     var header = $("meta[name='_csrf_header']").attr("content");
+            //     $(document).ajaxSend(function (e, xhr, options) {
+            //         xhr.setRequestHeader(header, token);
+            //     });
+            // });
+            $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "POST",
+                url: "/employee/removebooking",
+                data: JSON.stringify(eid), // imp
+                dataType: "json",
+                contentType: "application/json", //imp
+                async: false,
+                success: function (response) {
+                    alert("hello");
+                },
+                error: function (response) {
+                    // console.log(response.getResponseHeader(""));
+                    // alert('Error occured in cancelling booking ', response);
+                }
+            });
+            // window.location.href = "/employee/dashboard";
+        }
+    </script>
+    <title>Employee Dashboard </title> 
+</head>
+<body>
+                <form th:action="@{/logout}" id="log" method="POST">
+						
+</form>
+    <nav>
+        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
+
+          <div class="menu-items">
+          
+            <ul class="nav-links">
+                <li><a href="/employee" id="home">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dashboard</span>
+                </a></li>
+                <li><a href="/employee/book" id="bookbus">
+                    <i class="uil uil-files-landscapes"></i>
+                    <span class="link-name">Book Bus</span>
+                </a></li>
+                <li><a href="/employee/trackbus" id="track-bus-link">
+                    <i class="uil uil-car-sideview"></i>
+                    <span class="link-name">Track Bus</span>
+                </a></li>
+                <li><a href="/employee/showbookingdetails">
+                    <i class="uil uil-thumbs-up"></i>
+                    <span class="link-name">Booking Details</span>
+                </a></li>
+                <li><a href="/employee/editprofile">
+                    <i class="uil uil-pen"></i>
+                    <span class="link-name">Edit Profile</span>
+                </a></li>
+                <li><a href="/employee/releaseseat">
+                <i class="uil uil-lock-open-alt"></i>
+                <span class="link-name">Release Seat</span>
+            </a></li>
+            <li><a href="/employee/sos">
+                <i class="uil uil-band-aid"></i>
+                <span class="link-name">SOS</span>
+            </a></li>
+ <!--                <li><a href="#">
+                    <i class="uil uil-share"></i>
+                    <span class="link-name">Share</span>
+                </a></li> -->
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="#" onclick="document.getElementById('log').submit()">
+                    <i class="uil uil-signout"></i>
+    
+                     <span class="link-name">Logout</span> 
+                </a></li>
+
+                <li class="mode">
+                    <a href="#">
+                        <i class="uil uil-moon"></i>
+                    <span class="link-name">Dark Mode</span>
+                </a>
+
+                <div class="mode-toggle">
+                  <span class="switch"></span>
+                </div>
+            </li>
+            </ul>
+        </div>
+    </nav>
+
+
+
+
+<!-- Employee Dashboard-->
+    <div class="dashboard" id="homeContent">
+        <div class="top">
+        
+            <i class="uil uil-bars sidebar-toggle"></i>
+
+                
+                   <div id="clockdate">
+  <div class="clockdate-wrapper">
+    <div id="clock"></div>
+    <div id="date"></div>
+  </div>
+</div> 
+            
+            	
+
+            <img src="/images/profile.jpg" alt="">
+           
+        </div>
+        
+<div style="margin-top:5%;">
+<span style="color:grey;" class="logout-mode">> trackBus</span><hr>
+	
+
+</div>
+<Br/>
+
+<div>
+<!-- <div class="progress-bar">
+  <ul id="progress-bar-points">
+    <li id="point-1" class="active"></li>
+    <li id="point-2"></li>
+    <li id="point-3"></li>
+    <li id="point-4"></li>
+    <li id="point-5"></li>
+  </ul>
+  <div class="lines"></div>
+</div>
+            </div> -->
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col">
+        <div class="card card-stepper" style="border-radius: 10px;">
+          <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex flex-column">
+                <span class="lead fw-normal">Tracking Bus Location</span>
+              
+              </div>
+          
+            </div>
+            <hr class="my-4">
+ <div class="d-flex flex-row justify-content-between align-items-center overflow-auto align-content-center">
+
+
+              
+    			<!-- Stop 2 -->
+
+              
+    			<span th:if="${#lists.size(allStops) > 1}" class="dot" ></span>
+              <hr th:if="${#lists.size(allStops) > 1}" id="pipe2" class="flex-fill">
+              
+              <!-- Stop 3 -->
+    			<span th:if="${#lists.size(allStops) > 2}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 2}" id="pipe3" class="flex-fill ">
+              
+               <!-- Stop 4 -->
+    			<span th:if="${#lists.size(allStops) > 3}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 3}" id="pipe4" class="flex-fill ">
+              
+               
+               <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 4}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 4}" id="pipe5" class="flex-fill ">
+                       
+              <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 5}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 5}" id="pipe6" class="flex-fill ">
+             
+             <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 6}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 6}" id="pipe7" class="flex-fill ">
+              
+              <!-- Extra -->
+              <span th:if="${#lists.size(allStops) > 7}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 7}" id="pipe8" class="flex-fill ">
+              
+              <span th:if="${#lists.size(allStops) > 8}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 8}" id="pipe9" class="flex-fill ">
+              
+              
+               <span th:if="${#lists.size(allStops) > 9}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 9}" id="pipe10" class="flex-fill ">
+              
+               <span th:if="${#lists.size(allStops) > 10}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) >10}" id="pipe11" class="flex-fill ">
+              
+               <span th:if="${#lists.size(allStops) > 11}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 11}" id="pipe12" class="flex-fill ">
+              
+              
+                       <span th:if="${#lists.size(allStops) > 12}" class="dot"></span>
+              <hr th:if="${#lists.size(allStops) > 12}" id="pipe13" class="flex-fill ">
+              
+              <!-- Final -->
+              <span
+                id="pipefinal" class="d-flex justify-content-center align-items-center big-dot dot">
+                
+                
+                <i class="fa fa-check text-white"></i></span> 
+                
+            </div>
+
+
+
+            <div class="d-flex flex-row justify-content-between align-items-center">
+              
+              <!-- Start -->
+            <!--   <div th:if="${start}" class="d-flex flex-column align-items-start">
+              <span th:text="${start}"></span>
+              </div> -->
+              
+				<!-- Stop 1 -->
+              <div th:if="${#lists.size(allStops) > 0}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[0].name}"></span><span  th:text="${arrTime[0].getCurrentTime()}"> </span>
+              </div>
+
+			<!-- Stop 2 -->
+			<div th:if="${#lists.size(allStops) > 1}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[1].name}"></span><span  th:text="${arrTime[1].getCurrentTime()}"> </span>
+              </div>
+            
+             <!-- Stop 3 -->
+            <div th:if="${#lists.size(allStops) > 2}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[2].name}"></span><span  th:text="${arrTime[2].getCurrentTime()}"> </span>
+              </div>
+              
+              <!-- Stop 4 -->
+            <div th:if="${#lists.size(allStops) > 3}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[3].name}"></span><span  th:text="${arrTime[3].getCurrentTime()}"> </span>
+              </div>
+                 
+               <!-- Extra -->
+            <div th:if="${#lists.size(allStops) > 4}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[4].name}"></span><span  th:text="${arrTime[4].getCurrentTime()}"> </span>
+              </div>
+              
+              <!-- Extra -->
+            <div th:if="${#lists.size(allStops) > 5}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[5].name}"></span><span  th:text="${arrTime[5].getCurrentTime()}"> </span>
+              </div>
+              <!-- Extra -->
+            <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getCurrentTime()}"> </span>
+              </div>
+
+ <div th:if="${#lists.size(allStops) > 7}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[7].name}"></span><span  th:text="${arrTime[7].getCurrentTime()}"> </span>
+              </div>
+              
+              
+               <div th:if="${#lists.size(allStops) > 8}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[8].name}"></span><span  th:text="${arrTime[8].getCurrentTime()}"> </span>
+              </div>
+              
+               <div th:if="${#lists.size(allStops) > 9}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[9].name}"></span><span  th:text="${arrTime[9].getCurrentTime()}"> </span>
+              </div>
+              
+              
+               <div th:if="${#lists.size(allStops) > 10}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[10].name}"></span><span  th:text="${arrTime[10].getCurrentTime()}"> </span>
+              </div>
+              
+              
+                <div th:if="${#lists.size(allStops) > 11}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[11].name}"></span><span  th:text="${arrTime[11].getCurrentTime()}"> </span>
+              </div>
+
+ 			<div th:if="${#lists.size(allStops) > 12}" class="d-flex flex-column align-items-start">
+              <span th:text="${allStops[12].name}"></span><span  th:text="${arrTime[12].getCurrentTime()}"> </span>
+              </div>
+              <!-- Final -->
+            <!--   <div class="d-flex flex-column align-items-end">
+               <span th:text="${end}"></span>
+              </div>
+               -->
+              
+            </div>
+  </div>
+    </div> 
+    </div>
+  </div>
+    </div>
+   <div id="map"></div>
+    </div>
+
+          </div>
+        
+    
+      
+
+
+  <script>
+// Import the functions you need from the SDKs you nee
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCgQrfTj937itS7bZBmz0gApPpirBv-FYY",
+    authDomain: "location-track-5a2ef.firebaseapp.com",
+    databaseURL: "https://location-track-5a2ef-default-rtdb.firebaseio.com",
+    projectId: "location-track-5a2ef",
+    storageBucket: "location-track-5a2ef.appspot.com",
+    messagingSenderId: "457511529084",
+    appId: "1:457511529084:web:7e413431c9c4776797f7f9",
+    measurementId: "G-NR6VSVJGJ9"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const initialCenter = [0, 0];
+      const initialZoom = 30;
+  var global_lati;
+  var global_long;
+
+  var busIcon = L.icon({
+    iconUrl: '/images/bus-icon.png',
+    iconSize: [21.57, 59],
+});
+
+
+            var map = L.map('map').setView(initialCenter, initialZoom);// Set the initial center and zoom level
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+}).addTo(map);
+
+var marker = L.marker([0, 0],{icon:busIcon}).addTo(map);
+var mylocation = L.marker([0, 0]).addTo(map);
+
+map.on('zoomend', function() {
+  var currentZoom = map.getZoom();
+  var iconSize;
+
+  // Decrease icon size for zoom levels below 14
+  if (currentZoom < 18) {
+    iconSize = [15, 33.3];
+  }
+ 
+  // Use default icon size for zoom level 14
+  else {
+    iconSize = [21.57, 59];
+  }
+
+  // Update marker icon size
+  marker.setIcon(L.icon({
+    iconUrl: '/images/bus-icon.png',
+    iconSize: iconSize,
+    iconAnchor: [iconSize[0] / 2, iconSize[1] / 2]
+  }));
+});
+const locationRef = firebase.database()
+            .ref('location');
+      locationRef.on('value', (snapshot) => {
+        const location = snapshot.val();
+
+        global_lati = location.latitude;
+        global_long =  location.longitude;
+        
+
+      map.setView([global_lati, global_long], initialZoom);
+      marker.setLatLng([global_lati, global_long]);
+      
+      
+
+  // marker.bindPopup("Latitude: " + marker.getLatLng().lat + "<br>Longitude: " + marker.getLatLng().lng).openPopup(); // Add a popup with the latitude and longitude
+      });
+      function showPosition(position) {
+
+        mylocation.setLatLng([position.coords.latitude, position.coords.longitude]);
+      
+
+      }
+
+      function showError(error) {
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            alert("User denied the request for Geolocation.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert("Location information is unavailable.");
+            break;
+          case error.TIMEOUT:
+            alert("The request to get user location timed out.");
+            break;
+          case error.UNKNOWN_ERROR:
+            alert("An unknown error occurred.");
+            break;
+        }
+      }
+
+      if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(showPosition, showError);
+      } else {
+        alert("Geolocation is not supported by this browser.");
+      }
+</script>
+
+    <!-- Book Bus -->
+ 
+
+    <script src="/script/home_script.js"></script>
+ <!--    <script src="/script/navigation.js"></script> -->
+</body>
+</html>

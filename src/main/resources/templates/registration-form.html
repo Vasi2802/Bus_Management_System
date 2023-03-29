@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>Registration form</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	
+	 <link rel="stylesheet" href="/fonts/material-icon/css/material-design-iconic-font.min.css">
+	
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <!-- Main css -->
+    <link rel="stylesheet" href="/css/style.css">
+    
+	<link rel="stylesheet"
+		 href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	
+	<script	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+
+#logo{
+		margin-left:3%;
+		margin-top:4%;
+	}
+	@media (max-width: 767px) {
+  #logo{
+		margin-left:0%;
+		margin-top:0%;
+	}
+
+  }
+</style>
+<body>
+
+	<div>
+      <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" id="logo"/>
+ <section class="signup">
+            <div class="container">
+      
+                <div class="signup-content">
+                    <div class="signup-form">
+                        <h2 class="form-title">Sign up</h2>
+                        <form th:action="@{/register/processRegistrationForm}" 
+						  	   th:object="${crmUser}" method="POST" class="register-form" id="register-form">
+						  	   
+						  	   <!-- Place for messages: error, alert etc ... -->
+					    <div class="form-group">
+					        <div class="col-xs-15">
+					            <div>
+								
+									<!-- Check for registration error -->
+									<div th:if="${registrationError}" class="alert alert-danger col-xs-offset-1 col-xs-10">
+										<span th:text="${registrationError}"></span>
+									</div>
+									
+									<div th:if="${notauser}" class="alert alert-danger col-xs-offset-1 col-xs-10">
+										<span th:text="${notauser}"></span>
+									</div>
+																											
+					            </div>
+					        </div>
+					    </div>
+                            <div class="form-group">
+                                <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                <input type="text" th:field="*{fullName}" name="name" placeholder="Full Name (*)"/>
+                                	
+                            </div>
+                            <div th:if="${#fields.hasErrors('fullName')}"
+							style="margin-bottom: 25px" class="text-danger">
+							<ul>
+							  <li th:each="err : ${#fields.errors('fullName')}" th:text="'Full Name ' + ${err}" />
+							</ul>						
+						</div><br/>
+                            <div class="form-group">
+                                <label for="email"><i class="zmdi zmdi-email"></i></label>
+                                <input type="email" th:field="*{email}" name="email" id="email" placeholder="Your Email"/>
+                                
+                                
+                            </div>
+                            <div th:if="${#fields.hasErrors('email')}"
+							style="margin-bottom: 25px" class="text-danger">
+							<ul>
+							  <li th:each="err : ${#fields.errors('email')}" th:text="'Email ' + ${err}" />
+							</ul>						
+						</div><br/>
+                            <div class="form-group">
+                                <label for="pass"><i class="zmdi zmdi-lock"></i></label>
+                                <input type="password" th:field="*{password}" placeholder="Password (*)" th:errorclass="fieldError" />
+                            </div>
+                            <div th:if="${#fields.hasErrors('password')}"
+							style="margin-bottom: 25px" class="text-danger">
+							<ul>
+							  <li th:each="err : ${#fields.errors('password')}" th:text="'Password ' + ${err}" />
+							</ul>						
+						</div><br/>
+                            <div class="form-group">
+                                <label for="re-pass"><i class="zmdi zmdi-lock-outline"></i></label>
+                                <input type="password" th:field="*{matchingPassword}" placeholder="Confirm password (*)" th:errorclass="fieldError" />
+						
+                            </div>
+                            <div th:if="${#fields.hasErrors('matchingPassword')}"
+							style="margin-bottom: 25px" class="text-danger">
+							<ul>
+							  <li th:each="err : ${#fields.errors('matchingPassword')}" th:text="'Password ' + ${err}" />
+							</ul>						
+						</div>
+							<br/>
+							 <div class="form-group">
+                                <label for="contact"><i class="zmdi zmdi-smartphone-iphone"></i></label>
+                                <input type="text" th:field="*{contactNo}" placeholder="Contact No (*)" th:errorclass="fieldError" />
+                            </div>
+                            <div th:if="${#fields.hasErrors('contactNo')}"
+							style="margin-bottom: 25px" class="text-danger">
+							<ul>
+							  <li th:each="err : ${#fields.errors('contactNo')}" th:text="'Contact ' + ${err}" />
+							</ul>						
+						</div>
+                            
+                            <a href="/" class="signup-image-link">&nbsp;&nbsp;<u>I am already member</u></a>
+                            <div class="form-group form-button">
+                                <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                            </div>
+                            
+                        </form>
+                    </div>
+                    <div class="signup-image">
+                        <figure><img src="/images/5282.jpg" alt="Using up image"></figure>
+                        
+                    </div>
+                </div>
+            </div> 
+        </section>
+	</div>
+
+</body>
+</html>

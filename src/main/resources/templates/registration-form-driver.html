@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<title>Bus Management System NRIFT</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+		integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+		integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+	<!----======== CSS ======== -->
+	<link rel="stylesheet" href="/css/home_style.css">
+	<link rel="stylesheet" href="/css/style.css">
+
+	<!----===== Iconscout CSS ===== -->
+	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+	<!-- from other file -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+	</script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+	</script>
+
+    
+
+</head>
+
+<body class="container-fluid">
+	<form th:action="@{/logout}" id="log" method="POST">
+
+	</form>
+
+	<!-- SIDEBAR -->
+	<nav>
+			<img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
+		<div class="menu-items">
+			<ul class="nav-links">
+				<li><a href="/admin" id="home">
+						<i class="uil uil-estate"></i>
+						<span class="link-name">Dashboard</span>
+					</a></li>
+				<li><a href="/admin/analytics" id="analytics">
+						<i class="uil uil-files-landscapes"></i>
+						<span class="link-name">Analytics</span>
+					</a></li>
+				<li><a href="/admin/manageBus" id = "manageBus">
+						<i class="uil uil-chart"></i>
+						<span class="link-name">Manage Buses</span>
+					</a></li>
+				<li><a href="/admin/manageDriver" id = "manageDriver">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage  Drivers</span>
+					</a></li>
+
+				<li><a href="/admin/manageEmployee" id = "manageEmployee">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage Employees</span>
+					</a></li>
+				
+				<li><a href="/admin/manageRoute" id = "manageRoute">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage Routes</span>
+					</a></li>
+
+				<li><a href="/admin/manageStop" id = "manageStop">
+						<i class="uil uil-thumbs-up"></i>
+						<span class="link-name">Manage Stops</span>
+					</a></li>
+				
+				<!--                <li><a href="#">
+                    <i class="uil uil-share"></i>
+                    <span class="link-name">Share</span>
+                </a></li> -->
+			</ul>
+
+			<ul class="logout-mode">
+				<li><a href="#" onclick="document.getElementById('log').submit()">
+						<i class="uil uil-signout"></i>
+
+						<span class="link-name">Logout</span>
+					</a></li>
+
+				<li class="mode">
+					<a href="#">
+						<i class="uil uil-moon"></i>
+						<span class="link-name">Dark Mode</span>
+					</a>
+
+					<div class="mode-toggle">
+						<span class="switch"></span>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</nav>
+
+
+	<!-- RIGHT AREA-->
+	<section class="dashboard">
+		<div class="top">
+			<i class="uil uil-bars sidebar-toggle"></i>
+
+
+			<img src="images/profile.jpg" alt="">
+		</div>
+
+		<div class="dash-content">
+			<div class="overview">
+				<div class="title">
+					<i class="uil uil-tachometer-fast-alt"></i>
+					<span class="text">Add Driver</span>
+				</div>
+			</div>
+
+			<!-- MAIN AREA -->
+            <div class="display: flex; align-items-center justify-content: space-between; width: 100%;" id = "mainArea">
+
+                 <section class="signup">
+                    <div class="container">
+                        <div class="signup-content">
+                            <div class="signup-form">
+                                <form th:action="@{/admin/register/processRegistrationFormdriver}" 
+                                         th:object="${crmUser}" method="POST" class="register-form" id="register-form">
+                                         
+                                         <!-- Place for messages: error, alert etc ... -->
+                                <div class="form-group">
+                                    <div class="col-xs-15">
+                                        <div>
+                                        
+                                            <!-- Check for registration error -->
+                                            <div th:if="${registrationError}" class="alert alert-danger col-xs-offset-1 col-xs-10">
+                                                <span th:text="${registrationError}"></span>
+                                            </div>
+                                                                                                                    
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="form-group">
+                                        <label for="name"><i class="zmdi zmdi-account material-icons-name"></i></label>
+                                        <input type="text" th:field="*{fullName}" name="name" placeholder="Driver's Full Name (*)"/>
+                                            
+                                    </div>
+                                    <div th:if="${#fields.hasErrors('fullName')}"
+                                    style="margin-bottom: 25px" class="text-danger">
+                                    <ul>
+                                      <li th:each="err : ${#fields.errors('fullName')}" th:text="'Full Name ' + ${err}" />
+                                    </ul>						
+                                </div><br/>
+                                    <div class="form-group">
+                                        <label for="email"><i class="zmdi zmdi-email"></i></label>
+                                        <input type="email" th:field="*{email}" name="email" id="email" placeholder="Driver's Email"/>
+                                        
+                                        
+                                    </div>
+                                    <div th:if="${#fields.hasErrors('email')}"
+                                    style="margin-bottom: 25px" class="text-danger">
+                                    <ul>
+                                      <li th:each="err : ${#fields.errors('email')}" th:text="'Email ' + ${err}" />
+                                    </ul>						
+                                </div>
+                                
+                                        <input type="hidden"  th:field="*{password}" placeholder="Password (*)" th:errorclass="fieldError" >
+                                    
+                                    <div th:if="${#fields.hasErrors('password')}"
+                                    style="margin-bottom: 25px" class="text-danger">
+                                    <ul>
+                                      <li th:each="err : ${#fields.errors('password')}" th:text="'Password ' + ${err}" />
+                                    </ul>						
+                                </div>
+                                    
+                                        <input type="hidden"  th:field="*{matchingPassword}" placeholder="Confirm password (*)" th:errorclass="fieldError" />
+                                
+                                    <div th:if="${#fields.hasErrors('matchingPassword')}"
+                                    style="margin-bottom: 25px" class="text-danger">
+                                    <ul>
+                                      <li th:each="err : ${#fields.errors('matchingPassword')}" th:text="'Password ' + ${err}" />
+                                    </ul>						
+                                </div>
+                                    <br/>
+                                     <div class="form-group">
+                                        <label for="contact"><i class="zmdi zmdi-smartphone-iphone"></i></label>
+                                        <input type="text" th:field="*{contactNo}" placeholder="Driver's Contact No (*)" th:errorclass="fieldError" />
+                                    </div>
+                                    <div th:if="${#fields.hasErrors('contactNo')}"
+                                    style="margin-bottom: 25px" class="text-danger">
+                                    <ul>
+                                      <li th:each="err : ${#fields.errors('contactNo')}" th:text="'Contact ' + ${err}" />
+                                    </ul>						
+                                </div>
+                                    
+                
+                                    <div class="form-group form-button">
+                                        <input type="submit" name="signup" id="signup" class="form-submit" value="Register"/>
+                                    </div>
+                                    
+                                </form>
+                            </div>
+                         <!--    <div class="signup-image">
+                                <figure><img src="/images/5282.jpg" alt="Using up image"></figure>
+                                
+                            </div> -->
+                        </div>
+                    </div> 
+                </section>
+            </div>
+
+			
+		</div>
+	</section>
+
+    <script src="/script/navigation.js"></script>
+	  
+</body>
+
+</html>

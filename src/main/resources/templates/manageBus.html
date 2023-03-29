@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<title>Bus Management System NRIFT</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+		integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
+	<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+		integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+	<!----======== CSS ======== -->
+	<link rel="stylesheet" href="/css/home_style.css">
+
+	<!----===== Iconscout CSS ===== -->
+	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+
+	<!-- from other file -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+	</script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js">
+	</script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+
+
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
+	</script>
+
+	<script src="//code.jquery.com/jquery.min.js"></script>
+
+	<script src="jquery-clock-timepicker.min.js"></script>
+
+
+	<style>
+	
+	</style>
+	<script>
+
+		$(document).ready(() => {
+			var drivers;
+			$.ajax({
+				type: "GET",
+				url: "/admin/get-available-drivers",
+				data: null,
+				async: false,
+				success: function (response) {
+					drivers = response;
+					console.log(response);
+					var driverList = document.getElementById('select-driver-list');
+					driverList.innerHTML = `<option value="" disabled="" selected="">Select driver</option>`;
+					drivers?.forEach((driver) => {
+						driverList.innerHTML += `<option did=${driver.did} >
+                                                    <p>${driver.driverName}</p>
+                                                </option>`;
+					});
+				},
+				error: function () {
+					alert('Error occured in fetching drivers');
+				}
+			});
+			// console.log("drivers fetched = ", drivers);
+
+
+			var routesMap;
+			$.ajax({
+				type: "GET",
+				url: "/admin/getallroutesasstopslist",
+				data: null,
+				async: false,
+				success: function (response) {
+					routesMap = response;
+				},
+				error: function () {
+					alert('Error occured in fetching routes');
+				}
+			});
+			// console.log("routes fetched = ", routesMap);
+			var routesList = document.getElementById('select-route-list');
+			routesList.innerHTML = `<option value="" disabled="" selected="">Select route</option>`;
+			Object.keys(routesMap).forEach((routeId) => {
+				let stops = routesMap[routeId];
+				// console.log(routeId, routeObj, stops );
+				routesList.innerHTML += `<option rid=${routeId}>
+                                                    <p>${stops[0].name} -> ${stops[stops.length - 1].name}</p>
+                                                </option>`;
+			});
+		})
+	</script>
+
+
+
+	<script>
+		async function addBus() {
+			var routeId = $("#select-route-list option:selected").attr("rid");
+			var driverId = $("#select-driver-list option:selected").attr("did");
+			var totalSeats = $("#totalSeats").val();
+			var startTime = $("#time").val();
+			url = "/admin/bus/insert";
+			await $.ajax({
+				headers: {
+					Accept: 'application/json', //imp
+				},
+				type: "GET",
+				url: url,
+				data: {
+					"routeId": routeId,
+					"driverId": driverId,
+					"totalSeats": totalSeats,
+					"startTime" : startTime
+				},
+				dataType: "json",
+				contentType: "application/json", //imp
+				success: function (response) {
+					console.log("added bus");
+				},
+				error: function () {
+					alert('Error occured');
+				}
+			});
+
+			window.location.href = "/admin/manageBus";
+
+
+
+		}
+
+
+
+
+	</script>
+
+	<style>
+		.gradient-buttons .btn {
+			background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.2) 49%, rgba(0, 0, 0, 0.15) 51%, rgba(0, 0, 0, 0.05));
+			background-repeat: repeat-x;
+		}
+
+		body.modal-open .supreme-container{
+    -webkit-filter: blur(1px);
+    -moz-filter: blur(1px);
+    -o-filter: blur(1px);
+    -ms-filter: blur(1px);
+    filter: blur(7px);
+}
+	</style>
+
+	<script>
+		deleteBus = async (event) => {
+			busId = event.target.value;
+			await $.ajax({
+				type: "GET",
+				url: "/admin/delete/bus/" + busId,
+				data: null,
+				async: false,
+				success: function (response) {
+					alert("Bus Deleted");
+				},
+				error: function () {
+					alert('Error occured in deleting bus');
+				}
+			});
+
+			window.location.href = "/admin/manageBus";
+
+		}
+	</script>
+
+<script>
+	getStatus = async (event) => {
+		busId = event.target.value;
+		var retVal= "Error while fetching data";
+		url = "delay/getStatus/" + busId ;
+            console.log(url);
+
+            await $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "GET",
+                url: url,   
+                dataType:"text",
+                async: false,
+                success: function (response) {
+                    console.log(response)
+					retVal = response;
+                },
+                error: function (response) {}
+            });
+		return retVal;
+
+		// window.location.href = "/admin/manageBus";
+
+	}
+</script>
+
+
+
+</head>
+
+<body class="container-fluid">
+	<div class="modal fade" id="mainArea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header text-center bg-primary">
+							<h4 class="modal-title w-100 font-weight-bold">ENTER BUS DETAILS</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body" style="background: linear-gradient(180deg, rgba(0,123,255,1) 0%, rgba(153,227,255,0.8743872549019608) 28%, rgba(153,227,255,1) 73%, rgba(0,123,255,1) 100%);">
+							<div class="md-form">
+								<i class="fas fa-user prefix black-text"></i>
+								<label data-error="wrong" data-success="right" for="orangeForm-name">TOTAL SEATS
+								</label>
+								<input type="number" class="form-control" min=0 id="totalSeats" name="totalSeats"
+									placeholder="Total Seats in bus">
+								<br>
+
+								
+								<label data-error="wrong" data-success="right" for="orangeForm-name">START TIME
+								</label>
+								<input type="time" class="form-control" min=0 id="time" name="time"
+									placeholder="Start Time of the Bus">
+								<br>
+								<label for="select-driver-list" class="text-dark display-5">Driver</label>
+								<select id="select-driver-list" class="browser-default custom-select mb-4">
+								</select>
+
+								<label for="select-route-list" class="text-dark display-5">Route</label>
+								<select id="select-route-list" class="browser-default custom-select mb-4">
+								</select>
+
+							</div>
+						</div>
+
+
+						<div class="modal-footer bg-primary">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button class="btn btn-success" onclick="addBus()">ADD</button>
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+	<div class="supreme-container">
+		<form th:action="@{/logout}" id="log" method="POST">
+
+		</form>
+
+		<!-- SIDEBAR -->
+		<nav>
+			<img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" />
+
+			<div class="menu-items">
+				<ul class="nav-links">
+					<li>
+						<a href="/admin" id="home">
+							<i class="uil uil-estate"></i>
+							<span class="link-name">Dashboard</span>
+						</a>
+					</li>
+					<li>
+						<a href="/admin/manageBus" id="manageBus">
+							<i class="uil uil-chart"></i>
+							<span class="link-name">Manage Buses</span>
+						</a>
+					</li>
+					<li>
+						<a href="/admin/manageDriver" id="manageDriver">
+							<i class="uil uil-thumbs-up"></i>
+							<span class="link-name">Manage Drivers</span>
+						</a>
+					</li>
+
+					<li>
+						<a href="/admin/manageEmployee" id="manageEmployee">
+							<i class="uil uil-thumbs-up"></i>
+							<span class="link-name">Manage Employees</span>
+						</a>
+					</li>
+
+					<li>
+						<a href="/admin/manageRoute" id="manageRoute">
+							<i class="uil uil-thumbs-up"></i>
+							<span class="link-name">Manage Routes</span>
+						</a>
+					</li>
+
+					<li>
+						<a href="/admin/manageStop" id="manageStop">
+							<i class="uil uil-thumbs-up"></i>
+							<span class="link-name">Manage Stops</span>
+						</a>
+					</li>
+
+					<ul class="logout-mode">
+						<li><a href="#" onclick="document.getElementById('log').submit()">
+								<i class="uil uil-signout"></i>
+
+								<span class="link-name">Logout</span>
+							</a></li>
+
+						<!-- <li class="mode">
+						<a href="#">
+							<i class="uil uil-moon"></i>
+							<span class="link-name">Dark Mode</span>
+						</a>
+
+						<div class="mode-toggle">
+							<span class="switch"></span>
+						</div>
+					</li> -->
+					</ul>
+			</div>
+		</nav>
+
+
+
+		<!-- RIGHT AREA-->
+		<section class="dashboard">
+			<div class="top">
+				<i class="uil uil-bars sidebar-toggle"></i>
+
+				<img src="images/profile.jpg" alt="">
+			</div>
+
+			<div class="dash-content ">
+				<div class="overview justify-content-between flex-row border-bottom mb-3">
+					<div class="title">
+						<i class="uil uil-tachometer-fast-alt"></i>
+						<span class="text">MANAGE BUSES</span>
+					</div>
+				</div>
+
+				<!-- MAIN AREA -->
+				<!-- <div class="row mb-3">
+				<a href="/admin/addbus">
+					<button type="submit" class="btn btn-primary">Add Bus</button>
+				</a>
+			</div> -->
+
+
+
+				<div>
+					<a href="" class="btn btn-primary" data-toggle="modal" data-target="#mainArea">ADD BUS</a>
+				</div>
+				<br>
+				<br>
+
+
+
+				<div class="row">
+
+					<table class="table table-striped table-responsive-lg ">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">Bus ID</td>
+								<th>Total Seats</td>
+								<th>Available Seats</td>
+								<th>Start</td>
+								<th>Current Status & Other info</th>
+								<th>Delete</td>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="bus : ${list}">
+								<td th:text="${bus.bid}"></td>
+								<td th:text="${bus.totalSeats}"></td>
+								<td th:text="${bus.availableSeats}"></td>
+								<td th:text="${bus.startTime}"></td>
+								<!-- <script>var status = getStatus(1); 
+								document.write("<td>" + status + "</td>");
+								</script> -->
+								<!-- <td> "something"></td> -->
+								<!-- <td th:text = "CALL getStatus HERE">/td> -->
+								<td>
+									<button class="btn btn-danger" onclick="getStatus(event)"
+										th:value="${bus.bid}">Status</button>
+								</td>
+								<td>
+									<button class="btn btn-danger" onclick="deleteBus(event)"
+										th:value="${bus.bid}">Delete</button>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+			</div>
+		</section>
+
+	</div>
+
+</body>
+
+</html>
