@@ -6,8 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 @Entity
 public class Attendance {
@@ -16,23 +14,19 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long attendanceId; 
 
-    @OneToOne
-    @JoinColumn(name= "bus_id", referencedColumnName = "bid")
-    private Bus bus;
+    private Long busId;
 
-    @OneToOne
-    @JoinColumn(name= "employee_id", referencedColumnName = "eid")
-    private Employee employee;
+    private Long employeeId;
 
     private LocalDate attendanceDate;
 
     public Attendance() {
     }
 
-    public Attendance(Long attendanceId, Bus bus, Employee employee, LocalDate attendanceDate) {
+    public Attendance(Long attendanceId, Long busId, Long employeeId, LocalDate attendanceDate) {
         this.attendanceId = attendanceId;
-        this.bus = bus;
-        this.employee = employee;
+        this.busId = busId;
+        this.employeeId = employeeId;
         this.attendanceDate = attendanceDate;
     }
 
@@ -44,20 +38,20 @@ public class Attendance {
         this.attendanceId = attendanceId;
     }
 
-    public Bus getbus() {
-        return bus;
+    public Long getBusId() {
+        return busId;
     }
 
-    public void setbus(Bus bus) {
-        this.bus = bus;
+    public void setBusId(Long busId) {
+        this.busId = busId;
     }
 
-    public Employee getemployee() {
-        return employee;
+    public Long getEmployeeId() {
+        return employeeId;
     }
 
-    public void setemployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public LocalDate getAttendanceDate() {
@@ -67,5 +61,7 @@ public class Attendance {
     public void setAttendanceDate(LocalDate attendanceDate) {
         this.attendanceDate = attendanceDate;
     }
+
+    
 
 }

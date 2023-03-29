@@ -43,7 +43,7 @@
 
   </script>
   <script>
-        var passengersPerStop;
+    var passengersPerStop;
     var nextStop = {
       sid: -1,
       name: "Dunlop Bridge",
@@ -52,7 +52,12 @@
 
     // get all passengers
     $(document).ready(() => {
-      $.ajax({
+      getAllPassengers();
+    });
+
+    // GET ALL PASSENGERS
+    getAllPassengers = async () => {
+      await $.ajax({
         type: "GET",
         url: "/driver/get-all-passengers",
         data: null,
@@ -68,32 +73,32 @@
             employees = map?.employees;
 
             html += `<tr>
-                      <td>${stopName}</td>
-                      <td>
-                        <table class="table table-striped justify-content-between">`;
+                        <td>${stopName}</td>
+                        <td>
+                          <table class="table table-striped table-hover table-fixed">`;
             html += `<thead>
-                        <th>EmployeeId</th>
-                        <th>Name</th>
-                        <th>ContactNo</th>
-                        <th>Onboard</th>
-                      </thead>`;
+                          <th class="col-3">EmployeeId</th>
+                          <th class="col-3">Name</th>
+                          <th class="col-3">ContactNo</th>
+                          <th class="col-3">Onboard</th>
+                        </thead>`;
 
             employees.forEach(({ eid, name, contactNo, boardingStatus }) => {
               html += `<tr >
-                        <td>${eid}</td>
-                        <td>${name}</td>
-                        <td>${contactNo}</td>
-                        <td>
-                          <button class="btn btn-success ${boardingStatus == 'false' ? '' : 'disabled'}"  
-                          onclick="onBoardPassenger(${eid}, ${stop.sid})" >
-                            ${boardingStatus === "false" ? "Onboard passenger": "Onboarded"}
-                            </button>
-                        </td>
-                      </tr>`;
+                          <td>${eid}</td>
+                          <td>${name}</td>
+                          <td>${contactNo}</td>
+                          <td>
+                            <button class="btn btn-success ${boardingStatus == 'false' ? '' : 'disabled'}"  
+                            onclick="onBoardPassenger(${eid}, ${stop.sid})" id="list-boarding-button-${eid}">
+                              ${boardingStatus === "false" ? "Onboard passenger" : "Onboarded"}
+                              </button>
+                          </td>
+                        </tr>`;
             });
             html += `</td>
-                    </table>
-                  </tr>` ;
+                      </table>
+                    </tr>` ;
           });
           tableBody.html(html);
         },
@@ -101,12 +106,13 @@
           console.log("Error occured in get all passengers");
         }
       });
-    });
+    }
 
     // function to get passengers of next stop
-    getNextPassengers = () => {
+    getNextPassengers = async () => {
       // console.log("passengers = ");
       // console.log(passengersPerStopList);
+      await getAllPassengers();
       nextStop = {
         sid: 2,
         name: "Dunlop Bridge"
@@ -129,8 +135,8 @@
                     <td>${contactNo}</td>
                     <td>
                       <button class="btn btn-success ${boardingStatus == 'false' ? '' : 'disabled'} " 
-                      onclick="onBoardPassenger(${eid}, ${stop.sid})">
-                        ${boardingStatus === "false" ? "Onboard passenger": "Onboarded"}
+                      onclick="onBoardPassenger(${eid}, ${stop.sid})" id="boarding-button-${eid}">
+                        ${boardingStatus === "false" ? "Onboard passenger" : "Onboarded"}
                         </button>
                     </td>
                   </tr>`;
@@ -146,12 +152,26 @@
         data: null,
         dataType: "text",
         success: function (response) {
-          console.log("onboarded");
+          alert("onboarded");
+          $(`#boarding-button-${employeeId}`).text("Onboarded");
+          $(`#boarding-button-${employeeId}`).prop('disabled', true);
+          $(`#list-boarding-button-${employeeId}`).text("Onboarded");
+          $(`#list-boarding-button-${employeeId}`).prop('disabled', true);
+          popUpToast("Onbaording Sucessful!!", `Employee with ID ${employeeId} onboarded`)
         },
         error: function () {
+          alert("Error");
           console.log("Error occured in onboarding");
         }
       });
+    }
+
+    popUpToast = (header, body) => {
+      console.log("pop called");
+      $("#toast-header-text").text(header);
+      $("#toast-body-text").text(body);
+      $("#onboardingToast").toast("show");
+      alert("popup done");
     }
 
   </script>
@@ -605,10 +625,10 @@
               <table class="table table-responsive-lg rounded-lg" style="border: 1px solid #141E30;">
                 <thead class="thead-dark">
                   <tr>
-                    <th>Passenger ID</th>
-                    <th>Passenger Name</th>
-                    <th>Contact No</th>
-                    <th>Onboard Passenger</th>
+                    <th class="col-3">Passenger ID</th>
+                    <th class="col-3">Passenger Name</th>
+                    <th class="col-3">Contact No</th>
+                    <th class="col-3">Onboard Passenger</th>
                   </tr>
                 </thead>
                 <tbody id="next-passengers-table">
@@ -657,6 +677,23 @@
             </div>
           </div>
           <!-- ALL PASSENGERS MODAL ENDS -->
+
+          <!-- TOAST AREA-->
+          <div style="position: absolute; top: 0; right: 0;">
+            
+            <!-- TOAST -->
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="onboardingToast" data-delay="3000">
+              <div class="toast-header bg-success">
+                <strong class="mr-auto" id="toast-header-text"></strong>
+                <!-- <small class="text-muted">just now</small> -->
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="toast-body" id="toast-body-text">
+              </div>
+            </div>
+          </div>
 
         </div>
 

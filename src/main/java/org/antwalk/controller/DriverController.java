@@ -183,11 +183,14 @@ public class DriverController {
 
 		// save in attendance table
 		LocalDate today = LocalDate.now();
-		Attendance attendance = new Attendance(null,null, employee, today);
+		Attendance attendance = new Attendance(null,null, employee.getEid(), today);
 		attendanceService.save(attendance);
 		return "Successful";
 	}
 
-
+	@GetMapping("/clear-onboarding")
+	public void clearOnboarding(){
+		driverService.clearBoardingStatus();
+	}
 	
 }
