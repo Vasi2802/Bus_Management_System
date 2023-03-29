@@ -93,6 +93,8 @@ public class AdminController {
 
 	@Autowired
 	private AdminService adminService;
+	
+	@Autowired
 	private RouteService routeService;
 	
 
