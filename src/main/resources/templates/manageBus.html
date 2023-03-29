@@ -68,7 +68,24 @@
 		}
 		 showModal = async (event) => {
 			 busid = event.target.value;
-		  
+			 url = "delay/getStatus/" + busid ;
+			 
+			 await $.ajax({
+	                headers: {
+	                    Accept: 'application/json', //imp
+	                },
+	                type: "GET",
+	                url: url,   
+	                dataType:"text",
+	                async: false,
+	                success: function (response) {
+	                    console.log(response)
+	                    $("#value1").text("Status: "+response);
+	                },
+	                error: function (response) {}
+	            });
+
+			 
 		      $("#exampleModal").modal("toggle");
 		       $.ajax({
 		        type: "GET",
@@ -96,6 +113,33 @@
 		    }
 	</script>
 
+<script>
+	getStatus = async (event) => {
+		busId = event.target.value;
+		var retVal= "Error while fetching data";
+		url = "delay/getStatus/" + busId ;
+            console.log(url);
+
+            await $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "GET",
+                url: url,   
+                dataType:"text",
+                async: false,
+                success: function (response) {
+                    console.log(response)
+					retVal = response;
+                },
+                error: function (response) {}
+            });
+		return retVal;
+
+		// window.location.href = "/admin/manageBus";
+
+	}
+</script>
 
 </head>
 
@@ -252,12 +296,13 @@
                     <th scope="col">Employee Id</th>
                     <th scope="col">Employee Name</th>
                     <th scope="col">Stop Name</th>
+                    
                   </tr>
                 </thead>
                 <tbody>
                 </tbody>
               </table>
-
+<span id="value1"></span>
             </div>
 
 

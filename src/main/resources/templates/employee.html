@@ -229,6 +229,7 @@ p {
     transition: all 0.3s ease-in-out;
 }
 
+<<<<<<< HEAD
 .bn632-hover {
   width: 160px;
   font-size: 16px;
@@ -367,6 +368,67 @@ select:focus{
     #deactivate{
         line-height: 18px;
     }
+=======
+
+.glow-on-hover {
+    width: 220px;
+    height: 50px;
+    border: none;
+    outline: none;
+    color: #fff;
+    background: #111;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.glow-on-hover:before {
+    content: '';
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    position: absolute;
+    top: -2px;
+    left:-2px;
+    background-size: 400%;
+    z-index: -1;
+    filter: blur(5px);
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    animation: glowing 20s linear infinite;
+    opacity: 0;
+    transition: opacity .3s ease-in-out;
+    border-radius: 10px;
+}
+
+.glow-on-hover:active {
+    color: #000
+}
+
+.glow-on-hover:active:after {
+    background: transparent;
+}
+
+.glow-on-hover:hover:before {
+    opacity: 1;
+}
+
+.glow-on-hover:after {
+    z-index: -1;
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    left: 0;
+    top: 0;
+    border-radius: 10px;
+}
+
+@keyframes glowing {
+    0% { background-position: 0 0; }
+    50% { background-position: 400% 0; }
+    100% { background-position: 0 0; }
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
 }
 </style>
 
@@ -402,6 +464,7 @@ select:focus{
                     document.getElementById("profilename").innerText = employeeDashboardDetails?.name;
                     document.getElementById("phoneNo").innerText = employeeDashboardDetails?.phoneNo;
                     document.getElementById("email").innerText = employeeDashboardDetails?.email;
+<<<<<<< HEAD
                     document.getElementById("busId").innerText = employeeDashboardDetails?.busId==="NA"?"Not yet Booked":employeeDashboardDetails?.busId;
                     document.getElementById("bookingStatus").innerText = employeeDashboardDetails?.bookingStatus;
                     document.getElementById("empname").innerText = employeeDashboardDetails?.name;
@@ -416,6 +479,10 @@ select:focus{
                     
                     
                     
+=======
+                    document.getElementById("busId").innerText = employeeDashboardDetails?.busId;
+                    document.getElementById("bookingStatus").innerText = employeeDashboardDetails?.bookingStatus;
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
                     if(employeeDashboardDetails?.bookingStatus==="Bus Seat Reserved"){
                     	$("#bookbtn").hide();
                     	document.getElementById("bookingStatus").style.color = "green";
@@ -424,10 +491,13 @@ select:focus{
                     	document.getElementById("bookingStatus").style.color = "red";
                     	$("#bookbtn").show();
                     }
+<<<<<<< HEAD
                     else{
                     	$("#bookbtn").hide();
                     	document.getElementById("bookingStatus").style.color = "orange";
                     }
+=======
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
 
                 },
                 error: function (response) {
@@ -435,6 +505,7 @@ select:focus{
                 }
             });
         });
+<<<<<<< HEAD
         const showModal = (routeid) =>{
         	console.log(routeid);
         	$("#exampleModal").modal("toggle");
@@ -484,6 +555,9 @@ select:focus{
 			  
         	
         }
+=======
+
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
         const removeBooking = () => {
             console.log("the eid Id selected = ", eid);
             // $(function () {
@@ -597,12 +671,16 @@ select:focus{
 </div>   
           
             <img src="/images/profile.jpg" alt="">
+<<<<<<< HEAD
                  
  
               
            
 
 
+=======
+           
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
         </div>
         
 <div style="margin-top:5%;">
@@ -653,7 +731,12 @@ select:focus{
     
     
     
+<<<<<<< HEAD
  
+=======
+    
+    
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
     
     
     
@@ -670,9 +753,15 @@ select:focus{
                                                                 </div>
                                                                 <h6 class="f-w-600" id="profilename"></h6>
                                                                 
+<<<<<<< HEAD
                                                                 <a href="#" onclick="showModal()" style="color:white;"class="f-w-400">Edit Profile<i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
                                                             </a>
                                                             <a href="/employee/book"><button class="bn632-hover bn27 mt-5" id="bookbtn">Book a Bus</button></a>
+=======
+                                                                <a href="#" style="color:white;"class="f-w-400">Edit Profile<i class=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
+                                                            </a>
+                                                            <button class="glow-on-hover mt-5" id="bookbtn" style="display:none;"type="button">Book a Bus</button>
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
                                                             </div>
                                                         </div>
                                                         <div class="col-sm-8">
@@ -682,7 +771,11 @@ select:focus{
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
                                                                         <p class="m-b-10 f-w-600">Name</p>
+<<<<<<< HEAD
                                                                         <h6 class="text-muted f-w-400" id="name"></h6>
+=======
+                                                                        <h6 class="text-muted f-w-400" id="name">rntng@gmail.com</h6>
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
                                                                     </div>
                                                                     
                                                                 </div><br>
@@ -690,22 +783,38 @@ select:focus{
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
                                                                         <p class="m-b-10 f-w-600">Email</p>
+<<<<<<< HEAD
                                                                         <h6 class="text-muted f-w-400" id="email"></h6>
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         <p class="m-b-10 f-w-600">Phone</p>
                                                                         <h6 class="text-muted f-w-400" id="phoneNo"></h6>
+=======
+                                                                        <h6 class="text-muted f-w-400" id="email">rntng@gmail.com</h6>
+                                                                    </div>
+                                                                    <div class="col-sm-6">
+                                                                        <p class="m-b-10 f-w-600">Phone</p>
+                                                                        <h6 class="text-muted f-w-400" id="phoneNo">98979989898</h6>
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
                                                                     </div>
                                                                 </div><br>
                                                                 <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Booking Information</h6>
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
                                                                         <p class="m-b-10 f-w-600">Bus Number</p>
+<<<<<<< HEAD
                                                                         <h6 class="text-muted f-w-400" id="busId"></h6>
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         <p class="m-b-10 f-w-600">Booking Status</p>
                                                                         <h6 class="f-w-400" id="bookingStatus"></h6>
+=======
+                                                                        <h6 class="text-muted f-w-400" id="busId">Sam Disuja</h6>
+                                                                    </div>
+                                                                    <div class="col-sm-6">
+                                                                        <p class="m-b-10 f-w-600">Booking Status</p>
+                                                                        <h6 class="f-w-400" id="bookingStatus">Dinoter husainm</h6>
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
                                                                     </div>
                                                                 </div>
                                                                 <ul class="social-link list-unstyled m-t-40 m-b-10">
@@ -721,6 +830,7 @@ select:focus{
                                             
                                             
     
+<<<<<<< HEAD
   <!--   EMployee EDit -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
            <div id="toast" class="toast bg-success text-white" role="alert">
@@ -782,6 +892,10 @@ select:focus{
     </div>
     </div>
     </div>
+=======
+    
+    
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
 
        <script src="/script/home_script.js"></script>
  <!--    <script src="/script/navigation.js"></script> -->

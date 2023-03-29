@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
-import org.antwalk.entity.Employee;
 import org.antwalk.entity.Route;
 import org.antwalk.repository.BusRepo;
 import org.antwalk.repository.DriverRepo;
@@ -22,6 +24,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class BusService {
 
+	@Autowired
+	private EntityManager entityManager;
+
+	
 	@Autowired
 	private BusRepo busRepo;
 	
@@ -175,7 +181,6 @@ public class BusService {
 		
 		Bus bus = busRepo.getById(bid);
 		
-		
 		return bookserv.findAllByB(bus);
 	}
 
@@ -183,5 +188,36 @@ public class BusService {
 		// TODO Auto-generated method stub
 		return busRepo.findAllByR(route);
 	}
+	
+	public List<Bus> getBusesDesc(){
+		// List<HashMap<Long,LocalTime>> retVal = new ArrayList<>();
+		// HashMap<Long,LocalTime> temp;
+		// for(Bus bus: busRepo.findAll(Sort.by(Sort.Direction.DESC, "start_time"))){
+		// 	temp = new HashMap<>();
+		// 	temp.put(bus.getBid(),bus.getStartTime());
+		// 	retVal.add(temp);
+		// }		
+		return entityManager.createNativeQuery("select * from bus order by start_time desc",Bus.class).getResultList();
+	}
+	@Transactional
+	public String getActiveStatus(long id){
+		return busRepo.getById(id).getActive();
+	}
+	
+
+	public List<HashMap<String,String>> getBusData(){
+		List<HashMap<String,String>> retVal = new ArrayList<>();
+		HashMap<String,String> temp ;
+		for(Bus bus: getBusesDesc()){
+			temp = new HashMap<>();
+			temp.put("id",String.valueOf(bus.getBid()));
+			// temp.put("status" , "1");
+			temp.put("startTime",bus.getStartTime().toString());
+			retVal.add(temp);
+		}
+		return retVal;
+
+	}
+
 }
 

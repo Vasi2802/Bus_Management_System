@@ -31,8 +31,8 @@ public class BookingDetails {
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "bus_id", referencedColumnName = "bid")
-	@JsonBackReference
 	@NotNull
+	@JsonBackReference
 	private Bus b;
 	
 	@Column(name="booking_for_month")

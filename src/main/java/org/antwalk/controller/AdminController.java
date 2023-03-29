@@ -13,6 +13,7 @@ import org.antwalk.entity.Admin;
 import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
+import org.antwalk.entity.Delay;
 import org.antwalk.entity.Driver;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.Route;
@@ -32,6 +33,7 @@ import org.antwalk.service.AdminService;
 import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
+import org.antwalk.service.DelayService;
 import org.antwalk.service.DriverService;
 import org.antwalk.service.EmployeeService;
 import org.antwalk.service.RouteService;
@@ -58,6 +60,9 @@ public class AdminController {
 
 	@Autowired
 	private AdminRepo adminRepo;
+
+	@Autowired
+	private DelayService delayService;
 
 	@Autowired
 	private EmployeeRepo empRepo;
@@ -665,4 +670,11 @@ public class AdminController {
 		
 		return busService.getAllpassinBus(bid);
 	}
+	
+	@GetMapping("/delay/getStatus/{bid}")
+	public String getBusStatus(@PathVariable long bid) {
+		System.out.println(bid);
+		return delayService.getDelayStatus(bid);
+	}
+
 }

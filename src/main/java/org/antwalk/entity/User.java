@@ -173,6 +173,7 @@ public class User {
 		this.role = role;
 		this.employee = emp;
 	}
+
 //	public void setRoles(Collection<Role> roles) {
 //		this.roles = roles;
 //	}

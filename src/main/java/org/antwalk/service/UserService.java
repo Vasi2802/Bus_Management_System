@@ -1,9 +1,6 @@
 package org.antwalk.service;
 
 import java.security.Principal;
-import java.util.Optional;
-
-import javax.validation.Valid;
 
 import org.antwalk.entity.User;
 import org.antwalk.user.CrmUser;
