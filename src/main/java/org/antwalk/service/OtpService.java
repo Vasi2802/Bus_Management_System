@@ -17,6 +17,8 @@ public class OtpService {
     private EmailService emailServ;
     
     private static final int OTP_LENGTH = 6;
+    
+    
     public Otp generateOtp(String email) {
         Otp otp = new Otp();
         otp.setEmail(email);

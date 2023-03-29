@@ -36,7 +36,7 @@ class OtpRepoTest {
 	@BeforeEach
 	void setUp() {
 		email = "employee@nrifintech.com";
-		otpValue = "523923";
+		otpValue = "fun123";
 	}
 
 	

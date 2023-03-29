@@ -46,4 +46,14 @@ public class GlobalDb {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+	public GlobalDb(long gid, String email) {
+		super();
+		this.gid = gid;
+		this.email = email;
+	}
+
+	
+	
+	
 }
