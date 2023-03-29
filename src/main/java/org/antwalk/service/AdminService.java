@@ -135,7 +135,7 @@ public class AdminService {
 		sheet.setColumnWidth(1, 4000);
 		sheet.setColumnWidth(2, 10000);
 		sheet.setColumnWidth(3, 2000);
-		sheet.setColumnWidth(4, 10000);
+		sheet.setColumnWidth(4, 7000);
 
 		// =================================== Header Creation
 		// =======================================
@@ -167,17 +167,21 @@ public class AdminService {
 			headerCell.setCellStyle(headerStyle);
 
 			headerCell = header.createCell(3);
-			headerCell.setCellValue("Bus ID");
+			headerCell.setCellValue("Stop Name");
 			headerCell.setCellStyle(headerStyle);
 
 			headerCell = header.createCell(4);
+			headerCell.setCellValue("Bus ID");
+			headerCell.setCellStyle(headerStyle);
+
+			headerCell = header.createCell(5);
 			headerCell.setCellValue("Booking Date");
 			headerCell.setCellStyle(headerStyle);
 		}
 
 		// ======================= TABLE CREATION ================================
 
-		int rowNum = 2;
+		int rowNum = 1;
 		for (BookingDetails bookingDetails : bookingDetailsList) {
 			CellStyle style = workbook.createCellStyle();
 			style.setWrapText(false);
@@ -197,10 +201,14 @@ public class AdminService {
 			cell.setCellStyle(style);
 
 			cell = row.createCell(3);
-			cell.setCellValue(bookingDetails.getB().getBid());
+			cell.setCellValue(bookingDetails.getStop().getName());
 			cell.setCellStyle(style);
 
 			cell = row.createCell(4);
+			cell.setCellValue(bookingDetails.getB().getBid());
+			cell.setCellStyle(style);
+
+			cell = row.createCell(5);
 			cell.setCellValue(bookingDetails.getBookingForMonth().toString());
 			cell.setCellStyle(style);
 
@@ -431,7 +439,7 @@ public class AdminService {
 		Route mostWaitlistedRoute = null;
 		long count = 0;
 		for (Route route : routes) {
-			long freq = getCountWaitingListByRoute(route.getRid());
+			long freq = getCountWaitingListByRoute(route);
 			routeCount.put(route, freq);
 		}
 		try {
@@ -473,8 +481,15 @@ public class AdminService {
 		return waitingListRepo.findAll().size();
 	}
 
-	private long getCountWaitingListByRoute(long rid) {
-		return 0;
+	private long getCountWaitingListByRoute(Route route) {
+		int count = 0;
+		List<Bus> busList = busRepo.findAllByR(route);
+		for(Bus bus: busList){
+			List<WaitingList> waitingLists = waitingListRepo.findAllByB(bus);
+			count += waitingLists.size();
+		}
+
+		return count;
 	}
 
     public List<Attendance> getAttendanceAnalytics(LocalDate startDate, LocalDate endDate) {
