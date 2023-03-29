@@ -178,5 +178,10 @@ public class BusService {
 		
 		return bookserv.findAllByB(bus);
 	}
+
+	public List<Bus> findAllByR(Route route) {
+		// TODO Auto-generated method stub
+		return busRepo.findAllByR(route);
+	}
 }
 

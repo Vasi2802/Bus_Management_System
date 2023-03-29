@@ -41,8 +41,6 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/driver")
 public class DriverController {
 	
-	@Autowired
-	DriverRepo driverRepo;
 	
 	@Autowired
 	DriverService driverService;

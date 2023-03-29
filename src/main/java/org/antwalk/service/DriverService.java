@@ -97,4 +97,9 @@ public class DriverService {
 		}
 		return passengers;
 	}
+
+	public List<Driver> findAll() {
+		// TODO Auto-generated method stub
+		return driverRepo.findAll();
+	}
 }

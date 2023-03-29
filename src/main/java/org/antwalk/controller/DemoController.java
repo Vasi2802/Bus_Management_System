@@ -41,7 +41,7 @@ public class DemoController {
 	DriverService driverService;
 	
 	@Autowired
-	EmployeeService empRepo;
+	EmployeeService empService;
 
 	@Autowired
 	UserRepo userRepo;
@@ -151,7 +151,7 @@ public class DemoController {
 		User emp = (User) session.getAttribute("emp");
 		UpdateProfile updateProfile = new UpdateProfile();
 
-		Employee empinfo = empRepo.getEmployeeById(emp.getEmployee().getEid());
+		Employee empinfo = empService.getEmployeeById(emp.getEmployee().getEid());
 		User userinfo = userRepo.getById(emp.getId());
 
 		updateProfile.setFullName(empinfo.getName());
@@ -180,9 +180,9 @@ public class DemoController {
 			  }
 		 
 			  
-		empRepo.updateEmployeeById(emp.getEmployee().getEid(),user.getContactNo(),user.getFullName());
+			  empService.updateEmployeeById(emp.getEmployee().getEid(),user.getContactNo(),user.getFullName());
 		
-		System.out.println(empRepo.getEmployeeById(1L).getName());
+		System.out.println(empService.getEmployeeById(1L).getName());
 		
 		model.addAttribute("success","Successfully Updated");
 		return "edit-employee-profile";
