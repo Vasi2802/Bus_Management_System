@@ -1,13 +1,11 @@
 package org.antwalk.controller;
 
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Route;
-import org.antwalk.repository.BusRepo;
-import org.antwalk.repository.RouteRepo;
+import org.antwalk.service.BusService;
+import org.antwalk.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -25,39 +22,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class BusController {
 	
 	@Autowired
-	BusRepo busRepo;
+	BusService busService;
 
 	@Autowired
-	RouteRepo routeRepo;
+	RouteService routeService;
 	
 	@PostMapping("/insert")
 	public Bus insert(@RequestBody Bus b) {
-		return busRepo.save(b);
+		return busService.insertBus(b);
 	}
 	
 	@GetMapping("/getall")
 	public List<Bus> getAll(){
-		return busRepo.findAll();
+		return busService.getAllBus();
 	}
 	
 	@GetMapping("/getbyid/{id}")
 	public Bus getById(@PathVariable long id) {
-		return busRepo.findById(id).get();
+		return busService.getBusById(id);
 	}
 	
 	@DeleteMapping("/deletebyid/{id}")
 	public String deleteById(@PathVariable long id) {
-		busRepo.deleteById(id);
+		busService.deleteBusById(id);
 		return "Deleted";
 	}
 	
 	@PutMapping("/update/{id}")
 	public String update(@RequestBody Bus b, @PathVariable long id) {
-		List<Bus> busList = busRepo.findAll();
+		List<Bus> busList = busService.getAllBus();
 		for(Bus obj:busList) {
 			if(obj.getBid() == id) {
 				if(b.getBid() == id) {
-					busRepo.save(b);
+					busService.insertBus(b);
 					return "Updated";
 				}
 				
@@ -73,8 +70,8 @@ public class BusController {
 
 	@GetMapping("/getByRouteId/{routeId}")
 	public List<Bus> getBusesByRouteId(@PathVariable Long routeId) {
-		Route route = routeRepo.findById(routeId).get();
-		List<Bus> buses = busRepo.findAllByR(route);
+		Route route = routeService.getRouteById(routeId);
+		List<Bus> buses = busService.findAllByR(route);
 		return buses;
 	}
 

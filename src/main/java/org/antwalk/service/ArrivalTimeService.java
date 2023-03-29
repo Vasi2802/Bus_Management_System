@@ -1,6 +1,7 @@
 package org.antwalk.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -298,5 +299,20 @@ public class ArrivalTimeService {
 		return "RouteID-" + routeId + " " +
 				stops.get(0).getName() +
 				" to " + stops.get(stops.size() - 1).getName();
+	}
+
+	public List<ArrivalTimeTable> findAllByRouteStopId_RouteOrderByMorningArrivalTime(Route route) {
+		// TODO Auto-generated method stub
+		return arrivalTimeRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
+	}
+
+	public List<ArrivalTimeTable> findAllByRouteStopId_RouteOrderByEveningArrivalTime(Route route) {
+		// TODO Auto-generated method stub
+		return arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
+	}
+
+	public Collection<ArrivalTimeTable> findAllByRouteStopId_Stop(Stop stop) {
+		// TODO Auto-generated method stub
+		return arrivalTimeRepo.findAllByRouteStopId_Stop(stop);
 	}
 }

@@ -13,6 +13,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name="booking_details")
 public class BookingDetails {
@@ -29,6 +31,7 @@ public class BookingDetails {
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "bus_id", referencedColumnName = "bid")
+	@JsonBackReference
 	@NotNull
 	private Bus b;
 	

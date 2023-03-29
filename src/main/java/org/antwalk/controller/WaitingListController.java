@@ -2,9 +2,8 @@ package org.antwalk.controller;
 
 import java.util.List;
 
-import org.antwalk.entity.Driver;
 import org.antwalk.entity.WaitingList;
-import org.antwalk.repository.WaitingListRepo;
+import org.antwalk.service.WaitingListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,36 +19,36 @@ import org.springframework.web.bind.annotation.RestController;
 public class WaitingListController {
 
 	@Autowired
-	WaitingListRepo waitRepo;
+	WaitingListService waitService;
 	
 	@PostMapping("/insert")
 	public WaitingList insert(@RequestBody WaitingList wl) {
-		return waitRepo.save(wl);
+		return waitService.insertWaitingList(wl);
 	}
 	
 	@GetMapping("/getall")
 	public List<WaitingList> getAll(){
-		return waitRepo.findAll();
+		return waitService.getAllWaitingList();
 	}
 	
 	@GetMapping("/getbyid/{id}")
 	public WaitingList getById(@PathVariable long id) {
-		return waitRepo.findById(id).get();
+		return waitService.getWaitingListById(id);
 	}
 	
 	@DeleteMapping("/deletebyid/{id}")
 	public String deleteById(@PathVariable long id) {
-		waitRepo.deleteById(id);
+		waitService.deleteWaitingListById(id);
 		return "Deleted";
 	}
 	
 	@PutMapping("/update/{id}")
 	public String update(@RequestBody WaitingList wl, @PathVariable long id) {
-		List<WaitingList> waitList = waitRepo.findAll();
+		List<WaitingList> waitList = waitService.getAllWaitingList();
 		for(WaitingList obj:waitList) {
 			if(obj.getWid() == id) {
 				if(wl.getWid() == id) {
-					waitRepo.save(wl);
+					waitService.insertWaitingList(wl);
 					return "Updated";
 				}
 				

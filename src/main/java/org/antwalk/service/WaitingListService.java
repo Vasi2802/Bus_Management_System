@@ -1,7 +1,10 @@
 package org.antwalk.service;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.antwalk.entity.Bus;
+import org.antwalk.entity.Employee;
 import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.WaitingListRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,5 +52,35 @@ public class WaitingListService {
 		}
 		return "Waiting List does not exist";
 		
+	}
+
+	public List<WaitingList> findByBIn(List<Bus> buses) {
+		// TODO Auto-generated method stub
+		return waitRepo.findByBIn(buses);
+	}
+
+	public long countByBus(List<Bus> buses) {
+		// TODO Auto-generated method stub
+		return waitRepo.countByBus(buses);
+	}
+
+	public long count() {
+		// TODO Auto-generated method stub
+		return waitRepo.count();
+	}
+
+	public List<WaitingList> findAll() {
+		// TODO Auto-generated method stub
+		return waitRepo.findAll();
+	}
+
+	public Optional<WaitingList> findByE(Employee employee) {
+		// TODO Auto-generated method stub
+		return waitRepo.findByE(employee);
+	}
+
+	public List<WaitingList> findAllByBOrderByWid(Bus bus) {
+		// TODO Auto-generated method stub
+		return waitRepo.findAllByBOrderByWid(bus);
 	}
 }

@@ -18,7 +18,6 @@ import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Driver;
-import org.antwalk.entity.EditProfile;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.History;
 import org.antwalk.entity.Route;
@@ -27,17 +26,15 @@ import org.antwalk.entity.User;
 import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.ArrivalTimeRepo;
 import org.antwalk.repository.BookingDetailsRepo;
-import org.antwalk.repository.BusRepo;
-import org.antwalk.repository.EmployeeRepo;
-import org.antwalk.repository.RouteRepo;
-import org.antwalk.repository.StopRepo;
 import org.antwalk.repository.UserRepo;
 import org.antwalk.repository.WaitingListRepo;
 import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
+import org.antwalk.service.BusService;
 import org.antwalk.service.EmployeeService;
 import org.antwalk.service.HistoryService;
 import org.antwalk.service.RouteService;
+import org.antwalk.service.StopService;
 import org.antwalk.service.UserService;
 import org.antwalk.service.WaitingListService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,23 +56,18 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/employee")
 public class EmployeeController {
 
-	@Autowired
-	EmployeeRepo empRepo;
-
-	@Autowired
-	RouteRepo routeRepo;
 
 	@Autowired
 	ArrivalTimeService timeserv;
 
 	@Autowired
-	BusRepo busRepo;
+	BusService busService;
 
 	@Autowired
 	UserRepo userRepo;
 
 	@Autowired
-	StopRepo stopRepo;
+	StopService stopService;
 
 	@Autowired
 	private UserService userService;
@@ -83,11 +75,6 @@ public class EmployeeController {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 
-	@Autowired
-	BookingDetailsRepo bookingDetailsRepo;
-
-	@Autowired
-	WaitingListRepo waitingListRepo;
 
 	@Autowired
 	EmployeeService employeeService;
@@ -107,27 +94,25 @@ public class EmployeeController {
 	@Autowired
 	ArrivalTimeService arrivalTimeService;
 
-	@Autowired
-	ArrivalTimeRepo arrivalTimeRepo;
 
 	@PostMapping("/insert")
 	public Employee insert(@RequestBody Employee e) {
-		return empRepo.save(e);
+		return employeeService.insertEmployee(e);
 	}
 
 	@DeleteMapping("/deletebyid/{id}")
 	public String deleteById(@PathVariable long id) {
-		empRepo.deleteById(id);
+		employeeService.deleteemployee(id);
 		return "Deleted";
 	}
 
 	@PutMapping("/update/{id}")
 	public String update(@RequestBody Employee e, @PathVariable long id) {
-		List<Employee> empList = empRepo.findAll();
+		List<Employee> empList = employeeService.getAllEmployees();
 		for (Employee obj : empList) {
 			if (obj.getEid() == id) {
 				if (e.getEid() == id) {
-					empRepo.save(e);
+					employeeService.insertEmployee(e);
 					return "Updated";
 				}
 
@@ -157,7 +142,7 @@ public class EmployeeController {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("emp");
 		Employee employee = employeeService.getEmployeeById(user.getEmployee().getEid());
-		Optional<WaitingList> waitingListOptional = waitingListRepo.findByE(employee);
+		Optional<WaitingList> waitingListOptional = waitingListService.findByE(employee);
 		if (employee.getB() == null && waitingListOptional.isEmpty()) {
 			modelAndView = new ModelAndView("error-seat-form");
 			return modelAndView;
@@ -251,7 +236,7 @@ public class EmployeeController {
 	public ModelAndView book() {
 		ModelAndView modelAndView = new ModelAndView("employeeBook");
 		modelAndView.addObject("employee", new Employee());
-		List<Stop> stops = stopRepo.findAll();
+		List<Stop> stops = stopService.getAllStops();
 		modelAndView.addObject("stops", stops);
 		return modelAndView;
 		// Dummy
@@ -306,12 +291,12 @@ public class EmployeeController {
 	@GetMapping("/viewStops")
 	public List<ArrivalTimeTable> getAllStopsWithTimeByRouteid(@RequestParam Long rid, @RequestParam String shift) {
 		try {
-			Route route = routeRepo.findById(rid).get();
+			Route route = routeService.getRouteById(rid);
 			List<ArrivalTimeTable> arrivalTimeTableList;
 			if (shift.equalsIgnoreCase("morning")) {
-				arrivalTimeTableList = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
+				arrivalTimeTableList = arrivalTimeService.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
 			} else {
-				arrivalTimeTableList = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
+				arrivalTimeTableList = arrivalTimeService.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
 			}
 			return arrivalTimeTableList;
 		} catch (Exception e) {
@@ -328,15 +313,15 @@ public class EmployeeController {
 
 		System.out.println("Booking Bus For ==============");
 		System.out.println("bus id =" + busId + "  empId = " + eid + "stopId = " + stopId + "=============");
-		Bus bus = busRepo.findById(busId).get();
-		Stop stop = stopRepo.findById(stopId).get();
-		Employee employee = empRepo.findById(eid).get();
+		Bus bus = busService.getBusById(busId);
+		Stop stop = stopService.getStopById(stopId);
+		Employee employee = employeeService.getEmployeeById(eid);
 		LocalDate todayDate = LocalDate.now();
 
 		Date date = Date.valueOf(todayDate);
 
-		if (waitingListRepo.findByE(employee).isPresent()) {
-			WaitingList waitingList = waitingListRepo.findByE(employee).get();
+		if (waitingListService.findByE(employee).isPresent()) {
+			WaitingList waitingList = waitingListService.findByE(employee).get();
 			System.out.println("======================================");
 			System.out.println(" EMployee " + employee + " in waitingList");
 
@@ -353,7 +338,7 @@ public class EmployeeController {
 		// employee tries to book a filled bus
 		if (bus.getAvailableSeats() <= 0) {
 			WaitingList waitingList = new WaitingList(0, employee, bus, stop);
-			waitingListRepo.save(waitingList);
+			waitingListService.insertWaitingList(waitingList);
 
 
 			// ---------- Add entry to history table
@@ -374,13 +359,13 @@ public class EmployeeController {
 
 		// seats available and employee doesnt have any bus assigned
 		bus.setAvailableSeats(bus.getAvailableSeats() - 1);
-		busRepo.save(bus);
+		busService.insertBus(bus);
 		BookingDetails bookingDetails = new BookingDetails(0, employee, bus, date, stop);
-		bookingDetailsRepo.save(bookingDetails); // add to bookingDetails
+		bookingDetailsService.insertBookingDetails(bookingDetails); // add to bookingDetails
 		employee.setB(bus);
 		System.out.println("======================================");
 		System.out.println(employee + " has booked the bus");
-		empRepo.save(employee);
+		employeeService.insertEmployee(employee);
 
 		// ---------- Add entry to history table
 		Route route = bus.getR();
@@ -411,16 +396,16 @@ public class EmployeeController {
 
 	public String removeBooking(@RequestBody Long employeeId) {
 		String message = "";
-		Employee employee = empRepo.findById(employeeId).get();
+		Employee employee = employeeService.getEmployeeById(employeeId);
 
 		if (employee.getB() != null) {
-			Bus bus = busRepo.getById(employee.getB().getBid());
+			Bus bus = busService.getBusById(employee.getB().getBid());
 			message += String.format("Removed busId=%d from employee=%s\n", employee.getB().getBid(),
 					employee.getName());
 			employee.setB(null);
-			empRepo.save(employee);
+			employeeService.insertEmployee(employee);
 			bus.setAvailableSeats(bus.getAvailableSeats() + 1);
-			busRepo.save(bus);
+			busService.insertBus(bus);
 
 			// ---------- Add entry to history table
 			Route route = bus.getR();
@@ -438,7 +423,7 @@ public class EmployeeController {
 			// trigger to add first employee from waiting list to booking
 
 			// List of waitingList associated with the bus
-			List<WaitingList> waitingLists = waitingListRepo.findAllByBOrderByWid(bus);
+			List<WaitingList> waitingLists = waitingListService.findAllByBOrderByWid(bus);
 
 			// found an employee in waiting list
 			if (!waitingLists.isEmpty()) {
@@ -447,7 +432,7 @@ public class EmployeeController {
 				WaitingList waitingList = waitingLists.get(0);
 
 				// remove entry from waiting list
-				waitingListRepo.deleteById(waitingList.getWid());
+				waitingListService.deleteWaitingListById(waitingList.getWid());
 
 				// get the employee
 				Employee topEmployee = waitingList.getE();
@@ -477,12 +462,12 @@ public class EmployeeController {
 		}
 
 		// if employee exists in waiting list, remove them
-		Optional optionalWaitingList = waitingListRepo.findByE(employee);
+		Optional optionalWaitingList = waitingListService.findByE(employee);
 		if (optionalWaitingList.isPresent()) {
 			WaitingList waitingList = (WaitingList) optionalWaitingList.get();
 			Bus bus = waitingList.getB();
 			message += String.format("Removed waitingList entry with WID=%d", waitingList.getWid());
-			waitingListRepo.deleteById(waitingList.getWid());
+			waitingListService.deleteWaitingListById(waitingList.getWid());
 
 			// ---------- Add entry to history table
 			Route route = bus.getR();
@@ -513,7 +498,7 @@ public class EmployeeController {
 			employeeDashboardDetails.put("bookingStatus", "Bus Seat Reserved");
 		} else {
 			employeeDashboardDetails.put("busId", "NA");
-			Optional<WaitingList> waitList = waitingListRepo.findByE(employee);
+			Optional<WaitingList> waitList = waitingListService.findByE(employee);
 			if (waitList.isPresent()) {
 				employeeDashboardDetails.put("bookingStatus", "In Waitlist");
 			} else {

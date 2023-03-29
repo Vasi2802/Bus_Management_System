@@ -325,14 +325,20 @@ select:focus{
                     employeeDashboardDetails = response;
                     bus = employeeDashboardDetails?.bus;
                     time = employeeDashboardDetails?.bus?.active;
+                    console.log("Time "+time);
                     $("#timedata").text(time);
                     $("#togglebtn").text(time=="YES"?"End Journey":"Start the Journey");
                     document.getElementById("empname").innerText = employeeDashboardDetails?.driverName;
+                    document.getElementById("phone").innerHTML = employeeDashboardDetails?.driverContactNo;
                     
                     const [first, last] = employeeDashboardDetails?.driverName.split(" ");
                     console.log(first);
                     document.getElementById("actfirst").value = first;
                     document.getElementById("actlast").value = last;
+                    
+                    document.getElementById("actfirst1").innerHTML = first;
+                    document.getElementById("actlast1").innerHTML = last;
+                    
                     document.getElementById("actphone").value = employeeDashboardDetails?.driverContactNo;
                     console.log(time);
                 },
@@ -374,6 +380,49 @@ select:focus{
             });
            
             location.reload();
+        }
+        const changedata = () =>{
+        	
+        	
+        	let name =  document.getElementById("actfirst").value +" " +document.getElementById("actlast").value;
+        	
+			let phone = document.getElementById("actphone").value;
+			var pass;
+			var element = document.getElementById("actpass");
+			  if (element !== null) {
+			    pass = element.value;
+			    // rest of your code
+			  }
+			  $.ajax({
+	        	    type: "POST",
+	        	    url: "/driver/updateprofile/",
+	        	    headers: {
+	                    Accept: 'application/json', //imp
+	                },
+	        	    data: {
+	        	    	eid:did,
+	        	        contactNo: phone,
+	        	        password:pass
+	        	    },
+	        	    dataType: "json",
+	        	    success: function(response) {
+	        	    	$('#toast').toast({
+                		    delay: 2000, // 10 seconds
+                		  });
+                    $('#toast').toast('show');
+	        	        
+	        	    },
+	        	    error: function(xhr, status, error) {
+	        	    	$('#toast').toast({
+                		    delay: 2000, // 10 seconds
+                		  });
+                    $('#toast').toast('show');
+	        	        
+	        	    }
+	        	});
+			  
+			  
+        	
         }
     </script>
     
@@ -447,7 +496,6 @@ select:focus{
 
 <div style="margin-top:5%;">
 <span style="color:grey;" class="logout-mode"> >dashboard</span><hr>
-<h3 style="color:grey;text-align:center;">Route Details</h3>
 </div>
 <Br/>
 
@@ -478,8 +526,12 @@ select:focus{
                                                                 <h6 class="m-b-20 p-b-5 b-b-default f-w-600">Personal Information</h6>
                                                                 <div class="row">
                                                                     <div class="col-sm-6">
-                                                                        <p class="m-b-10 f-w-600">Name</p>
-                                                                        <h6 class="text-muted f-w-400" th:text="${session.driver.getDriver().getDriverName()}"></h6>
+                                                                        <p class="m-b-10 f-w-600">First Name</p>
+                                                                        <h6 class="text-muted f-w-400" id="actfirst1"></h6>
+                                                                    </div>
+                                                                    <div class="col-sm-6">
+                                                                        <p class="m-b-10 f-w-600">Last Name</p>
+                                                                        <h6 class="text-muted f-w-400" id="actlast1"></h6>
                                                                     </div>
                                                                     
                                                                 </div><br>
@@ -491,7 +543,7 @@ select:focus{
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         <p class="m-b-10 f-w-600">Phone</p>
-                                                                        <h6 class="text-muted f-w-400" th:text="${session.driver.getDriver().getDriverContactNo()}"></h6>
+                                                                        <h6 class="text-muted f-w-400" id="phone"></h6>
                                                                     </div>
                                                                 </div><br>
                                                                 <h6 class="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Booking Information</h6>
@@ -541,7 +593,7 @@ select:focus{
             class="img" alt="">
         <div class="pl-sm-4 pl-2" id="img-section">
             <b id="empname"></b>
-            <p id="empemail"></p>
+            <p th:text="${session.driver.getUserName()}"></p>
         </div>
     </div>
     <div class="py-2">
@@ -549,11 +601,11 @@ select:focus{
             
             <div class="col-md-6">
                 <label for="firstname">First Name</label>
-                <input type="text" id="actfirst" class="bg-light form-control" placeholder="Enter First Name">
+                <input type="text" disabled="true" id="actfirst" class="bg-light form-control" placeholder="Enter First Name">
             </div>
             <div class="col-md-6 pt-md-0 pt-3">
                 <label for="lastname">Last Name</label>
-                <input type="text" id="actlast" class="bg-light form-control" placeholder="Enter Last Name">
+                <input type="text" disabled="true" id="actlast" class="bg-light form-control" placeholder="Enter Last Name">
             </div>
         </div>
         <div class="row py-2">

@@ -41,7 +41,7 @@ public class DemoController {
 	DriverService driverService;
 	
 	@Autowired
-	EmployeeService empRepo;
+	EmployeeService empService;
 
 	@Autowired
 	UserRepo userRepo;
@@ -59,7 +59,11 @@ public class DemoController {
 	    User user = (User)session.getAttribute("driver");
 		Driver driver = driverService.getDriverById(user.getDriver().getDid());
 		
-		String res = driver.getBus().getActive();
+		String res;
+		if(driver.getBus()==null)
+			res=" ";
+		else
+				res = driver.getBus().getActive();
 		
 		model.addAttribute("res",res);
 		return "driver";
@@ -99,10 +103,12 @@ public class DemoController {
 //	logger.info("Processing registration form for: " + userName);
 
 		// form validation
+		theModel.addAttribute("showModal", "yes");
 		if (theBindingResult.hasErrors()) {
-			return "registration-form-driver";
+			
+			return "manageDriver";
 		}
-
+		
 		// check the database if user already exists
 		User existing = userService.findByUserName(userName);
 
@@ -111,7 +117,7 @@ public class DemoController {
 			theModel.addAttribute("registrationError", "User name already exists.");
 
 //		logger.warning("User name already exists.");
-			return "registration-form-driver";
+			return "manageDriver";
 		}
 		/*
 		 * String userEmail = theCrmUser.getEmail(); System.out.println(userEmail); User
@@ -145,7 +151,7 @@ public class DemoController {
 		User emp = (User) session.getAttribute("emp");
 		UpdateProfile updateProfile = new UpdateProfile();
 
-		Employee empinfo = empRepo.getEmployeeById(emp.getEmployee().getEid());
+		Employee empinfo = empService.getEmployeeById(emp.getEmployee().getEid());
 		User userinfo = userRepo.getById(emp.getId());
 
 		updateProfile.setFullName(empinfo.getName());
@@ -174,9 +180,9 @@ public class DemoController {
 			  }
 		 
 			  
-		empRepo.updateEmployeeById(emp.getEmployee().getEid(),user.getContactNo(),user.getFullName());
+			  empService.updateEmployeeById(emp.getEmployee().getEid(),user.getContactNo(),user.getFullName());
 		
-		System.out.println(empRepo.getEmployeeById(1L).getName());
+		System.out.println(empService.getEmployeeById(1L).getName());
 		
 		model.addAttribute("success","Successfully Updated");
 		return "edit-employee-profile";

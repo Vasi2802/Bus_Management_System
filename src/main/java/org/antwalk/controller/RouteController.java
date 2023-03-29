@@ -3,7 +3,7 @@ package org.antwalk.controller;
 import java.util.List;
 
 import org.antwalk.entity.Route;
-import org.antwalk.repository.RouteRepo;
+import org.antwalk.service.RouteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,37 +19,37 @@ import org.springframework.web.bind.annotation.RestController;
 public class RouteController {
 	
 	@Autowired
-	RouteRepo routeRepo;
+	RouteService routeService;
 	
 	@PostMapping("/insert")
 	public Route insert(@RequestBody Route r) {
-		return routeRepo.save(r);
+		return routeService.insertRoute(r);
 	}
 	
 	@GetMapping("/getall")
 	public List<Route> getAll(){
-		return routeRepo.findAll();
+		return routeService.getAllRoutes();
 	}
 	
 	@GetMapping("/getbyid/{id}")
 	public Route getById(@PathVariable long id) {
-		return routeRepo.findById(id).get();
+		return routeService.getRouteById(id);
 	}
 	
 	@DeleteMapping("/deletebyid/{id}")
 	public String deleteById(@PathVariable long id) {
-		routeRepo.deleteById(id);
+		routeService.deleteRouteById(id);
 		return "Deleted";
 		
 	}
 	
 	@PutMapping("/update/{id}")
 	public String update(@RequestBody Route r, @PathVariable long id) {
-		List<Route> routeList = routeRepo.findAll();
+		List<Route> routeList = routeService.getAllRoutes();
 		for(Route obj:routeList) {
 			if(obj.getRid() == id) {
 				if(r.getRid() == id) {
-					routeRepo.save(r);
+					routeService.insertRoute(r);
 					return "Updated";
 				}
 				
