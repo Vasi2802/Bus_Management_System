@@ -39,6 +39,7 @@ class ArrivalTimeServiceTest {
 	@MockBean
 	private StopRepo stopRepo;
 	
+
 	private Route r;
 	private Stop s;
 	private LocalTime morning;
@@ -70,6 +71,7 @@ class ArrivalTimeServiceTest {
 		List<ArrivalTimeTable> expected = new ArrayList<>();
 		ArrivalTimeTable at1 = new ArrivalTimeTable(composite, morning, evening);
 		ArrivalTimeTable at2 = new ArrivalTimeTable(new RouteStopId(new Route(2, new Stop(2, "s2"), new Stop(15, "s15")), new Stop(7,"s7")),  LocalTime.of(7, 30), LocalTime.of(18, 30));
+
 		expected.add(at1);
 		expected.add(at2);
 
@@ -134,6 +136,7 @@ class ArrivalTimeServiceTest {
 		assertEquals(expected1, actual1);
 		
 		Route newRoute = new Route(5, new Stop(3, "s3"), new Stop(12, "s12"));
+
 		Stop newStop = new Stop(8, "s8");
 		LocalTime newMorning = LocalTime.of(7, 50);
 		LocalTime newEvening = LocalTime.of(18, 20);

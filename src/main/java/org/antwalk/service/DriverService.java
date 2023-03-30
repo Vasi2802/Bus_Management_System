@@ -15,6 +15,7 @@ import org.antwalk.entity.Stop;
 import org.antwalk.repository.DriverRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -45,6 +46,11 @@ public class DriverService {
 	public String deleteDriverById(long id) {
 		driverRepo.deleteById(id);
 		return "Driver Deleted";
+	}
+	
+	@Transactional
+	public void updateDriverById(Long id, String contact) {
+		driverRepo.getById(id).setDriverContactNo(contact);
 	}
 	
 	public String updateDriverById(Driver d, long id) {
@@ -96,6 +102,11 @@ public class DriverService {
 			}
 		}
 		return passengers;
+	}
+
+	public List<Driver> findAll() {
+		// TODO Auto-generated method stub
+		return driverRepo.findAll();
 	}
 	
 	// call during end journey

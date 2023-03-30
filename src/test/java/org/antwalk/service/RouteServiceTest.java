@@ -30,7 +30,7 @@ class RouteServiceTest {
 	
 	private Stop start;
 	private Stop end;
-	//private String active;
+
 	
 	@BeforeEach
 	void setUp() {
@@ -53,6 +53,7 @@ class RouteServiceTest {
 		List<Route> expected = new ArrayList<>();
 		Route r1 = new Route(1, start, end);
 		Route r2 = new Route(2, new Stop(2,"s2"), new Stop(8, "s8"));
+
 		expected.add(r1);
 		expected.add(r2);
 
@@ -109,6 +110,7 @@ class RouteServiceTest {
 		
 		when(routeRepo.save(new Route(20, start, end))).thenReturn(new Route(20, start, end));
 		String actual3 = routeService.updateRouteById(new Route(20, start, end), 20);
+
 		assertEquals(expected3, actual3);
 	}
 

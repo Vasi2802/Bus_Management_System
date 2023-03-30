@@ -11,11 +11,10 @@ import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.Route;
 import org.antwalk.entity.RouteStopId;
 import org.antwalk.entity.Stop;
-import org.antwalk.repository.ArrivalTimeRepo;
-import org.antwalk.repository.BusRepo;
-import org.antwalk.repository.RouteRepo;
-import org.antwalk.repository.StopRepo;
 import org.antwalk.service.ArrivalTimeService;
+import org.antwalk.service.BusService;
+import org.antwalk.service.RouteService;
+import org.antwalk.service.StopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,16 +34,13 @@ public class ArrivalTimeController {
 	private ArrivalTimeService arrivalTimeService;
 
 	@Autowired
-	private ArrivalTimeRepo arrivalTimeRepo;
+	private StopService stopservice;
 
 	@Autowired
-	private StopRepo stopRepo;
+	private BusService busService;
 
 	@Autowired
-	private BusRepo busRepo;
-
-	@Autowired
-	private RouteRepo routeRepo;
+	private RouteService routeService;
 
 	@PostMapping("/insert")
 	public ArrivalTimeTable insert(@RequestBody ArrivalTimeTable at) {
@@ -94,14 +90,14 @@ public class ArrivalTimeController {
 	@GetMapping("/getallrouteswithtimebystopid")
 	public List<List<ArrivalTimeTable>> getRoutesByStopId(@RequestParam long stopId, @RequestParam String shift) {
 		try {
-			Stop stop = stopRepo.findById(stopId).get();
-			Set<Route> routes = arrivalTimeRepo.findAllByRouteStopId_Stop(stop).stream()
+			Stop stop = stopservice.getStopById(stopId);
+			Set<Route> routes = arrivalTimeService.findAllByRouteStopId_Stop(stop).stream()
 					.map(ArrivalTimeTable::getRouteStopId).collect(Collectors.toList()).stream()
 					.map(RouteStopId::getRoute)
 					.collect(Collectors.toSet());
 			List<List<ArrivalTimeTable>> routesWithTime = new ArrayList();
 			for (Route route : routes) {
-				List<ArrivalTimeTable> routeWithTime = arrivalTimeRepo
+				List<ArrivalTimeTable> routeWithTime = arrivalTimeService
 						.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
 				routesWithTime.add(routeWithTime);
 			}
@@ -157,12 +153,12 @@ public class ArrivalTimeController {
 	@GetMapping("/getallstopsinaroute")
 	public List<Stop> getStopsByRouteId(@RequestParam long routeId, @RequestParam String shift) {
 		try {
-			Route route = routeRepo.findById(routeId).get();
+			Route route = routeService.getRouteById(routeId);
 			List<ArrivalTimeTable> arrivalTimeTables = null;
 			if (shift.equalsIgnoreCase("morning")) {
-				arrivalTimeTables = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
+				arrivalTimeTables = arrivalTimeService.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
 			} else {
-				arrivalTimeTables = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
+				arrivalTimeTables = arrivalTimeService.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
 			}
 			List<Stop> stops = arrivalTimeTables.stream().map(ArrivalTimeTable::getRouteStopId)
 					.collect(Collectors.toList()).stream().map(RouteStopId::getStop).collect(Collectors.toList());
@@ -208,13 +204,13 @@ public class ArrivalTimeController {
 	@GetMapping("/getallstopswithtime")
 	public List<ArrivalTimeTable> getAllStopsWithTimeByRouteId(@RequestParam long routeId, @RequestParam String shift) {
 		try {
-			Route route = routeRepo.findById(routeId).get();
+			Route route = routeService.getRouteById(routeId);
 			if (shift.equalsIgnoreCase("morning")) {
-				return arrivalTimeRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
+				return arrivalTimeService.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
 			}
 
 			else {
-				return arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
+				return arrivalTimeService.findAllByRouteStopId_RouteOrderByEveningArrivalTime(route);
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -240,14 +236,14 @@ public class ArrivalTimeController {
 	public HashMap<Long, ArrivalTimeTable[]> getRoutesStartStop(@RequestParam long stopId, @RequestParam String shift) {
 
 		try {
-			Stop stop = stopRepo.findById(stopId).get();
-			Set<Route> routes = arrivalTimeRepo.findAllByRouteStopId_Stop(stop).stream()
+			Stop stop = stopservice.getStopById(stopId);
+			Set<Route> routes = arrivalTimeService.findAllByRouteStopId_Stop(stop).stream()
 					.map(ArrivalTimeTable::getRouteStopId).collect(Collectors.toList()).stream()
 					.map(RouteStopId::getRoute)
 					.collect(Collectors.toSet());
 			HashMap<Long, ArrivalTimeTable[]> routeStartStop = new HashMap<Long, ArrivalTimeTable[]>();
 			for (Route route : routes) {
-				List<ArrivalTimeTable> routeWithTime = arrivalTimeRepo
+				List<ArrivalTimeTable> routeWithTime = arrivalTimeService
 						.findAllByRouteStopId_RouteOrderByMorningArrivalTime(route);
 
 				for (ArrivalTimeTable stopWithTime : routeWithTime) {
@@ -276,7 +272,7 @@ public class ArrivalTimeController {
 	@GetMapping("/getallroutesasstopslist")
 	public Map<Long, List<Stop>> getAllRoutesAsListOfStop() {
 		Map<Long, List<Stop>> routes = new HashMap<>();
-		for (Route route : routeRepo.findAll()) {
+		for (Route route : routeService.getAllRoutes()) {
 			List<Stop> stops = getStopsByRouteId(route.getRid(), "morning");
 			routes.put(route.getRid(), stops);
 			System.out.println(route.getRid() + "" + stops);

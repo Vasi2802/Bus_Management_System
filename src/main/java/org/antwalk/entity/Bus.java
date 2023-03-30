@@ -45,6 +45,7 @@ public class Bus {
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "bus_route", referencedColumnName = "rid")
+	@JsonBackReference
 	private Route r;
 
 	@Column(name="active")
@@ -125,7 +126,7 @@ public class Bus {
 	@Override
 	public String toString() {
 		return "Bus [bid=" + bid + ", totalSeats=" + totalSeats + ", availableSeats=" + availableSeats + ", startTime="
-				+ startTime + ", d=" + d + ", r=" + r + "]";
+				+ startTime + ", d=" + d + ", r=" + r + "active = " + active + "]";
 	}
 
 	public Bus(int totalSeats, int availableSeats, LocalTime startTime, Driver d, Route r) {

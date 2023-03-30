@@ -90,18 +90,18 @@ class EmployeeServiceTest {
 		verify(empRepo, times(1)).deleteById((long) 8);
 	}
 
-//	@Test
-//	void testUpdateEmployeeById() {
-//		Employee e = new Employee(10, name, contactNo, b, user);
-//		Employee expected = new Employee(10, "Shreyansh Sahu", "0987654321", b, user);
-//		empService.updateEmployeeById((long) 10, "0987654321", "Shreyansh Sahu");
-//		
-//		
-////		when(empRepo.getById((long) 10).setContactNo("0987654321")).thenReturn(Optional.of(expected));
-//		verify(empRepo, times(1)).getById((long) 10).setContactNo("0987654321");
-//		verify(empRepo, times(1)).getById((long) 10).setName("Shreyansh Sahu");
-//		
-//		
-//	}
+	
+	@Test
+	void testUpdateEmployeeById() {
+		Employee expected = new Employee(10, name, contactNo, b, user);
+		when(empRepo.getById((long) 10)).thenReturn(expected);
+		empService.updateEmployeeById((long) 10, "0987654321", "Shreyansh Sahu");
+		
+//		System.out.println(expected.getContactNo() + "      " + expected.getName());
+		assertEquals(expected.getContactNo(), "0987654321");
+		assertEquals(expected.getName(), "Shreyansh Sahu");		
+
+		
+	}
 
 }

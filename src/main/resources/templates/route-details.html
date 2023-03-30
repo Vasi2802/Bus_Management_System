@@ -40,6 +40,13 @@
     var cutoffTimes = /*[[${arrTime}]]*/[];
     /*]]>*/
 
+    var passengersPerStop;
+    var nextStop = {
+      sid: -1,
+      name: "Dunlop Bridge",
+    };
+    var nextPassengers = [];
+
 
   </script>
   <script>
@@ -173,6 +180,30 @@
       $("#onboardingToast").toast("show");
       alert("popup done");
     }
+
+    // function to get passengers of next stop
+    getNextPassengers = () => {
+      console.log("passengers = ");
+      console.log(passengersPerStop);
+      passengersPerStop.forEach((map)=>{
+        stopName = Object.keys(map)[0];
+        employees = Object.values(map)[0]
+        if(stopName==nextStop.name){
+          nextPassengers = employees;
+        }
+      });
+      // nextPassengers = passengersPerStop?.nextStop?.stopName || [];
+      html = "";
+      nextPassengersTable = $('#next-passengers-table')
+      nextPassengers.forEach(({ eid, name, contactNo }) => {
+        html += `<tr ">
+                    <td>${eid}</td>
+                    <td>${name}</td>
+                    <td>${contactNo}</td>
+                  </tr>`;
+      });
+      nextPassengersTable.html(html)
+    };
 
   </script>
   <style>
@@ -321,6 +352,7 @@
           cutoffTime.setSeconds(0);
           cutoffTime.setMilliseconds(0);
           if (currentTime.getTime() >= cutoffTime.getTime()) {
+            // console.log(currentTime.getTime() + " " + cutoffTime.getTime());
             // console.log(currentTime.getTime() + " " + cutoffTime.getTime());
             $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
           } else if (currentTime.getTime() > threshold.getTime()) {

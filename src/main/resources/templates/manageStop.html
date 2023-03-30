@@ -12,6 +12,7 @@
 		integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
 	<!----======== CSS ======== -->
 	<link rel="stylesheet" href="/css/home_style.css">
+	<link rel="stylesheet" href="/styles/modal.css">
 
 	<!----===== Iconscout CSS ===== -->
 	<link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
@@ -34,67 +35,78 @@
 
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
 	</script>
+	<style>
+	
 
+		body.modal-open .supreme-container{
+    -webkit-filter: blur(1px);
+    -moz-filter: blur(1px);
+    -o-filter: blur(1px);
+    -ms-filter: blur(1px);
+    filter: blur(7px);
+}
+	</style>
 </head>
 
 <body class="container-fluid">
-	<form th:action="@{/logout}" id="log" method="POST">
+	<div class="supreme-container">
+		<form th:action="@{/logout}" id="log" method="POST">
 
-	</form>
+		</form>
 
-	<!-- SIDEBAR -->
-	<nav>
-		<img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
-		<div class="menu-items">
-			<ul class="nav-links">
-				<li>
-					<a href="/admin" id="home">
-						<i class="uil uil-estate"></i>
-						<span class="link-name">Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="/admin/manageBus" id="manageBus">
-						<i class="uil uil-chart"></i>
-						<span class="link-name">Manage Buses</span>
-					</a>
-				</li>
-				<li>
-					<a href="/admin/manageDriver" id="manageDriver">
-						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage Drivers</span>
-					</a>
-				</li>
+		<!-- SIDEBAR -->
+		<nav>
+			<img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" />
+			<div class="menu-items">
+				<ul class="nav-links">
+					<li>
+						<a href="/admin" id="home">
+							<i class="uil uil-estate"></i>
+							<span class="link-name">Dashboard</span>
+						</a>
+					</li>
+					<li>
+						<a href="/admin/manageBus" id="manageBus">
+							<i class="uil uil-chart"></i>
+							<span class="link-name">Manage Buses</span>
+						</a>
+					</li>
+					<li>
+						<a href="/admin/manageDriver" id="manageDriver">
+							<i class="uil uil-thumbs-up"></i>
+							<span class="link-name">Manage Drivers</span>
+						</a>
+					</li>
 
-				<li>
-					<a href="/admin/manageEmployee" id="manageEmployee">
-						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage Employees</span>
-					</a>
-				</li>
+					<li>
+						<a href="/admin/manageEmployee" id="manageEmployee">
+							<i class="uil uil-thumbs-up"></i>
+							<span class="link-name">Manage Employees</span>
+						</a>
+					</li>
 
-				<li>
-					<a href="/admin/manageRoute" id="manageRoute">
-						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage Routes</span>
-					</a>
-				</li>
+					<li>
+						<a href="/admin/manageRoute" id="manageRoute">
+							<i class="uil uil-thumbs-up"></i>
+							<span class="link-name">Manage Routes</span>
+						</a>
+					</li>
 
-				<li>
-					<a href="/admin/manageStop" id="manageStop">
-						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage Stops</span>
-					</a>
-				</li>
+					<li>
+						<a href="/admin/manageStop" id="manageStop">
+							<i class="uil uil-thumbs-up"></i>
+							<span class="link-name">Manage Stops</span>
+						</a>
+					</li>
 
-				<ul class="logout-mode">
-					<li><a href="#" onclick="document.getElementById('log').submit()">
-							<i class="uil uil-signout"></i>
+					<ul class="logout-mode">
+						<li><a href="#" onclick="document.getElementById('log').submit()">
+								<i class="uil uil-signout"></i>
 
-							<span class="link-name">Logout</span>
-						</a></li>
+								<span class="link-name">Logout</span>
+							</a></li>
 
-					<!-- <li class="mode">
+						<!-- <li class="mode">
 						<a href="#">
 							<i class="uil uil-moon"></i>
 							<span class="link-name">Dark Mode</span>
@@ -104,80 +116,187 @@
 							<span class="switch"></span>
 						</div>
 					</li> -->
-				</ul>
-		</div>
-	</nav>
+					</ul>
+			</div>
+		</nav>
 
 
-	<!-- RIGHT AREA-->
-	<section class="dashboard">
-		<div class="top">
-			<i class="uil uil-bars sidebar-toggle"></i>
+		<!-- RIGHT AREA-->
+		<section class="dashboard">
+			<div class="top">
+				<i class="uil uil-bars sidebar-toggle"></i>
 
-			<img src="images/profile.jpg" alt="">
-		</div>
+				<img src="images/profile.jpg" alt="">
+			</div>
 
-		<!-- MAIN AREA -->
+			<!-- MAIN AREA -->
 
-		<div class="dash-content">
-			<div class="overview justify-content-between flex-row border-bottom mb-3">
-				<div class="title">
-					<i class="uil uil-tachometer-fast-alt"></i>
-					<span class="text">Manage Stops</span>
+			<div class="dash-content">
+				<div class="overview justify-content-between flex-row border-bottom mb-3">
+					<div class="title">
+						<i class="uil uil-tachometer-fast-alt"></i>
+						<span class="text">Manage Stops</span>
+					</div>
+				</div>
+
+			</div>
+
+			
+
+			<div>
+				<a href="" class="btn btn-primary" data-toggle="modal" data-target="#mainArea">ADD STOP</a>
+			</div>
+			<br>
+			<br>
+
+			
+
+			<div>
+				<a href="" class="btn btn-primary" data-toggle="modal" data-target="#editArea">EDIT STOP</a>
+			</div>
+
+
+		</section>
+
+
+	</div>
+
+	<div class="modal fade" id="mainArea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog  modal-dialog-centered" role="document">
+
+					<div class="modal-content">
+						<div class="modal-header text-center bg-primary">
+							<h4 class="modal-title w-100 font-weight-bold">ENTER STOP DETAILS</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body" style="background: linear-gradient(180deg, rgba(0,123,255,1) 0%, rgba(153,227,255,0.8743872549019608) 28%, rgba(153,227,255,1) 73%, rgba(0,123,255,1) 100%);">
+							<div class="md-form mb-5">
+								<i class="fas fa-user prefix grey-text"></i>
+								<label data-error="wrong" data-success="right" for="orangeForm-name">Stop name</label>
+								<input type="text" id="orangeForm-name" class="form-control validate">
+
+							</div>
+						</div>
+						<div class="modal-footer bg-primary">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button class="btn btn-success" onclick="addStop()">ADD</button>
+
+						</div>
+					</div>
+				</div>
+	</div>
+
+	<div class="modal fade" id="editArea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header text-center bg-primary">
+							<h4 class="modal-title w-100 font-weight-bold">Edit Stop Details</h4>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body" style="background: linear-gradient(180deg, rgba(0,123,255,1) 0%, rgba(153,227,255,0.8743872549019608) 28%, rgba(153,227,255,1) 73%, rgba(0,123,255,1) 100%);">
+							<div class="md-form mb-5">
+								<i class="fas fa-user prefix grey-text"></i>
+								<label for="stopname" class="text-dark display-5">Select Stop </label><br>
+								<select id="select-stop" name="stop">
+
+									<option th:each="s : ${list}" th:id="'stop-selected'" th:value="${s.sid}"
+										th:text="${s.name}"></option>
+								</select>
+								<br>
+								<br>
+								<label for="stopname" class="text-dark display-5">New Name: </label>
+								<input type="text" class="form-control" id="input-name" name="name"
+									placeholder="Stop Name">
+
+							</div>
+						</div>
+
+						<div class="modal-footer  bg-primary">
+							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+							<button class="btn btn-success" onclick="editStop()">UPDATE</button>
+
+						</div>
+					</div>
+
 				</div>
 			</div>
 
-			<div class="row mb-3">
-				<a href="/admin/addStop">
-					<button type="submit" class="btn btn-primary">Add Stop</button>
-				</a>
-			</div>
-			<div class="row mb-3">
-				<a href="/admin/editStop">
-					<button type="submit" class="btn btn-primary">Edit Stop</button>
-				</a>
-			</div>
-
-		</div>
 
 
-	</section>
+		
 
 
+	<script>
+		function addStop() {
+			var url = '/admin/stop/insert';
+			var stop = {
+				"name": document.getElementById("mainArea").getElementsByTagName("input")[0].value,
+			};
+			console.log(stop);
+			// alert('Click ok to add this Stop')
+			$.ajax({
+				headers: {
+					Accept: 'application/json', //imp
+				},
+				type: "POST",
+				url: url,
+				data: JSON.stringify(stop), // imp
+				dataType: "json",
+				contentType: "application/json", //imp
+				success: function (response) {
+					console.log("added", response);
+					alert('Stop Added');
+					window.location.href = "/admin/manageStop";
+				},
+				error: function () {
+					alert('Error occured');
+					// window.location.href="/stop/stopform";
+				}
+
+			});
+			//window.location.href = "/stop/managing";
+		}
+	</script>
+	<script>
+		function editStop() {
+			var url = '/admin/stop/update';
+			console.log($("#select-stop option:selected").attr("value"));
+			var stop = {
+				sid: Number($("#select-stop option:selected").attr("value")),
+				name: document.getElementById("input-name").value
+			};
+
+			console.log(stop);
+			alert("Click Ok to update");
+			$.ajax({
+				headers: {
+					Accept: 'application/json', //imp
+				},
+				type: "PUT",
+				url: url,
+				data: JSON.stringify(stop), // imp
+				dataType: "json",
+				contentType: "application/json", //imp
+				success: function (response) {
+					console.log("added", response);
+					alert('Stop Updated')
+					window.location.href = "/admin/manageStop";
+				},
+				error: function () {
+					alert('Error occured');
+				}
+			});
+
+		}
 
 
-	<!-- <div id="chart_div" style="width: 80vw; align-items: center; justify-content: center; display: flex;"> -->
-
-
-	<!-- <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
-            <table class="columns">
-                <tr>
-                    <td>
-                        <div id="route-piechart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                    <td>
-                        <div id="route-barchart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div id="bus-piechart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                    <td>
-                        <div id="bus-barchart-div" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-                <tr>
-                
-                    <td>
-                        <div id="booking-line-chart" style="border: 1px solid #ccc"></div>
-                    </td>
-                </tr>
-            </table> -->
-	</div>
-
-
-	<script src="/script/home_script.js"></script>
+	</script>
 	<!--    <script src="/script/navigation.js"></script> -->
 </body>
 

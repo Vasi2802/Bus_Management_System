@@ -124,6 +124,7 @@ public class BookingDetailsService {
     }
 
     public List<BookingDetails> findAllByB(Bus bus) {
+    	
         return bookingRepo.findAllByB(bus);
     }
 

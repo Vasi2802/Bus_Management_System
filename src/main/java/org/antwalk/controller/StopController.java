@@ -3,7 +3,7 @@ package org.antwalk.controller;
 import java.util.List;
 
 import org.antwalk.entity.Stop;
-import org.antwalk.repository.StopRepo;
+import org.antwalk.service.StopService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,37 +20,37 @@ import org.springframework.web.servlet.ModelAndView;
 public class StopController {
 	
 	@Autowired
-	StopRepo stopRepo;
+	StopService stopService;
 	
 	@PostMapping("/insert")
 	public Stop insert(@RequestBody Stop s) {
-		return stopRepo.save(s);
+		return stopService.insertStop(s);
 	}
 	
 	@GetMapping("/getall")
 	public List<Stop> getAll(){
-		return stopRepo.findAll();
+		return stopService.getAllStops();
 	}
 	
 	@GetMapping("/getbyid/{id}")
 	public Stop getOne(@PathVariable long id) {
-		return stopRepo.findById(id).get();
+		return stopService.getStopById(id);
 	}
 	
 	@DeleteMapping("/deletebyid/{id}")
 	public String deleteById(@PathVariable long id) {
-		stopRepo.deleteById(id);
+		stopService.deleteStopById(id);
 		return "Deleted";
 		
 	}
 	
 	@PutMapping("/update/{id}")
 	public String update(@RequestBody Stop s, @PathVariable long id) {
-		List<Stop> stopList = stopRepo.findAll();
+		List<Stop> stopList = stopService.getAllStops();
 		for(Stop obj:stopList) {
 			if(obj.getSid() == id) {
 				if(s.getSid() == id) {
-					stopRepo.save(s);
+					stopService.insertStop(s);
 					return "Updated";
 				}
 				
@@ -67,7 +67,7 @@ public class StopController {
 	@PutMapping("/update")
 	public Stop update(@RequestBody Stop stop) {
 	
-		stopRepo.save(stop);
+		stopService.insertStop(stop);
 		return stop;
 		
 	}

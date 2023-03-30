@@ -2,7 +2,6 @@ package org.antwalk.controller;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,21 +12,23 @@ import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.Attendance;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
+import org.antwalk.entity.Delay;
 import org.antwalk.entity.Driver;
 import org.antwalk.entity.Employee;
-import org.antwalk.entity.Route;
 import org.antwalk.entity.Stop;
 import org.antwalk.entity.User;
-import org.antwalk.repository.DriverRepo;
 import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.AttendanceService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
+import org.antwalk.service.DelayService;
 import org.antwalk.service.DriverService;
 import org.antwalk.service.EmployeeService;
+import org.antwalk.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -42,13 +44,17 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/driver")
 public class DriverController {
 	
-	@Autowired
-	DriverRepo driverRepo;
 	
 	@Autowired
 	DriverService driverService;
 	
 	
+	@Autowired
+	DelayService delayServices;
+
+	@Autowired
+	private UserService userService;
+
 	@Autowired
 	ArrivalTimeService arrivalTimeService;
 
@@ -61,6 +67,8 @@ public class DriverController {
 	@Autowired
 	private AttendanceService attendanceService;
 	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 	
 	@Autowired
 	BusService buserv;
@@ -146,22 +154,82 @@ public class DriverController {
 		return modelAndView;
 	}
 	
-	@PostMapping("/changestatus/{bid}")
-	public String insert1(@PathVariable long bid) {
-		String msg;
-		System.out.println(bid);
-		Bus bus = buserv.getBusById(bid);
-		if(bus.getActive().equals("NO")){
-			bus.setActive("YES");
+	@PostMapping("/changeActiveStatus/{bid}")
+	public String changeStatus(@PathVariable long bid) {
+		System.out.println("changing status of bus " + bid);
+		Bus b = buserv.getBusById(bid);
+		System.out.println(b);
+		if(b.getActive().equals("NO")){
+			// System.out.println("into NO case");
+			b.setActive("YES");
+		}
+		else{
+			// System.out.println("into YES case");
+			b.setActive("NO");
+		}
+		return buserv.updateBusById(b, bid);
+	}
+	
+
+
+	@GetMapping("/nextStop/{bid}")
+	public String nextStop(@PathVariable long bid) {
+		String retVal = "End Journey";
+		int slotIdx = 1;
+		if(LocalTime.now().compareTo(LocalTime.parse("12:00:00")) < 0 ){slotIdx = 0;}
+		System.out.println("time = " +  LocalTime.now() + " is after 12'o clock : " + LocalTime.now().compareTo(LocalTime.parse("12:00:00")) +" slotIdx = " + slotIdx);
+		Delay d = delayServices.getLatest(bid);
+		ArrivalTimeTable at = delayServices.getNextStop(bid,d, slotIdx);
+		if(at != null){
+			retVal = "Reached " + at.getRouteStopId().getStop().getName();
+		}
+		return retVal;
+	}
+
+	@PostMapping("/addDelay/{bid}")
+	public String addDelay(@PathVariable long bid) {
+		Stop stop;
+		Delay d = delayServices.getLatest(bid);
+		int slotIdx = 1;
+		if(LocalTime.now().compareTo(LocalTime.parse("12:00:00")) < 0 ){slotIdx = 0;}
+
+		if(d == null ) {
+			stop = null;
 		}
 		else {
-			bus.setActive("NO");
+			stop = delayServices.getNextStop(bid,d, slotIdx).getRouteStopId().getStop();
 		}
-		
-		buserv.updateBusById(bus, bid);
-		
-		
-		return null;
+		d = new Delay(buserv.getBusById(bid),stop,LocalTime.now());
+		System.out.println(delayServices.addDelay(d));
+		return "updated";
+	}
+
+
+	@DeleteMapping("/flushDelays/{bid}")
+	public String flushDelays(@PathVariable long bid) {
+		System.out.println("deleting all delays from table with bus_id = " + bid);
+		return delayServices.flushByBusId(bid);
+	}
+
+	
+	@PostMapping("/updateprofile")
+	public ResponseEntity<String> update(@RequestParam("eid") long eid,
+			@RequestParam("contactNo") String contactNo,
+			@RequestParam("password") String password,
+			HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		User emp1 = (User) session.getAttribute("driver");
+
+		User userv = userService.findByUserName(emp1.getUserName());
+
+		if (!password.equals("")) {
+			userService.findByUserName(emp1.getUserName()).setPassword(passwordEncoder.encode(password));
+
+		}
+
+		driverService.updateDriverById(eid, contactNo);
+
+		return ResponseEntity.ok("Profile Updated Successfully");
 	}
 
 	@GetMapping("get-all-passengers") 
