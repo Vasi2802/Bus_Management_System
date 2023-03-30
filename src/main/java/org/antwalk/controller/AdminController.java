@@ -363,8 +363,13 @@ public class AdminController {
 
 	@GetMapping("/manageStop")
 	public ModelAndView manageStop() {
-		ModelAndView modelAndView = new ModelAndView("manageStop");
-		return modelAndView;
+		String uri = "http://localhost:8080/stop/getall"; 
+		RestTemplate restTemplate = new RestTemplate();
+	    List<Stop> result = stopRepo.findAll();
+		ModelAndView mv=new ModelAndView("manageStop");
+		mv.addObject("list", result);
+		return mv;
+
 	}
 
 	@GetMapping("/addStop")

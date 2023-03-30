@@ -5,20 +5,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<<<<<<< HEAD
 
     <!----======== CSS ======== -->
     <link rel="stylesheet" href="/css/home_style.css">
 	<link rel="stylesheet" href="/css/ticket.css">
-=======
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
-        integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
-        integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-    <!----======== CSS ======== -->
-    <link rel="stylesheet" href="/css/home_style.css">
-
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
     <!----===== Iconscout CSS ===== -->
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
 
@@ -94,12 +84,9 @@
             font-size: 15px;
             position: relative;
         }
-<<<<<<< HEAD
         .highlight {
         background-color: #ffcc66;
     }
-=======
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
     </style>
     <script>
         console.log(eid);
@@ -166,7 +153,6 @@
         }, 1000);
         var employeeBookingDetails;
         $(document).ready(async () => {
-<<<<<<< HEAD
        	 $('tr').hover(function() {
                 $(this).addClass('table-active');
             }, function() {
@@ -200,28 +186,6 @@
            $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
        });
 
-=======
-            url = "/employee/get-booking-details/" + eid;
-            await $.ajax({
-                type: "GET",
-                url: url,
-                success: function (response) {
-                    console.log(response);
-                    employeeBookingDetails = response;
-                    bus = employee?.b;
-                    document.getElementById("bookingId").innerText = employeeBookingDetails?.bookingId;
-                    document.getElementById("busNo").innerText = employeeBookingDetails?.busNo;
-                    document.getElementById("driverName").innerText = employeeBookingDetails?.driverName;
-                    document.getElementById("driverContactNo").innerText = employeeBookingDetails?.driverContactNo;
-                    document.getElementById("busStatus").innerText = employeeBookingDetails?.busStatus;
-                },
-                error: function (response) {
-                    alert('Error occured ', response.statusText);
-                }
-            });
-            $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
-        });
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
 
         const removeBooking = () => {
             console.log("the eid Id selected = ", eid);
@@ -347,57 +311,33 @@
         </div>
         <Br />
 
-<<<<<<< HEAD
        <div class="text-white ">
 
             <div class="table-responsive">
-=======
-        <div class="card text-white ">
-
-            <div class="table-responsive table table-striped table-light">
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
                 <table class="table text-black">
 
                     <tbody>
 
                         <tr>
-<<<<<<< HEAD
                             <th>Booking Id</th>
                             <td id="bookingId"></td>
                         </tr>
 
                         <tr>
                             <th>Bus Number</th>
-=======
-                            <td>Booking Id</td>
-                            <td id="bookingId">13</td>
-                        </tr>
-
-                        <tr>
-                            <td>Bus Number</td>
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
                             <td id="busNo"></td>
                         </tr>
                         <tr>
 
-<<<<<<< HEAD
                             <th>Driver Name</th>
                             <td id="driverName"></td>
                         </tr>
                         <tr>
                             <th>Driver Contact Number</th>
-=======
-                            <td>Driver Name</td>
-                            <td id="driverName"></td>
-                        </tr>
-                        <tr>
-                            <td>Driver Contact Number</td>
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
                             <td id="driverContactNo"></td>
                         </tr>
 
                         <tr>
-<<<<<<< HEAD
                             <th>Bus Start Time </th>
                             <td id="busStatus"></td>
                         </tr>
@@ -408,13 +348,6 @@
                     </tbody>
                 </table>
  
-=======
-                            <td>Bus Start Time </td>
-                            <td id="busStatus"></td>
-                        </tr>
-                    </tbody>
-                </table>
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
             </div>
         </div>
     </div>
