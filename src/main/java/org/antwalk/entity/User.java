@@ -165,14 +165,14 @@ public class User {
 		this.role = role;
 	}
 
-	public User(Long id, String userName, String password, String role,Employee emp) {
-		super();
-		this.id = id;
-		this.userName = userName;
-		this.password = password;
-		this.role = role;
-		this.employee = emp;
-	}
+	// public User(Long id, String userName, String password, String role,Employee emp) {
+	// 	super();
+	// 	this.id = id;
+	// 	this.userName = userName;
+	// 	this.password = password;
+	// 	this.role = role;
+	// 	this.employee = emp;
+	// }
 	public User(Long id, @NotNull String userName, @NotNull String password, @NotNull String role, Employee employee) {
 		super();
 		this.id = id;

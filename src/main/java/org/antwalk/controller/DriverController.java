@@ -264,9 +264,9 @@ public class DriverController {
 		return "Successful";
 	}
 
-	@GetMapping("/clear-onboarding")
-	public void clearOnboarding(){
-		driverService.clearBoardingStatus();
+	@GetMapping("/clear-onboarding/{driverId}")
+	public void clearOnboarding(@PathVariable long driverId){
+		driverService.clearBoardingStatus(driverId);
 	}
 
 }

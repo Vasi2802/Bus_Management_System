@@ -35,42 +35,81 @@
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
   </script>
+
+
   <script th:inline="javascript">
     /*<![CDATA[*/
     var cutoffTimes = /*[[${arrTime}]]*/[];
+    var did = /*[[${session.driver.getDriver().getDid()}]]*/ 'default';
+    var bus = 'default';
+    var time;
+    var buttonText;
     /*]]>*/
 
     var passengersPerStop;
-    var nextStop = {
-      sid: -1,
-      name: "Dunlop Bridge",
-    };
     var nextPassengers = [];
 
 
   </script>
+
+
   <script>
     var passengersPerStop;
-    var nextStop = {
+    var nextStopObject = {
       sid: -1,
       name: "Dunlop Bridge",
     };
     var nextPassengers = [];
 
+
+
     // get all passengers
     $(document).ready(() => {
-      getAllPassengers();
+      url = "/driver/getbyid/" + did;
+      console.log("document ready");
+      $.ajax({
+        type: "GET",
+        url: url,
+        success: function (response) {
+          console.log(response);
+          employee = response;
+          bus = employee?.bus;
+          time = employee?.bus?.active;
+          getAllPassengers();
+          // $("#timedata").text(time?time:"Not Started");
+          // $("#togglebtn").text(time?"End Journey":"Start the Journey");
+          // console.log(time);
+          if (time == "NO") {
+            // $("#timedata").text(time?time:"Not Started");
+            console.log("calling flush");
+            flushDelays();
+            buttonText = "Start Journey";
+            $("#togglebtn").text(buttonText);
+            $('#next-passenger-row').addClass("d-none");
+          }
+          else {
+            console.log("calling next stop()");
+            nextStop();
+          }
+        },
+        error: function (response) {
+
+        }
+      });
+      // $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
+
     });
 
     // GET ALL PASSENGERS
     getAllPassengers = async () => {
+      console.log("in get all passengers");
       await $.ajax({
         type: "GET",
         url: "/driver/get-all-passengers",
         data: null,
         dataType: "json",
         success: function (response) {
-          // console.log(response);
+          console.log(response);
           passengersPerStopList = response;
           const tableBody = $('#passenger-table-body');
           var html = "";
@@ -83,11 +122,11 @@
                         <td>${stopName}</td>
                         <td>
                           <table class="table table-striped table-hover table-fixed">`;
-            html += `<thead>
+            html += `<thead>              
                           <th class="col-3">EmployeeId</th>
                           <th class="col-3">Name</th>
                           <th class="col-3">ContactNo</th>
-                          <th class="col-3">Onboard</th>
+                          <th class="col-3">Onboard</th>  
                         </thead>`;
 
             employees.forEach(({ eid, name, contactNo, boardingStatus }) => {
@@ -96,11 +135,11 @@
                           <td>${name}</td>
                           <td>${contactNo}</td>
                           <td>
-                            <button class="btn btn-success ${boardingStatus == 'false' ? '' : 'disabled'}"  
-                            onclick="onBoardPassenger(${eid}, ${stop.sid})" id="list-boarding-button-${eid}">
-                              ${boardingStatus === "false" ? "Onboard passenger" : "Onboarded"}
+                            <button class="btn btn-success" ${(boardingStatus==="true" || bus.active==="NO" )? "disabled=true" : ""}
+                            onclick="onBoardPassenger(${eid}, ${stop.sid})" id="list-boarding-button-${eid}" >
+                              ${bus.active==="NO"? "BUS NOT STARTED": (boardingStatus==="false"? "Onboard passenger" : "Onboarded")}
                               </button>
-                          </td>
+                          </td>      
                         </tr>`;
             });
             html += `</td>
@@ -145,7 +184,7 @@
                       onclick="onBoardPassenger(${eid}, ${stop.sid})" id="boarding-button-${eid}">
                         ${boardingStatus === "false" ? "Onboard passenger" : "Onboarded"}
                         </button>
-                    </td>
+                    </td>    
                   </tr>`;
       });
       nextPassengersTable.html(html);
@@ -182,28 +221,159 @@
     }
 
     // function to get passengers of next stop
-    getNextPassengers = () => {
-      console.log("passengers = ");
-      console.log(passengersPerStop);
-      passengersPerStop.forEach((map)=>{
-        stopName = Object.keys(map)[0];
-        employees = Object.values(map)[0]
-        if(stopName==nextStop.name){
-          nextPassengers = employees;
+    getNextPassengers = async (nextStopName) => {
+      console.log("in get next passengers");
+      await getAllPassengers();
+      // console.log("passengers per stop =  " ,passengersPerStopList);
+      // console.log(passengersPerStopList);
+      nextPassengers = [];
+      console.log("next stop  ame fetched = ", nextStopName);
+      passengersPerStopList.forEach((map) => {
+        stop = map?.stop;
+        employees = map?.employees;
+        stopName = stop?.name;
+        console.log("stop = ", stop);
+        console.log(nextStopName?.substring(8));
+        console.log(stopName === (nextStopName?.substring(8)));
+        if (stopName === (nextStopName?.substring(8))) {
+          console.log(employees);
+          html = "";
+          nextPassengersTable = $('#next-passengers-table');
+          employees.forEach(({ eid, name, contactNo,boardingStatus }) => {
+            html += `<tr >  
+                      <td>${eid}</td>
+                      <td>${name}</td>
+                      <td>${contactNo}</td>
+                      <td>
+                          <button class="btn btn-success "  ${(boardingStatus==="true" || bus.active==="NO" )? "disabled=true" : ""}
+                          onclick="onBoardPassenger(${eid}, ${stop.sid})" id="boarding-button-${eid}">
+                            ${boardingStatus === "false" ? "Onboard passenger" : "Onboarded"}
+                            </button>
+                      </td>    
+                    </tr>`;
+          });
+          nextPassengersTable.html(html)
+          alert("updated next passengers");
         }
       });
-      // nextPassengers = passengersPerStop?.nextStop?.stopName || [];
-      html = "";
-      nextPassengersTable = $('#next-passengers-table')
-      nextPassengers.forEach(({ eid, name, contactNo }) => {
-        html += `<tr ">
-                    <td>${eid}</td>
-                    <td>${name}</td>
-                    <td>${contactNo}</td>
-                  </tr>`;
-      });
-      nextPassengersTable.html(html)
     };
+
+    const nextStop = async () => {
+      url = "/driver/nextStop/" + bus.bid;
+      console.log(url);
+
+      await $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "GET",
+        url: url,
+        dataType: "text",
+        async: false,
+        success: function (response) {
+          console.log(response)
+          buttonText = response;
+          $("#togglebtn").text(buttonText);
+          if(response.startsWith("Reached")){
+            stopName = response.substring(8);
+            $('#nextStopName').text(stopName);
+          }
+          getNextPassengers(response);
+        },
+        error: function (response) { }
+      });
+      // location.reload();
+
+    }
+
+    const changeActiveStatus = async () => {
+      url = "/driver/changeActiveStatus/" + bus.bid;
+      console.log(url);
+      await $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "POST",
+        url: url,
+        dataType: "text",
+        async: false,
+        success: function (response) { },
+        error: function (response) { }
+      });
+    }
+
+
+    const addDelay = async () => {
+      url = "/driver/addDelay/" + bus.bid;
+      console.log(url);
+      await $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "POST",
+        url: url,
+        dataType: "text",
+        async: false,
+        success: function (response) { },
+        error: function (response) { }
+      });
+    }
+
+
+    const reachedStop = async () => {
+      if (buttonText == "Start Journey" || buttonText == "End Journey") {
+        changeActiveStatus();
+        await $.ajax({
+          headers: {
+            Accept: 'application/json', //imp
+          },
+          type: "GET",
+          url: "/driver/clear-onboarding/" + did,
+          dataType: "text",
+          async: false,
+          success: function (response) {
+            console.log("boarding status cleared")
+          },
+          error: function (response) {
+            alert("error occured in clearing boarding status");
+          }
+        });
+
+      }
+      // buttonText = "End Journey";
+      if (buttonText != "End Journey") {
+        addDelay();
+      }
+      // else{
+      //     flushDelays();
+      // }
+      location.reload();
+    }
+
+
+
+
+
+    const flushDelays = async () => {
+      url = "/driver/flushDelays/" + bus.bid;
+      console.log(url);
+
+      await $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "DELETE",
+        url: url,
+        dataType: "text",
+        async: false,
+        success: function (response) {
+          console.log(response)
+        },
+        error: function (response) { }
+      });
+      // location.reload();
+
+    }
 
   </script>
   <style>
@@ -641,17 +811,20 @@
 
         </div>
 
+        <div class="row m-3">
+          <button onclick="reachedStop()" id="togglebtn" class="btn btn-primary"></button>
+        </div>
+
         <!-- PASSENGERS OF NEXT STOP -->
 
-        <div class="row  d-flex justify-content-center align-items-center h-100">
-          <div class="card container mt-5 mx-2 " style="border-radius: 20px;">
+        <div class="row  justify-content-center align-items-center h-100" id="next-passenger-row">
+          <div class="card container mt-5 mx-3 " style="border-radius: 20px;">
             <div class="card-header mt-2" style="background-color: white;">
               <span class="small">Next Stop</span>
               <h3 id="nextStopName"></h3>
             </div>
             <div class="card-header mt-2" style="background-color: white;">
-              <h4>Passengers Waiting in this Stop</h4>
-              <button onclick="getNextPassengers()">Get Passengers in next Stop</button>
+              <h4>Passengers Waiting There are</h4>
             </div>
             <div class="card-body">
               <table class="table table-responsive-lg rounded-lg" style="border: 1px solid #141E30;">
@@ -712,9 +885,10 @@
 
           <!-- TOAST AREA-->
           <div style="position: absolute; top: 0; right: 0;">
-            
+
             <!-- TOAST -->
-            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="onboardingToast" data-delay="3000">
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="onboardingToast"
+              data-delay="3000">
               <div class="toast-header bg-success">
                 <strong class="mr-auto" id="toast-header-text"></strong>
                 <!-- <small class="text-muted">just now</small> -->

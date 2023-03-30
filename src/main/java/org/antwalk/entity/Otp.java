@@ -60,18 +60,7 @@ public class Otp {
 		this.otpValue = otpValue;
 	}
 
-	public Otp(long oid, String email, String otpValue) {
-		super();
-		this.oid = oid;
-		this.email = email;
-		this.otpValue = otpValue;
-	}
-
-	public Otp() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(email, oid, otpValue);

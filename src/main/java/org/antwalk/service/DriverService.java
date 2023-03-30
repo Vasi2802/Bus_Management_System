@@ -110,8 +110,10 @@ public class DriverService {
 	}
 	
 	// call during end journey
-	public void clearBoardingStatus(){
-		List<BookingDetails> bookingDetailsList = bookingDetailsService.getAllBookingDetails();
+	public void clearBoardingStatus(long driverId){
+		Driver driver = driverRepo.findById(driverId).get();
+		Bus bus = driver.getBus();
+		List<BookingDetails> bookingDetailsList = bookingDetailsService.findAllByB(bus);
 		for(BookingDetails bookingDetails : bookingDetailsList){
 			bookingDetails.setIsBoarded(false);
 			bookingDetailsService.insertBookingDetails(bookingDetails);
