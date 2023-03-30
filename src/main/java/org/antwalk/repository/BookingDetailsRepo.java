@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 
@@ -25,12 +27,16 @@ public interface BookingDetailsRepo extends JpaRepository<BookingDetails, Long>{
 	public List<BookingDetails> findByEAndBOrderByBookingIdDesc(Employee employee, Bus bus);
 	
     public List<BookingDetails> findByEAndBOrderByBookingForMonthDesc(Employee employee, Bus bus);
-
+    
+    @Transactional
     public void deleteByB(Bus bus);
-
+    
+    @Transactional
     public void deleteByE(Employee employee);
 
     public List<BookingDetails> findAllByB(Bus bus);
+
+	public List<BookingDetails> findAllByE(Employee employee);
 
  
 }

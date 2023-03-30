@@ -3,6 +3,8 @@ package org.antwalk.repository;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.WaitingList;
@@ -14,8 +16,9 @@ public interface WaitingListRepo extends JpaRepository<WaitingList, Long>{
     public List<WaitingList> findAllByE(Employee employee);
     
     public Optional<WaitingList> findByE(Employee employee);
-
-    public Long deleteByE(Employee employee);
+    
+    @Transactional
+    public Long deleteByE(Employee employee);		//returns no of employee deleted
 
     public List<WaitingList> findAllByBOrderByWid(Bus bus);
 
@@ -25,7 +28,8 @@ public interface WaitingListRepo extends JpaRepository<WaitingList, Long>{
     public List<WaitingList> findByBIn(List<Bus> b);
 
     public List<WaitingList> findAllByB(Bus bus);
-
+    
+    @Transactional
     public void deleteByB(Bus bus);
 
     
