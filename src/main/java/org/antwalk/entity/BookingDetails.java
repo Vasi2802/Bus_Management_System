@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name="booking_details")
-public class BookingDetails {
+public class BookingDetails implements Comparable<BookingDetails>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -104,6 +104,12 @@ public class BookingDetails {
 
 	public void setStop(Stop stop) {
 		this.stop = stop;
+	}
+
+	@Override
+	public int compareTo(BookingDetails o) {
+		// TODO Auto-generated method stub
+		return this.bookingForMonth.compareTo(o.getBookingForMonth());
 	}
 	
 }

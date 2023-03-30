@@ -50,7 +50,10 @@ class WaitingListRepoTest {
 		
 		when(wlRepo.findAllByE(e)).thenReturn(expected);
 		List<WaitingList> actual = wlRepo.findAllByE(e);
-		assertEquals(expected, actual);
+		
+		assertEquals(expected.size(), actual.size());
+		assertEquals(expected.get(0), actual.get(0));
+		assertEquals(expected.get(1), actual.get(1));
 
 	}
 
@@ -87,9 +90,10 @@ class WaitingListRepoTest {
 		when(wlRepo.findAllByBOrderByWid(b)).thenReturn(expected);
 		
 		List<WaitingList> actual = wlRepo.findAllByBOrderByWid(b);
-		assertEquals(expected, actual);
-
-
+		
+		assertEquals(expected.size(), actual.size());
+		assertEquals(expected.get(0), actual.get(0));
+		assertEquals(expected.get(1), actual.get(1));
 	}
 //
 //	@Test
@@ -114,7 +118,9 @@ class WaitingListRepoTest {
 		
 		List<WaitingList> actual = wlRepo.findAllByB(b);
 		
-		assertEquals(expected, actual);
+		assertEquals(expected.size(), actual.size());
+		assertEquals(expected.get(0), actual.get(0));
+		assertEquals(expected.get(1), actual.get(1));
 
 		
 		

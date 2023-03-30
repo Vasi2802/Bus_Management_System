@@ -1,7 +1,7 @@
 -- data for stop table
 
 -- desc stop;
--- select * from stop;
+-- select * from stop order by sid;
 
 insert into stop(name) values
 ('Belgharia'),
@@ -57,7 +57,6 @@ insert into stop(name) values
 -- desc route;
 -- select * from route;
 
-<<<<<<< HEAD
 insert into route(start,end) values
 (1, 12);
 
@@ -72,22 +71,6 @@ insert into route(start,end) values
 
 insert into route(start,end) values
 (35, 12);
-=======
-insert into route(active,start,end) values
-('YES', 1, 12);
-
-insert into route(active,start,end) values
-('YES', 13, 12);
-
-insert into route(active,start,end) values
-('YES', 18, 12);
-
-insert into route(active,start,end) values
-('YES', 26, 12);
-
-insert into route(active,start,end) values
-('YES', 35, 12);
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
 
 
 -- data for time table
@@ -193,7 +176,7 @@ insert into global_db(username) values
 -- data for user table
 
 -- desc user;
-select * from user;
+-- select * from user;
 
 insert into user(username, password, role) values
 ('driver1@driver.nrifintech.com', '$2a$04$eFytJDGtjbThXa80FyOOBuFdK2IwjyWefYkMpiBEFlpBwDH.5PM0K', 'ROLE_DRIVER'),
@@ -257,17 +240,18 @@ insert into driver(driver_name, driver_contact, auth_id) values
 -- data for bus table
 
 -- desc bus;
+-- select * from bus;
 
-insert into bus(total_seats, available_seats, bus_route, driver_id) values
-(20,18, 1, 1),
-(15,15, 1, 2),
-(25,23, 2, 3),
-(1,0, 2, 4),
-(20,20, 3, 5),
-(20,20, 3, 6),
-(25,24, 4, 7),
-(5,5, 4, 8),
-(20,18, 5, 9);
+insert into bus(start_time, total_seats, available_seats, bus_route, driver_id, active) values
+('06:40',20,18, 1, 1, 'NO'),
+('06:40', 15,15, 1, 2, 'NO'),
+('06:35', 25,23, 2, 3, 'NO'),
+('06:35', 1,0, 2, 4, 'NO'),
+('06:50', 20,20, 3, 5, 'NO'),
+('06:50', 20,20, 3, 6, 'NO'),
+('06:05', 25,24, 4, 7, 'NO'),
+('06:05', 5,5, 4, 8, 'NO'),
+('07:45', 20,18, 5, 9, 'NO');
 
 -- data for employee table
 
@@ -307,38 +291,20 @@ insert into employee(name, contact_no, bus_id, auth_id) values
 -- desc booking_details;
 -- select * from booking_details;
 
-<<<<<<< HEAD
 insert into booking_details(emp_id, bus_id, booking_for_month, stop_id) values
 (1, 1, '2023-03-25', 3),
-(2, 3, '2023-03-25', 8),
-(3, 7, '2023-03-26', 9),
-(4, 9, '2023-03-27', 12),
-(5, 9, '2023-03-25', 35),
-(6, 3, '2023-03-26', 1),
-(7, 4, '2023-03-27', 6),
-(8, 1, '2023-03-28', 2);
-=======
-insert into booking_details(emp_id, bus_id, booking_for_month) values
-(1, 1, '2023-03-25'),
-(2, 3, '2023-03-25'),
-(3, 7, '2023-03-26'),
-(4, 9, '2023-03-27'),
-(5, 9, '2023-03-25'),
-(6, 3, '2023-03-26'),
-(7, 4, '2023-03-27'),
-(8, 1, '2023-03-28');
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
+(2, 3, '2023-03-25', 17),
+(3, 7, '2023-03-26', 26),
+(4, 9, '2023-03-27', 35),
+(5, 9, '2023-03-25', 36),
+(6, 3, '2023-03-26', 13),
+(7, 4, '2023-03-27', 15),
+(8, 1, '2023-03-28', 6);
 
 -- data for waiting list table
 
 -- select * from waiting_list;
 
-<<<<<<< HEAD
 insert into waiting_list(emp_id, bus_id, stop_id) values
-(9,4, 6),
-(10,4, 6);
-=======
-insert into waiting_list(emp_id, bus_id) values
-(9,4),
-(10,4);
->>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
+(9,4, 7),
+(10,4, 7);
