@@ -11,7 +11,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepo extends JpaRepository<User, Long>{
 
 	Optional<User> findById(Long id);
-
-    public void deleteByEmployee(Employee employee);
+	
+	
+//    public void deleteByEmployee(Employee employee);
 
 }

@@ -16,93 +16,129 @@ import org.antwalk.entity.RouteStopId;
 import org.antwalk.entity.Stop;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 class ArrivalTimeRepoTest {
 
-	@MockBean
+//	@MockBean
+	
+	@Autowired
 	private ArrivalTimeRepo atRepo;
 	
-	private Route r;
-	private Stop s;
-	private LocalTime morning;
-	private LocalTime evening;
-	private RouteStopId composite;
+	@Autowired
+	private StopRepo stopRepo;
 	
-	@BeforeEach
-	void setUp() {
-		r = new Route(1, new Stop(1, "s1"), new Stop(10, "s10"));
-		s = new Stop(5, "s5");
-		morning = LocalTime.of(7, 45);
-		evening = LocalTime.of(18, 15);
-		composite = new RouteStopId(r,s);
-	}
+	@Autowired
+	private RouteRepo routeRepo;
+	
+	
+//	private Route r;
+//	private Stop s;
+//	private LocalTime morning;
+//	private LocalTime evening;
+//	private RouteStopId composite;
+//	
+//	@BeforeEach
+//	void setUp() {
+//		r = new Route(1, new Stop(1, "s1"), new Stop(10, "s10"));
+//		s = new Stop(5, "s5");
+//		morning = LocalTime.of(7, 45);
+//		evening = LocalTime.of(18, 15);
+//		composite = new RouteStopId(r,s);
+//	}
+	
+//	@Test
+//	void testFindAllByRouteStopId_Stop() {
+//		ArrivalTimeTable at1 = new ArrivalTimeTable(composite, morning, evening);
+//		ArrivalTimeTable at2 = new ArrivalTimeTable(new RouteStopId(new Route(2, new Stop(3, "s3"), new Stop(12, "s12")), new Stop(7, "s7")), LocalTime.of(7, 55), LocalTime.of(18, 05));
+//		List<ArrivalTimeTable> timeList = new ArrayList<>();
+//		timeList.add(at1);
+//		timeList.add(at2);
+//		
+//		Stop find = s;
+//		
+//		List<ArrivalTimeTable> expected = new ArrayList<>();
+//		
+//		for(ArrivalTimeTable obj: timeList) {
+//			if(obj.getRouteStopId().getStop().equals(find)) {
+//				expected.add(obj);
+//			}
+//		}
+//		
+////		System.out.println("Expected " + expected.get(0).getRouteStopId().getStop().getSid());
+//		
+//		when(atRepo.findAllByRouteStopId_Stop(find)).thenReturn(expected);
+//		
+//		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_Stop(find);
+//		
+//		assertEquals(expected, actual);
+//
+//	}
 	
 	@Test
 	void testFindAllByRouteStopId_Stop() {
-		ArrivalTimeTable at1 = new ArrivalTimeTable(composite, morning, evening);
-		ArrivalTimeTable at2 = new ArrivalTimeTable(new RouteStopId(new Route(2, new Stop(3, "s3"), new Stop(12, "s12")), new Stop(7, "s7")), LocalTime.of(7, 55), LocalTime.of(18, 05));
-		List<ArrivalTimeTable> timeList = new ArrayList<>();
-		timeList.add(at1);
-		timeList.add(at2);
-		
-		Stop find = s;
-		
-		List<ArrivalTimeTable> expected = new ArrayList<>();
-		
-		for(ArrivalTimeTable obj: timeList) {
-			if(obj.getRouteStopId().getStop().equals(find)) {
-				expected.add(obj);
-			}
+		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_Stop(stopRepo.findById(10L).get());
+		for(ArrivalTimeTable obj: actual) {
+			assertEquals(10, obj.getRouteStopId().getStop().getSid());
 		}
-		
-//		System.out.println("Expected " + expected.get(0).getRouteStopId().getStop().getSid());
-		
-		when(atRepo.findAllByRouteStopId_Stop(find)).thenReturn(expected);
-		
-		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_Stop(find);
-		
-		assertEquals(expected, actual);
-
 	}
 
+//	@Test
+//	void testFindAllByRouteStopId_RouteOrderByMorningArrivalTime() {
+//		ArrivalTimeTable at1 = new ArrivalTimeTable(composite, morning, evening);
+//		ArrivalTimeTable at2 = new ArrivalTimeTable(new RouteStopId(r, new Stop(7, "s7")), LocalTime.of(7, 55), LocalTime.of(18, 05));
+//		List<ArrivalTimeTable> expected = new ArrayList<>();
+//		expected.add(at2);
+//		expected.add(at1);
+//		
+//		expected.sort(Comparator.comparing(ArrivalTimeTable::getMorningArrivalTime));
+//		
+////		System.out.println("Expected 1 " + expected.get(0).getMorningArrivalTime());
+////		System.out.println("Expected 2 " + expected.get(1).getMorningArrivalTime());
+//
+//		when(atRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(r)).thenReturn(expected);
+//		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(r);
+//		assertEquals(expected, actual);
+//	
+//	}
+	
 	@Test
 	void testFindAllByRouteStopId_RouteOrderByMorningArrivalTime() {
-		ArrivalTimeTable at1 = new ArrivalTimeTable(composite, morning, evening);
-		ArrivalTimeTable at2 = new ArrivalTimeTable(new RouteStopId(r, new Stop(7, "s7")), LocalTime.of(7, 55), LocalTime.of(18, 05));
-		List<ArrivalTimeTable> expected = new ArrayList<>();
-		expected.add(at2);
-		expected.add(at1);
-		
-		expected.sort(Comparator.comparing(ArrivalTimeTable::getMorningArrivalTime));
-		
-//		System.out.println("Expected 1 " + expected.get(0).getMorningArrivalTime());
-//		System.out.println("Expected 2 " + expected.get(1).getMorningArrivalTime());
-
-		when(atRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(r)).thenReturn(expected);
-		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(r);
-		assertEquals(expected, actual);
-	
+		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(routeRepo.findById(1L).get());
+		for(int i=0; i<actual.size()-1; i++) {
+//			System.out.println(actual.get(i).getMorningArrivalTime());
+			assertTrue(actual.get(i).getMorningArrivalTime().compareTo(actual.get(i+1).getMorningArrivalTime()) < 0);
+		}
 	}
 //
+//	@Test
+//	void testFindAllByRouteStopId_RouteOrderByEveningArrivalTime() {
+//		ArrivalTimeTable at1 = new ArrivalTimeTable(composite, morning, evening);
+//		ArrivalTimeTable at2 = new ArrivalTimeTable(new RouteStopId(r, new Stop(7, "s7")), LocalTime.of(7, 55), LocalTime.of(18, 05));
+//		List<ArrivalTimeTable> expected = new ArrayList<>();
+//		expected.add(at1);
+//		expected.add(at2);
+//		
+//		expected.sort(Comparator.comparing(ArrivalTimeTable::getEveningArrivalTime));
+//		
+////		System.out.println("Expected 1 " + expected.get(0).getEveningArrivalTime());
+////		System.out.println("Expected 2 " + expected.get(1).getEveningArrivalTime());
+//
+//		when(atRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(r)).thenReturn(expected);
+//		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(r);
+//		assertEquals(expected, actual);
+//	}
+	
 	@Test
 	void testFindAllByRouteStopId_RouteOrderByEveningArrivalTime() {
-		ArrivalTimeTable at1 = new ArrivalTimeTable(composite, morning, evening);
-		ArrivalTimeTable at2 = new ArrivalTimeTable(new RouteStopId(r, new Stop(7, "s7")), LocalTime.of(7, 55), LocalTime.of(18, 05));
-		List<ArrivalTimeTable> expected = new ArrayList<>();
-		expected.add(at1);
-		expected.add(at2);
-		
-		expected.sort(Comparator.comparing(ArrivalTimeTable::getEveningArrivalTime));
-		
-//		System.out.println("Expected 1 " + expected.get(0).getEveningArrivalTime());
-//		System.out.println("Expected 2 " + expected.get(1).getEveningArrivalTime());
-
-		when(atRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(r)).thenReturn(expected);
-		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(r);
-		assertEquals(expected, actual);
+		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(routeRepo.findById(1L).get());
+		for(int i=0; i<actual.size()-1; i++) {
+//			System.out.println(actual.get(i).getEveningArrivalTime());
+			assertTrue(actual.get(i).getEveningArrivalTime().compareTo(actual.get(i+1).getEveningArrivalTime()) < 0);
+		}
 	}
 //
 //	@Test
@@ -115,11 +151,18 @@ class ArrivalTimeRepoTest {
 //		fail("Not yet implemented");
 //	}
 //
+//	@Test
+//	void testDeleteByRouteStopId_Route() {
+//		ArrivalTimeTable at = new ArrivalTimeTable(composite, morning, evening);
+//		atRepo.deleteByRouteStopId_Route(r);
+//		verify(atRepo, times(1)).deleteByRouteStopId_Route(r);
+//	}
+	
 	@Test
 	void testDeleteByRouteStopId_Route() {
-		ArrivalTimeTable at = new ArrivalTimeTable(composite, morning, evening);
-		atRepo.deleteByRouteStopId_Route(r);
-		verify(atRepo, times(1)).deleteByRouteStopId_Route(r);
+		atRepo.deleteByRouteStopId_Route(routeRepo.findById(2L).get());
+		List<ArrivalTimeTable> actual = atRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(routeRepo.findById(2L).get());
+		assertEquals(0, actual.size());
 	}
 
 }

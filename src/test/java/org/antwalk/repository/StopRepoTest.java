@@ -16,18 +16,33 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 @SpringBootTest
 class StopRepoTest {
 
-	@MockBean
+//	@MockBean
+	
+	@Autowired
 	private StopRepo stopRepo;
+	
+//	@Test
+//	void testFindByName() {
+//		
+//		Stop expected = new Stop(1,"stop name");
+//		when(stopRepo.findByName("stop name")).thenReturn(expected);
+//		
+//		Stop actual = stopRepo.findByName("stop name");
+//		
+//		assertEquals(expected,actual);
+//		
+//	}
 	
 	@Test
 	void testFindByName() {
 		
-		Stop expected = new Stop(1,"stop name");
-		when(stopRepo.findByName("stop name")).thenReturn(expected);
+		Stop expected = stopRepo.findById((long) 1).get();
+		Stop actual = stopRepo.findByName("Belgharia");
 		
-		Stop actual = stopRepo.findByName("stop name");
+//		System.out.println(expected.getName() + "          " + actual.getName());
 		
-		assertEquals(expected,actual);
+		assertEquals(expected.getSid(),actual.getSid());
+		assertEquals(expected.getName(),actual.getName());
 		
 	}
 
