@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.http.ResponseEntity;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -115,8 +117,9 @@ public class User {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public ResponseEntity<String> setPassword(String password) {
 		this.password = password;
+		return ResponseEntity.ok("Updated Successfully");
 	}
 
 	public Employee getEmployee() {

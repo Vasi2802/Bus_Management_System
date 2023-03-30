@@ -34,7 +34,7 @@ public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
 
 		http.authorizeRequests()
 			.antMatchers("/").permitAll()
-			.antMatchers("/driver/**").hasRole("DRIVER")
+			.antMatchers("/driver/**").permitAll()
 			.antMatchers("/employee/**").hasRole("EMPLOYEE")
 			.antMatchers("/admin/**").hasRole("ADMIN")
 	

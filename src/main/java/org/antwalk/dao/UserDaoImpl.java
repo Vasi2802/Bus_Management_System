@@ -29,6 +29,7 @@ public class UserDaoImpl implements UserDao {
 		} catch (Exception e) {
 			theUser = null;
 		}
+
 		return theUser;
 	}
 

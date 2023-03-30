@@ -55,24 +55,6 @@ public class RegistrationController {
 	@Autowired
 	OtpService optserv;
 	
-	/*
-	 * @GetMapping("/verifyemail") public String
-	 * verifyotpval(@RequestParam("inputText") String input) {
-	 * System.out.println(input); // System.out.println(email);
-	 * 
-	 * // Otp otpval = optserv.getOtpByEmail(email);
-	 * 
-	 * if(input.equals(otpval.getOtpValue())) { String pass = "NRIFINTECH";
-	 * userService.findByUserName(email).setPassword(passwordEncoder.encode(pass));
-	 * optserv.deleteOtpByEmail(email);
-	 * model.addAttribute("successreset","Password has been reset successfully");
-	 * return "redirect:/"; }
-	 * 
-	 * model.addAttribute("failurereset","Encountered error"); return
-	 * "reset-password-get-email";
-	 * 
-	 * }
-	 */
 	
 	@PostMapping("/verifyotp")
 	public String verifyotpval(@RequestParam("email1") String email1,@RequestParam("otp") String otp,Model model ) {

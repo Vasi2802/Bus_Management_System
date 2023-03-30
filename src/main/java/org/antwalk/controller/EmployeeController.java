@@ -394,7 +394,7 @@ public class EmployeeController {
 	 */
 	@PostMapping("/removebooking")
 
-	public String removeBooking(@RequestBody Long employeeId) {
+	public ResponseEntity<String> removeBooking(@RequestBody Long employeeId) {
 		String message = "";
 		Employee employee = employeeService.getEmployeeById(employeeId);
 
@@ -482,7 +482,7 @@ public class EmployeeController {
 			// -------------------------------------------
 		}
 
-		return message;
+		return ResponseEntity.ok(message);
 
 	}
 
