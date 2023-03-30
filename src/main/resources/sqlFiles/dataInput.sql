@@ -57,6 +57,7 @@ insert into stop(name) values
 -- desc route;
 -- select * from route;
 
+<<<<<<< HEAD
 insert into route(start,end) values
 (1, 12);
 
@@ -71,6 +72,22 @@ insert into route(start,end) values
 
 insert into route(start,end) values
 (35, 12);
+=======
+insert into route(active,start,end) values
+('YES', 1, 12);
+
+insert into route(active,start,end) values
+('YES', 13, 12);
+
+insert into route(active,start,end) values
+('YES', 18, 12);
+
+insert into route(active,start,end) values
+('YES', 26, 12);
+
+insert into route(active,start,end) values
+('YES', 35, 12);
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
 
 
 -- data for time table
@@ -290,6 +307,7 @@ insert into employee(name, contact_no, bus_id, auth_id) values
 -- desc booking_details;
 -- select * from booking_details;
 
+<<<<<<< HEAD
 insert into booking_details(emp_id, bus_id, booking_for_month, stop_id) values
 (1, 1, '2023-03-25', 3),
 (2, 3, '2023-03-25', 8),
@@ -299,11 +317,28 @@ insert into booking_details(emp_id, bus_id, booking_for_month, stop_id) values
 (6, 3, '2023-03-26', 1),
 (7, 4, '2023-03-27', 6),
 (8, 1, '2023-03-28', 2);
+=======
+insert into booking_details(emp_id, bus_id, booking_for_month) values
+(1, 1, '2023-03-25'),
+(2, 3, '2023-03-25'),
+(3, 7, '2023-03-26'),
+(4, 9, '2023-03-27'),
+(5, 9, '2023-03-25'),
+(6, 3, '2023-03-26'),
+(7, 4, '2023-03-27'),
+(8, 1, '2023-03-28');
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
 
 -- data for waiting list table
 
 -- select * from waiting_list;
 
+<<<<<<< HEAD
 insert into waiting_list(emp_id, bus_id, stop_id) values
 (9,4, 6),
 (10,4, 6);
+=======
+insert into waiting_list(emp_id, bus_id) values
+(9,4),
+(10,4);
+>>>>>>> 8ffbf5d4d1d590b9a0287957a39678151d508f8d
