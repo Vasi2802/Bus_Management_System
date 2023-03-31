@@ -36,15 +36,13 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
 	</script>
 	<style>
-	
-
-		body.modal-open .supreme-container{
-    -webkit-filter: blur(1px);
-    -moz-filter: blur(1px);
-    -o-filter: blur(1px);
-    -ms-filter: blur(1px);
-    filter: blur(7px);
-}
+		body.modal-open .supreme-container {
+			-webkit-filter: blur(1px);
+			-moz-filter: blur(1px);
+			-o-filter: blur(1px);
+			-ms-filter: blur(1px);
+			filter: blur(7px);
+		}
 	</style>
 </head>
 
@@ -141,7 +139,7 @@
 
 			</div>
 
-			
+
 
 			<div>
 				<a href="" class="btn btn-primary" data-toggle="modal" data-target="#mainArea">ADD STOP</a>
@@ -149,7 +147,7 @@
 			<br>
 			<br>
 
-			
+
 
 			<div>
 				<a href="" class="btn btn-primary" data-toggle="modal" data-target="#editArea">EDIT STOP</a>
@@ -161,75 +159,72 @@
 
 	</div>
 
-	<div class="modal fade" id="mainArea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-				aria-hidden="true">
-				<div class="modal-dialog  modal-dialog-centered" role="document">
+	<div class="modal fade" id="mainArea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog  modal-dialog-centered" role="document">
 
-					<div class="modal-content">
-						<div class="modal-header text-center bg-primary">
-							<h4 class="modal-title w-100 font-weight-bold">ENTER STOP DETAILS</h4>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body" style="background: linear-gradient(180deg, rgba(0,123,255,1) 0%, rgba(153,227,255,0.8743872549019608) 28%, rgba(153,227,255,1) 73%, rgba(0,123,255,1) 100%);">
-							<div class="md-form mb-5">
-								<i class="fas fa-user prefix grey-text"></i>
-								<label data-error="wrong" data-success="right" for="orangeForm-name">Stop name</label>
-								<input type="text" id="orangeForm-name" class="form-control validate">
+			<div class="modal-content">
+				<div class="modal-header text-center bg-primary">
+					<h4 class="modal-title text-light w-100 font-weight-bold">ENTER STOP DETAILS</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="md-form mb-5">
+						<i class="fas fa-user prefix grey-text"></i>
+						<label data-error="wrong" data-success="right" for="orangeForm-name">Stop name</label>
+						<input type="text" id="orangeForm-name" class="form-control validate">
 
-							</div>
-						</div>
-						<div class="modal-footer bg-primary">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button class="btn btn-success" onclick="addStop()">ADD</button>
-
-						</div>
 					</div>
 				</div>
+				<div class="modal-footer bg-light justify-content-between">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+					<button class="btn btn-success" onclick="addStop()">ADD</button>
+
+				</div>
+			</div>
+		</div>
 	</div>
 
-	<div class="modal fade" id="editArea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-				aria-hidden="true">
-				<div class="modal-dialog" role="document">
-					<div class="modal-content">
-						<div class="modal-header text-center bg-primary">
-							<h4 class="modal-title w-100 font-weight-bold">Edit Stop Details</h4>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body" style="background: linear-gradient(180deg, rgba(0,123,255,1) 0%, rgba(153,227,255,0.8743872549019608) 28%, rgba(153,227,255,1) 73%, rgba(0,123,255,1) 100%);">
-							<div class="md-form mb-5">
-								<i class="fas fa-user prefix grey-text"></i>
-								<label for="stopname" class="text-dark display-5">Select Stop </label><br>
-								<select id="select-stop" name="stop">
+	<div class="modal fade" id="editArea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header text-center bg-primary">
+					<h4 class="modal-title w-100 font-weight-bold text-light">Edit Stop Details</h4>
+					<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="md-form mb-5">
+						<i class="fas fa-user prefix grey-text"></i>
+						<label for="stopname" class="text-dark display-5">Select Stop </label><br>
+						<select id="select-stop" name="stop">
 
-									<option th:each="s : ${list}" th:id="'stop-selected'" th:value="${s.sid}"
-										th:text="${s.name}"></option>
-								</select>
-								<br>
-								<br>
-								<label for="stopname" class="text-dark display-5">New Name: </label>
-								<input type="text" class="form-control" id="input-name" name="name"
-									placeholder="Stop Name">
+							<option th:each="s : ${list}" th:id="'stop-selected'" th:value="${s.sid}"
+								th:text="${s.name}"></option>
+						</select>
+						<br>
+						<br>
+						<label for="stopname" class="text-dark display-5">New Name: </label>
+						<input type="text" class="form-control" id="input-name" name="name" placeholder="Stop Name">
 
-							</div>
-						</div>
-
-						<div class="modal-footer  bg-primary">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button class="btn btn-success" onclick="editStop()">UPDATE</button>
-
-						</div>
 					</div>
+				</div>
+
+				<div class="modal-footer bg-light justify-content-between">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					<button class="btn btn-success" onclick="editStop()">UPDATE</button>
 
 				</div>
 			</div>
 
+		</div>
+	</div>
 
 
-		
+
+
 
 
 	<script>
