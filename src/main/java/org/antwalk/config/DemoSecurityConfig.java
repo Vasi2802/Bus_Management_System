@@ -31,11 +31,13 @@ public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 
 		http.csrf().disable();
-
+//		.antMatchers("/driver/**").permitAll()
+//		.antMatchers("/employee/**").hasRole("EMPLOYEE")
+//		.antMatchers("/admin/**").hasRole("ADMIN")
 		http.authorizeRequests()
 			.antMatchers("/").permitAll()
 			.antMatchers("/driver/**").permitAll()
-			.antMatchers("/employee/**").hasRole("EMPLOYEE")
+			.antMatchers("/employee/**").permitAll()
 			.antMatchers("/admin/**").hasRole("ADMIN")
 	
 			.and()
