@@ -5,6 +5,8 @@ import java.security.Principal;
 import org.antwalk.entity.User;
 import org.antwalk.user.CrmUser;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.stereotype.Service;
+
 
 public interface UserService extends UserDetailsService {
 

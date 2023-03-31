@@ -191,7 +191,7 @@ public class DriverController {
 	}
 
 	@PostMapping("/addDelay/{bid}")
-	public String addDelay(@PathVariable long bid) {
+	public ResponseEntity<String> addDelay(@PathVariable long bid) {
 		Stop stop;
 		Delay d = delayServices.getLatest(bid);
 		int slotIdx = 1;
@@ -206,13 +206,19 @@ public class DriverController {
 		}
 		d = new Delay(buserv.getBusById(bid), stop, LocalTime.now());
 		System.out.println(delayServices.addDelay(d));
-		return "updated";
+		return ResponseEntity.ok("Added Delay");
 	}
 
 	@DeleteMapping("/flushDelays/{bid}")
-	public String flushDelays(@PathVariable long bid) {
+	public ResponseEntity<String> flushDelays(@PathVariable long bid) {
 		System.out.println("deleting all delays from table with bus_id = " + bid);
-		return delayServices.flushByBusId(bid);
+		try {
+		 delayServices.flushByBusId(bid);
+		}
+		catch(Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An Error occured");
+		}
+		return ResponseEntity.ok("Flushed Successfully");
 	}
 
 	@PostMapping("/updateprofile")

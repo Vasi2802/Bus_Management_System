@@ -28,6 +28,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private UserDao userrepo;
 	
+	
 	@Autowired
 	private EmailService emailserv;
 	
@@ -41,8 +42,6 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
 	
-	 @Autowired
-	    private UserRepo employeeRepository;
 
 	@Override
 	@Transactional
@@ -50,7 +49,7 @@ public class UserServiceImpl implements UserService {
 		// check the database if the user already exists
 		return userrepo.findByUserName(userName);
 	}
-
+	
 	@Override
 	@Transactional
 	public void save(CrmUser crmUser) {
