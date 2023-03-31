@@ -162,7 +162,7 @@ public class BusService {
 		return (int)maxUsedBus.getR().getRid();
 	}
 
-    public Bus addBus(int totalSeats, long routeId, long driverId) {
+    public Bus addBus(int totalSeats, long routeId, long driverId, LocalTime startTime) {
         Optional<Route> routeOptional = routeRepo.findById(routeId);
 		Optional<Driver> driverOptional = driverRepo.findById(driverId);
 		if(routeOptional.isEmpty() || driverOptional.isEmpty()){
@@ -170,7 +170,7 @@ public class BusService {
 		}
 		Route route = routeOptional.get();
 		Driver driver = driverOptional.get();
-		Bus bus = new Bus(totalSeats, totalSeats, null, driver, route);
+		Bus bus = new Bus(totalSeats, totalSeats, startTime, driver, route);
 		busRepo.save(bus);
 		return bus;
     }

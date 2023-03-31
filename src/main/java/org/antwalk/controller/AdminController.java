@@ -653,8 +653,8 @@ public class AdminController {
 	}
 
 	@GetMapping("/bus/insert")
-	public Bus insert(@RequestParam int totalSeats, @RequestParam long routeId, @RequestParam long driverId) {
-		return busService.addBus(totalSeats, routeId, driverId);
+	public Bus insert(@RequestParam int totalSeats, @RequestParam long routeId, @RequestParam long driverId, @RequestParam String startTime) {
+		return busService.addBus(totalSeats, routeId, driverId,LocalTime.parse(startTime));
 	}
 
 	@GetMapping("/route/getbyid/{id}")
@@ -720,6 +720,31 @@ public class AdminController {
 	public String getBusStatus(@PathVariable long bid) {
 		System.out.println(bid);
 		return delayService.getDelayStatus(bid);
+	}
+
+
+	@GetMapping("/delay/getLateBusDetails")
+	public List<HashMap<String,String>> getBusStatus1() {
+		List<HashMap<String,String>> retVal = new ArrayList<>();
+		LocalTime expectedTime, actualTime;
+		for(Delay d : delayService.getNullStopDelays()){
+			expectedTime = LocalTime.parse("17:30:00");
+			if(LocalTime.now().isBefore(LocalTime.NOON)){
+				expectedTime = d.getBus().getStartTime();
+			}
+			actualTime = d.getActualTime();
+			// actualTime = LocalTime.parse("20:00:00");
+			if(actualTime.isAfter(expectedTime)){
+				HashMap<String,String> val = new HashMap<>();
+				val.put("id",String.valueOf(d.getBus().getBid()));
+				val.put("name",d.getBus().getD().getDriverName());	
+				val.put("eTime",String.valueOf(expectedTime));
+				val.put("aTime",String.valueOf(actualTime));
+				retVal.add(val);
+			}
+		}
+		System.out.println(retVal); 
+		return retVal;
 	}
 
 }

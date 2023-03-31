@@ -35,10 +35,78 @@
     </script>
 
 
+    <script>
+        function delaywork() {
+            var delays;
+            url = "/admin/delay/getLateBusDetails";
+            console.log(url);
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: null,
+                asyns: false,
+                success: function (response) {
+                    delays = response;
+                    console.log(delays);
+                    var formDiv = document.getElementById('my_form_div');    // you hopefully have a better method to do this ;)
+                    if (delays.length != 0) {
+                        var HTML = `<h1>Delay Information</h1>
+                        <table align="center" >
+                            <thead>
+                                <tr>
+                                    <th> Bus Id </th>
+                                    <th> Driver Name</th>
+                                    <th> Expected Time </th>
+                                    <th> Actual Time </th>
+                                </tr>
+                            </thead>`;
+                        for (i in delays) {
+                            // if (delays[i]["bus"]["startTime"] < delays[i]["actualTime"]) {
+                                HTML += '<tr>';
+                                HTML += '<td>' + delays[i]["id"] + '</td>';
+                                HTML += '<td>' + delays[i]["name"] + '</td>';
+                                HTML += '<td>' + delays[i]["eTime"] + '</td>';
+                                HTML += '<td>' + delays[i]["aTime"] + '</td>';
+                                // HTML+=  '<td>' +(MINUTES.between(delays[i]["actualTime"], delays[i]["bus"]["startTime"]))+'</td>';
+                                // var timeing = delays[i]["actualTime"] - delays[i]["bus"]["startTime"];
+                            //    var timeing=calctime(delays[i]["actualTime"],delays[i]["bus"]["startTime"]);
+                            //     HTML += '<td>' + timeing + '</td>';
+                                HTML += '<tr>';
+                            // }
+                        }
+                        formDiv.innerHTML = HTML;
+                    }
 
+                },
+                error: function (response) {
+                    alert('Error occured ', response.statusText);
+                }
+            });
+            // console.log(delays);
+            // var formDiv = document.getElementById('my_form_div');    // you hopefully have a better method to do this ;)
+            // if (formDiv) {
+            //    var HTML = `<h1>Delay Information</h1>
+            // <table align="center" >
+            //     <thead>
+            //         <tr>
+            //             <th> Bus Id </th>
+            //             <th> Actual Time </th>
+            //             <th> Expected Time </th>
+            //         </tr>
+            //     </thead>
+            // </table>`;
+            //     formDiv.innerHTML = HTML;
+            //}
+
+
+        }
+
+    </script>
 
 
     <script type="text/javascript">
+        console.log("INSIDE");
+
         // Load the Visualization API and the corechart package.
         google.charts.load('current', { 'packages': ['corechart'] });
 
@@ -183,10 +251,20 @@
                 }
             });
             // --------------------- STATS ENDS --------------------------------
-
+            delaywork();
         }
     </script>
+    <style>
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+        }
 
+        thead th {
+            width: 25%;
+        }
+    </style>
 
 
 
@@ -199,7 +277,7 @@
 
     <!-- SIDEBAR -->
     <nav>
-        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
+        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" />
 
         <div class="menu-items">
             <ul class="nav-links">
@@ -250,7 +328,7 @@
                             <span class="link-name">Logout</span>
                         </a></li>
 
-                  <!--   <li class="mode">
+                    <!--   <li class="mode">
                         <a href="#">
                             <i class="uil uil-moon"></i>
                             <span class="link-name">Dark Mode</span>
@@ -284,7 +362,7 @@
                 </h1>
 
                 <div class="mt-5">
-                    <a  href="/admin/analytics/downlaod-report">
+                    <a href="/admin/analytics/downlaod-report">
                         <button class="btn btn-outline-primary">Download Report For Accounts</button>
                     </a>
                     <a href="/admin/analytics/download-stats-report">
@@ -294,6 +372,7 @@
 
 
             </div>
+
 
             <!-- SEPARATOR -->
             <div class="mb-5 mt-1 rounded-lg"
@@ -306,6 +385,10 @@
 
             <!------------------------------- row 1 --------------------------------------->
 
+            <div id="my_form_div">
+
+            </div>
+            <br><br>
 
             <div class="row justify-content-between">
                 <div class="col-lg-8 card mx-3 px-0">

@@ -150,6 +150,7 @@ width: 100%;
         console.log(eid);
         var employee;
         var bus;
+        var bar ;
         setInterval(() => {
         	  // Get the current time
         	  const now = new Date();
@@ -168,8 +169,9 @@ width: 100%;
       	    threshold.setHours(12);
 
       	    var currentTime = new Date(); // get the current time
+            var cutoffTimes = new Date();
       	    for (var i = 0; i < cutoffTimes.length; i++) {
-      	        var cutoffTime = new Date(); // create a new Date object for the cutoff time
+      	         // create a new Date object for the cutoff time
 
       	        if (currentTime.getTime()<=threshold.getTime()) {
           	        var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
@@ -226,6 +228,7 @@ width: 100%;
                 }
             });
             $("#bus-id-display").append(`${bus? bus.bid : "NA"}`);
+          
         });
 
       
@@ -259,6 +262,33 @@ width: 100%;
             // window.location.href = "/employee/dashboard";
         }
     </script>
+
+    <script>
+        const getAdjustedTimes =  async () => {
+            url = "/employee/trackbus/getAdjustedTime/" + bus.bid ;
+            console.log(url);
+
+            await $.ajax({
+                headers: {
+                    Accept: 'application/json', //imp
+                },
+                type: "GET",
+                url: url,   
+                dataType:"text",
+                async: false,
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (response) {}
+            });
+            // location.reload();
+
+        }
+    </script>
+
+
+
+
     <title>Employee Dashboard </title> 
 </head>
 <body>
@@ -382,7 +412,7 @@ width: 100%;
           
             </div>
             <hr class="my-4">
- <div class="d-flex flex-row justify-content-between align-items-center overflow-auto align-content-center">
+ <div class="d-flex flex-row justify-content-between align-items-center overflow-auto align-content-center" id = "trackBar">
 
 
               
@@ -454,63 +484,63 @@ width: 100%;
               
 				<!-- Stop 1 -->
               <div th:if="${#lists.size(allStops) > 0}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[0].name}"></span><span  th:text="${arrTime[0].getCurrentTime()}"> </span>
+              <span th:text="${allStops[0].name}"></span><span  th:text="${allStops[0].time}"> </span>
               </div>
 
 			<!-- Stop 2 -->
 			<div th:if="${#lists.size(allStops) > 1}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[1].name}"></span><span  th:text="${arrTime[1].getCurrentTime()}"> </span>
+              <span th:text="${allStops[1].name}"></span><span  th:text="${allStops[1].time}"> </span>
               </div>
             
              <!-- Stop 3 -->
             <div th:if="${#lists.size(allStops) > 2}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[2].name}"></span><span  th:text="${arrTime[2].getCurrentTime()}"> </span>
+              <span th:text="${allStops[2].name}"></span><span  th:text="${allStops[2].time}"> </span>
               </div>
               
               <!-- Stop 4 -->
             <div th:if="${#lists.size(allStops) > 3}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[3].name}"></span><span  th:text="${arrTime[3].getCurrentTime()}"> </span>
+              <span th:text="${allStops[3].name}"></span><span  th:text="${allStops[3].time}"> </span>
               </div>
                  
                <!-- Extra -->
             <div th:if="${#lists.size(allStops) > 4}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[4].name}"></span><span  th:text="${arrTime[4].getCurrentTime()}"> </span>
+              <span th:text="${allStops[4].name}"></span><span  th:text="${allStops[4].time}"> </span>
               </div>
               
               <!-- Extra -->
             <div th:if="${#lists.size(allStops) > 5}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[5].name}"></span><span  th:text="${arrTime[5].getCurrentTime()}"> </span>
+              <span th:text="${allStops[5].name}"></span><span  th:text="${allStops[5].time}"> </span>
               </div>
               <!-- Extra -->
             <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[6].name}"></span><span  th:text="${arrTime[6].getCurrentTime()}"> </span>
+              <span th:text="${allStops[6].name}"></span><span  th:text="${allStops[6].time}"> </span>
               </div>
 
  <div th:if="${#lists.size(allStops) > 7}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[7].name}"></span><span  th:text="${arrTime[7].getCurrentTime()}"> </span>
+              <span th:text="${allStops[7].name}"></span><span  th:text="${allStops[7].time}"> </span>
               </div>
               
               
                <div th:if="${#lists.size(allStops) > 8}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[8].name}"></span><span  th:text="${arrTime[8].getCurrentTime()}"> </span>
+              <span th:text="${allStops[8].name}"></span><span  th:text="${allStops[8].time}"> </span>
               </div>
               
                <div th:if="${#lists.size(allStops) > 9}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[9].name}"></span><span  th:text="${arrTime[9].getCurrentTime()}"> </span>
+              <span th:text="${allStops[9].name}"></span><span  th:text="${allStops[9].time}"> </span>
               </div>
               
               
                <div th:if="${#lists.size(allStops) > 10}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[10].name}"></span><span  th:text="${arrTime[10].getCurrentTime()}"> </span>
+              <span th:text="${allStops[10].name}"></span><span  th:text="${allStops[10].time}"> </span>
               </div>
               
               
                 <div th:if="${#lists.size(allStops) > 11}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[11].name}"></span><span  th:text="${arrTime[11].getCurrentTime()}"> </span>
+              <span th:text="${allStops[11].name}"></span><span  th:text="${allStops[11].time}"> </span>
               </div>
 
  			<div th:if="${#lists.size(allStops) > 12}" class="d-flex flex-column align-items-start">
-              <span th:text="${allStops[12].name}"></span><span  th:text="${arrTime[12].getCurrentTime()}"> </span>
+              <span th:text="${allStops[12].name}"></span><span  th:text="${allStops[12].time}"> </span>
               </div>
               <!-- Final -->
             <!--   <div class="d-flex flex-column align-items-end">
