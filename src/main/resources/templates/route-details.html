@@ -66,12 +66,12 @@
     // get all passengers
     $(document).ready(() => {
       url = "/driver/getbyid/" + did;
-      console.log("document ready");
+      // console.log("document ready");
       $.ajax({
         type: "GET",
         url: url,
         success: function (response) {
-          console.log(response);
+          // console.log(response);
           employee = response;
           bus = employee?.bus;
           time = employee?.bus?.active;
@@ -81,14 +81,14 @@
           // console.log(time);
           if (time == "NO") {
             // $("#timedata").text(time?time:"Not Started");
-            console.log("calling flush");
+            // console.log("calling flush");
             flushDelays();
             buttonText = "Start Journey";
             $("#togglebtn").text(buttonText);
             $('#next-passenger-row').addClass("d-none");
           }
           else {
-            console.log("calling next stop()");
+            // console.log("calling next stop()");
             nextStop();
           }
         },
@@ -102,14 +102,14 @@
 
     // GET ALL PASSENGERS
     getAllPassengers = async () => {
-      console.log("in get all passengers");
+      // console.log("in get all passengers");
       await $.ajax({
         type: "GET",
         url: "/driver/get-all-passengers",
         data: null,
         dataType: "json",
         success: function (response) {
-          console.log(response);
+          // console.log(response);
           passengersPerStopList = response;
           const tableBody = $('#passenger-table-body');
           var html = "";
@@ -154,51 +154,15 @@
       });
     }
 
-    // function to get passengers of next stop
-    getNextPassengers = async () => {
-      // console.log("passengers = ");
-      // console.log(passengersPerStopList);
-      await getAllPassengers();
-      nextStop = {
-        sid: 2,
-        name: "Dunlop Bridge"
-      };
-      passengersPerStopList.forEach((map) => {
-        stop = map?.stop;
-        employees = map.employees;
-        if (stop.name == nextStop.name) {
-          nextPassengers = employees;
-          $('#nextStopName').text(stop.name);
-        }
-      });
-      // console.log("next = ", nextPassengers)
-      html = "";
-      nextPassengersTable = $('#next-passengers-table')
-      nextPassengers.forEach(({ eid, name, contactNo, boardingStatus }) => {
-        html += `<tr>
-                    <td>${eid}</td>
-                    <td>${name}</td>
-                    <td>${contactNo}</td>
-                    <td>
-                      <button class="btn btn-success ${boardingStatus == 'false' ? '' : 'disabled'} " 
-                      onclick="onBoardPassenger(${eid}, ${stop.sid})" id="boarding-button-${eid}">
-                        ${boardingStatus === "false" ? "Onboard passenger" : "Onboarded"}
-                        </button>
-                    </td>    
-                  </tr>`;
-      });
-      nextPassengersTable.html(html);
-    };
 
+    //  ONBOARD PASSENGER FUNCTION
     onBoardPassenger = (employeeId, stopId) => {
-      console.log("hello");
       $.ajax({
         type: "GET",
         url: "/driver/onboard-passenger/" + employeeId + "/" + stopId,
         data: null,
         dataType: "text",
         success: function (response) {
-          alert("onboarded");
           $(`#boarding-button-${employeeId}`).text("Onboarded");
           $(`#boarding-button-${employeeId}`).prop('disabled', true);
           $(`#list-boarding-button-${employeeId}`).text("Onboarded");
@@ -206,39 +170,31 @@
           popUpToast("Onbaording Sucessful!!", `Employee with ID ${employeeId} onboarded`)
         },
         error: function () {
-          alert("Error");
+          alert("Error occured in onboarding passenger");
           console.log("Error occured in onboarding");
         }
       });
     }
 
     popUpToast = (header, body) => {
-      console.log("pop called");
+      // console.log("pop called");
       $("#toast-header-text").text(header);
       $("#toast-body-text").text(body);
       $("#onboardingToast").toast("show");
-      alert("popup done");
+      // alert("popup done");
     }
 
     // function to get passengers of next stop
     getNextPassengers = async (nextStopName) => {
-      console.log("in get next passengers");
       await getAllPassengers();
-      // console.log("passengers per stop =  " ,passengersPerStopList);
-      // console.log(passengersPerStopList);
       nextPassengers = [];
-      console.log("next stop  ame fetched = ", nextStopName);
       passengersPerStopList.forEach((map) => {
         stop = map?.stop;
         employees = map?.employees;
         stopName = stop?.name;
-        console.log("stop = ", stop);
-        console.log(nextStopName?.substring(8));
-        console.log(stopName === (nextStopName?.substring(8)));
         if (stopName === (nextStopName?.substring(8))) {
-          console.log(employees);
           html = "";
-          nextPassengersTable = $('#next-passengers-table');
+          nextPassengersTable = $('#next-passengers-table-body');
           employees.forEach(({ eid, name, contactNo,boardingStatus }) => {
             html += `<tr >  
                       <td>${eid}</td>
@@ -252,15 +208,17 @@
                       </td>    
                     </tr>`;
           });
-          nextPassengersTable.html(html)
-          alert("updated next passengers");
+          nextPassengersTable.html(html);
+          $('#next-passengers-table').removeAttr("hidden");
+          $('#next-passengers-heading').text("Passengers Waiting There are");
+          $('#next-passengers-heading').addClass("text-primary");
         }
       });
     };
 
     const nextStop = async () => {
       url = "/driver/nextStop/" + bus.bid;
-      console.log(url);
+      // console.log(url);
 
       await $.ajax({
         headers: {
@@ -271,7 +229,7 @@
         dataType: "text",
         async: false,
         success: function (response) {
-          console.log(response)
+          // console.log(response)
           buttonText = response;
           $("#togglebtn").text(buttonText);
           if(response.startsWith("Reached")){
@@ -812,22 +770,22 @@
         </div>
 
         <div class="row m-3">
-          <button onclick="reachedStop()" id="togglebtn" class="btn btn-primary"></button>
+          <button onclick="reachedStop()" id="togglebtn" class="btn btn-success"></button>
         </div>
 
         <!-- PASSENGERS OF NEXT STOP -->
 
         <div class="row  justify-content-center align-items-center h-100" id="next-passenger-row">
           <div class="card container mt-5 mx-3 " style="border-radius: 20px;">
-            <div class="card-header mt-2" style="background-color: white;">
-              <span class="small">Next Stop</span>
-              <h3 id="nextStopName"></h3>
+            <div class="card-header mt-2 align-items-center d-flex" style="background-color: white;">
+              <span class="text-secondary ">Next Stop : </span>
+              <span id="nextStopName" class="h2 text-primary"></span>
             </div>
             <div class="card-header mt-2" style="background-color: white;">
-              <h4>Passengers Waiting There are</h4>
+              <h4 id="next-passengers-heading">No Passenger is Waiting There</h4>
             </div>
             <div class="card-body">
-              <table class="table table-responsive-lg rounded-lg" style="border: 1px solid #141E30;">
+              <table class="table table-responsive-lg rounded-lg" id="next-passengers-table" hidden style="border: 1px solid #141E30;">
                 <thead class="thead-dark">
                   <tr>
                     <th class="col-3">Passenger ID</th>
@@ -836,7 +794,7 @@
                     <th class="col-3">Onboard Passenger</th>
                   </tr>
                 </thead>
-                <tbody id="next-passengers-table">
+                <tbody id="next-passengers-table-body">
                 </tbody>
               </table>
             </div>
@@ -844,7 +802,7 @@
         </div>
 
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary mx-2 mt-5 " data-toggle="modal" data-target="#allPassengersModal">
+        <button type="button" class="btn btn-primary mx-3 mt-5 " data-toggle="modal" data-target="#allPassengersModal">
           View All Passengers
         </button>
 
