@@ -3,6 +3,7 @@ package org.antwalk.repository;
 import java.util.List;
 
 import org.antwalk.entity.ArrivalTimeTable;
+import org.antwalk.entity.Bus;
 import org.antwalk.entity.Route;
 import org.antwalk.entity.RouteStopId;
 import org.antwalk.entity.Stop;
@@ -21,6 +22,12 @@ public interface ArrivalTimeRepo extends JpaRepository<ArrivalTimeTable, RouteSt
     public void deleteAllByRouteStopId_Route(Route route);
 
 	public void deleteByRouteStopId_Route(Route route);
+
+    // public List<ArrivalTimeTable> findAllByRouteStopId_RouteOrderByMorningArrivalTime(Route r);
+
+    // public List<ArrivalTimeTable> findAllByRouteStopId_RouteOrderByEveningArrivalTime(Route r);
+    
+    
 
 
 }

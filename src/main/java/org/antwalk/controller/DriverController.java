@@ -38,12 +38,10 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 @RequestMapping("/driver")
 public class DriverController {
-	
-	
+
 	@Autowired
 	DriverService driverService;
-	
-	
+
 	@Autowired
 	DelayService delayServices;
 
@@ -55,28 +53,28 @@ public class DriverController {
 
 	@Autowired
 	private BookingDetailsService bookingDetailsService;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	BusService buserv;
-	
+
 	@PostMapping("/insert")
 	public Driver insert(@RequestBody Driver d) {
 		return driverService.insertDriver(d);
 	}
-	
+
 	@GetMapping("/getall")
-	public List<Driver> getAll(){
+	public List<Driver> getAll() {
 		return driverService.getAllDrivers();
 	}
-	
+
 	@GetMapping("/getbyid/{id}")
 	public Driver getById(@PathVariable long id) {
 		return driverService.getDriverById(id);
 	}
-	
+
 	@DeleteMapping("/deletebyid/{id}")
 	public String deleteById(@PathVariable long id) {
 		driverService.deleteDriverById(id);
@@ -87,89 +85,95 @@ public class DriverController {
 	public String update(@RequestBody Driver d, @PathVariable long id) {
 
 		List<Driver> driverList = driverService.getAllDrivers();
-		for(Driver obj:driverList) {
-			if(obj.getDid() == id) {
-				if(d.getDid() == id) {
+		for (Driver obj : driverList) {
+			if (obj.getDid() == id) {
+				if (d.getDid() == id) {
 					driverService.insertDriver(d);
 					return "Updated";
 				}
-				
+
 				else {
 					return "Id doesn't match";
 				}
-				
+
 			}
 		}
 		return "Id does not exist";
-		
+
 	}
-	
+
 	@GetMapping("/routedetails")
 	public ModelAndView booking(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-	    User user = (User)session.getAttribute("driver");
+		User user = (User) session.getAttribute("driver");
 		Driver driver = driverService.getDriverById(user.getDriver().getDid());
-		
+		int slotIdx = 1;
+		if (LocalTime.now().isBefore(LocalTime.parse("12:00:00"))) {
+			slotIdx = 0;
+		}
+		System.out.println(
+				"in controller from service : " + delayServices.getAdjustedTimes(driver.getBus().getBid(), slotIdx));
+		List<HashMap<String, String>> stops = delayServices.getAdjustedTimes(driver.getBus().getBid(), slotIdx);
+
 		ModelAndView modelAndView = new ModelAndView("route-details");
-		 if(driver.getBus()==null) {
-		    	modelAndView = new ModelAndView("error-track-bus");
-		    	return modelAndView;
-		    }
-		    
-		
+		if (driver.getBus() == null) {
+			modelAndView = new ModelAndView("error-track-bus");
+			return modelAndView;
+		}
+
 		Long rid = driver.getBus().getR().getRid();
-	    
-	    LocalTime currentTime = LocalTime.now(); // get the current time
-	    LocalTime noon = LocalTime.of(12, 0); // set noon time to 12:00 PM
-	    
 		
-		  if (currentTime.isBefore(noon)) { List<Stop> stops=
-		  arrivalTimeService.getStopsByRouteId(rid, "morning"); List<ArrivalTimeTable> aAndS =
-		  arrivalTimeService.getAllStopsWithTimeByRouteId(rid, "morning");
-		  
-		  modelAndView.addObject("arrTime", aAndS);
-		  
-//		  modelAndView.addObject("end", "NRIFINTECH");
-		  modelAndView.addObject("allStops", stops); } else {
-		 
-	    	List<Stop> stops= arrivalTimeService.getStopsByRouteId(rid, "evening");
-	    	List<ArrivalTimeTable> aAndS = arrivalTimeService.getAllStopsWithTimeByRouteId(rid, "evening");
-	    
-	    	modelAndView.addObject("arrTime", aAndS);
-	    	modelAndView.addObject("start", "NRIFINTECH");
-	    	modelAndView.addObject("allStops", stops);
-	    }
-		  
+		LocalTime currentTime = LocalTime.now(); // get the current time
+		LocalTime noon = LocalTime.of(12, 0); // set noon time to 12:00 PM
+
+		// if (currentTime.isBefore(noon)) {
+		// 	List<Stop> stops = arrivalTimeService.getStopsByRouteId(rid, "morning");
+		// 	List<ArrivalTimeTable> aAndS = arrivalTimeService.getAllStopsWithTimeByRouteId(rid, "morning");
+
+		// 	modelAndView.addObject("arrTime", aAndS);
+
+		// 	// modelAndView.addObject("end", "NRIFINTECH");
+		// 	modelAndView.addObject("allStops", stops);
+		// } else {
+
+		// 	List<Stop> stops = arrivalTimeService.getStopsByRouteId(rid, "evening");
+		// 	List<ArrivalTimeTable> aAndS = arrivalTimeService.getAllStopsWithTimeByRouteId(rid, "evening");
+
+		// 	modelAndView.addObject("arrTime", aAndS);
+		// 	modelAndView.addObject("start", "NRIFINTECH");
+		// 	modelAndView.addObject("allStops", stops);
+		// }
+		modelAndView.addObject("allStops", stops);
 		return modelAndView;
 	}
-	
+
 	@PostMapping("/changeActiveStatus/{bid}")
 	public String changeStatus(@PathVariable long bid) {
 		System.out.println("changing status of bus " + bid);
 		Bus b = buserv.getBusById(bid);
 		System.out.println(b);
-		if(b.getActive().equals("NO")){
+		if (b.getActive().equals("NO")) {
 			// System.out.println("into NO case");
 			b.setActive("YES");
-		}
-		else{
+		} else {
 			// System.out.println("into YES case");
 			b.setActive("NO");
 		}
 		return buserv.updateBusById(b, bid);
 	}
-	
-
 
 	@GetMapping("/nextStop/{bid}")
 	public String nextStop(@PathVariable long bid) {
 		String retVal = "End Journey";
 		int slotIdx = 1;
-		if(LocalTime.now().compareTo(LocalTime.parse("12:00:00")) < 0 ){slotIdx = 0;}
-		System.out.println("time = " +  LocalTime.now() + " is after 12'o clock : " + LocalTime.now().compareTo(LocalTime.parse("12:00:00")) +" slotIdx = " + slotIdx);
+		if (LocalTime.now().compareTo(LocalTime.parse("12:00:00")) < 0) {
+			slotIdx = 0;
+		}
+		System.out.println("time = " + LocalTime.now() + " is after 12'o clock : "
+				+ LocalTime.now().compareTo(LocalTime.parse("12:00:00")) + " slotIdx = " + slotIdx);
 		Delay d = delayServices.getLatest(bid);
-		ArrivalTimeTable at = delayServices.getNextStop(bid,d, slotIdx);
-		if(at != null){
+		ArrivalTimeTable at = delayServices.getNextStop(bid, d, slotIdx);
+		if (at != null) {
 			retVal = "Reached " + at.getRouteStopId().getStop().getName();
 		}
 		return retVal;
@@ -180,19 +184,19 @@ public class DriverController {
 		Stop stop;
 		Delay d = delayServices.getLatest(bid);
 		int slotIdx = 1;
-		if(LocalTime.now().compareTo(LocalTime.parse("12:00:00")) < 0 ){slotIdx = 0;}
+		if (LocalTime.now().compareTo(LocalTime.parse("12:00:00")) < 0) {
+			slotIdx = 0;
+		}
 
-		if(d == null ) {
+		if (d == null) {
 			stop = null;
+		} else {
+			stop = delayServices.getNextStop(bid, d, slotIdx).getRouteStopId().getStop();
 		}
-		else {
-			stop = delayServices.getNextStop(bid,d, slotIdx).getRouteStopId().getStop();
-		}
-		d = new Delay(buserv.getBusById(bid),stop,LocalTime.now());
+		d = new Delay(buserv.getBusById(bid), stop, LocalTime.now());
 		System.out.println(delayServices.addDelay(d));
 		return "updated";
 	}
-
 
 	@DeleteMapping("/flushDelays/{bid}")
 	public String flushDelays(@PathVariable long bid) {
@@ -200,7 +204,6 @@ public class DriverController {
 		return delayServices.flushByBusId(bid);
 	}
 
-	
 	@PostMapping("/updateprofile")
 	public ResponseEntity<String> update(@RequestParam("eid") long eid,
 			@RequestParam("contactNo") String contactNo,
@@ -221,13 +224,14 @@ public class DriverController {
 		return ResponseEntity.ok("Profile Updated Successfully");
 	}
 
-	@GetMapping("get-all-passengers") 
-	public ResponseEntity<List<HashMap<String,List<Employee>>>> getAllPassengers(HttpServletRequest httpServletRequest){
-		User user = (User)httpServletRequest.getSession().getAttribute("driver");
+	@GetMapping("get-all-passengers")
+	public ResponseEntity<List<HashMap<String, List<Employee>>>> getAllPassengers(
+			HttpServletRequest httpServletRequest) {
+		User user = (User) httpServletRequest.getSession().getAttribute("driver");
 		Driver driver = user.getDriver();
-		List<HashMap<String,List<Employee>>> passengers = driverService.getAllPassengers(driver);
+		List<HashMap<String, List<Employee>>> passengers = driverService.getAllPassengers(driver);
 
 		return ResponseEntity.status(HttpStatus.OK).body(passengers);
 	}
-	
+
 }
