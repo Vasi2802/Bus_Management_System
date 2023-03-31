@@ -395,8 +395,8 @@ select:focus{
                 type: "GET",
                 url: url,
                 success: function (response) {
-                    console.log("The employee is");
-                    console.log(response);
+                    // console.log("The employee is");
+                    // console.log(response);
                     employeeDashboardDetails = response;
                     document.getElementById("name").innerText = employeeDashboardDetails?.name;
                     document.getElementById("profilename").innerText = employeeDashboardDetails?.name;
@@ -436,7 +436,7 @@ select:focus{
             });
         });
         const showModal = (routeid) =>{
-        	console.log(routeid);
+        	// console.log(routeid);
         	$("#exampleModal").modal("toggle");
         	
         }
