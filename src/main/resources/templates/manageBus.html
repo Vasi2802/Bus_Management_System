@@ -52,7 +52,7 @@
 			async: false,
 			success: function (response) {
 				drivers = response;
-				console.log(response);
+				// console.log(response);
 				var driverList = document.getElementById('select-driver-list');
 				driverList.innerHTML = `<option value="" disabled="" selected="">Select driver</option>`;
 				drivers?.forEach((driver) => {
