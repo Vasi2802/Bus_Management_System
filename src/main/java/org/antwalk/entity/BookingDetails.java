@@ -38,11 +38,13 @@ public class BookingDetails implements Comparable<BookingDetails>{
 	@Column(name="booking_for_month")
 	@NotNull
 	private Date bookingForMonth;
+
+	@Column(name="is_boarded")
+	private Boolean isBoarded;
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="stop_id", referencedColumnName = "sid")
 	private Stop stop;
-
 	
 	public BookingDetails() {
 		super();
@@ -63,6 +65,18 @@ public class BookingDetails implements Comparable<BookingDetails>{
 		this.e = e;
 		this.b = b;
 		this.bookingForMonth = bookingForMonth;
+		this.stop = stop;
+	}
+
+	
+
+	public BookingDetails(long bookingId, @NotNull Employee e, @NotNull Bus b, @NotNull Date bookingForMonth,
+			Boolean isBoarded, Stop stop) {
+		this.bookingId = bookingId;
+		this.e = e;
+		this.b = b;
+		this.bookingForMonth = bookingForMonth;
+		this.isBoarded = isBoarded;
 		this.stop = stop;
 	}
 
@@ -106,10 +120,22 @@ public class BookingDetails implements Comparable<BookingDetails>{
 		this.stop = stop;
 	}
 
+
 	@Override
 	public int compareTo(BookingDetails o) {
 		// TODO Auto-generated method stub
 		return this.bookingForMonth.compareTo(o.getBookingForMonth());
 	}
+
+	public Boolean getIsBoarded() {
+		return isBoarded;
+	}
+
+	public void setIsBoarded(Boolean isBoarded) {
+		this.isBoarded = isBoarded;
+	}
+
+	
+
 	
 }

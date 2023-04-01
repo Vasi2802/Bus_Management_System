@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.antwalk.entity.ArrivalTimeTable;
+import org.antwalk.entity.Bus;
 import org.antwalk.entity.Route;
 import org.antwalk.entity.RouteStopId;
 import org.antwalk.entity.Stop;
@@ -24,6 +25,12 @@ public interface ArrivalTimeRepo extends JpaRepository<ArrivalTimeTable, RouteSt
     
     @Transactional
 	public void deleteByRouteStopId_Route(Route route);
+
+    // public List<ArrivalTimeTable> findAllByRouteStopId_RouteOrderByMorningArrivalTime(Route r);
+
+    // public List<ArrivalTimeTable> findAllByRouteStopId_RouteOrderByEveningArrivalTime(Route r);
+    
+    
 
 
 }

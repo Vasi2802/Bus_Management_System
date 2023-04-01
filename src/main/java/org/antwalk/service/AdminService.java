@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 
 import org.antwalk.entity.Admin;
+import org.antwalk.entity.Attendance;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
 import org.antwalk.entity.Employee;
@@ -19,6 +20,7 @@ import org.antwalk.entity.Route;
 import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.AdminRepo;
 import org.antwalk.repository.ArrivalTimeRepo;
+import org.antwalk.repository.AttendanceRepo;
 import org.antwalk.repository.BookingDetailsRepo;
 import org.antwalk.repository.BusRepo;
 import org.antwalk.repository.EmployeeRepo;
@@ -80,6 +82,9 @@ public class AdminService {
 	@Autowired
 	private HistoryService historyService;
 
+	@Autowired
+	private AttendanceRepo attendanceRepo;
+
 	public Admin insertAdmin(Admin a) {
 		return adminRepo.save(a);
 	}
@@ -130,7 +135,7 @@ public class AdminService {
 		sheet.setColumnWidth(1, 4000);
 		sheet.setColumnWidth(2, 10000);
 		sheet.setColumnWidth(3, 2000);
-		sheet.setColumnWidth(4, 10000);
+		sheet.setColumnWidth(4, 7000);
 
 		// =================================== Header Creation
 		// =======================================
@@ -162,17 +167,21 @@ public class AdminService {
 			headerCell.setCellStyle(headerStyle);
 
 			headerCell = header.createCell(3);
-			headerCell.setCellValue("Bus ID");
+			headerCell.setCellValue("Stop Name");
 			headerCell.setCellStyle(headerStyle);
 
 			headerCell = header.createCell(4);
+			headerCell.setCellValue("Bus ID");
+			headerCell.setCellStyle(headerStyle);
+
+			headerCell = header.createCell(5);
 			headerCell.setCellValue("Booking Date");
 			headerCell.setCellStyle(headerStyle);
 		}
 
 		// ======================= TABLE CREATION ================================
 
-		int rowNum = 2;
+		int rowNum = 1;
 		for (BookingDetails bookingDetails : bookingDetailsList) {
 			CellStyle style = workbook.createCellStyle();
 			style.setWrapText(false);
@@ -192,10 +201,14 @@ public class AdminService {
 			cell.setCellStyle(style);
 
 			cell = row.createCell(3);
-			cell.setCellValue(bookingDetails.getB().getBid());
+			cell.setCellValue(bookingDetails.getStop().getName());
 			cell.setCellStyle(style);
 
 			cell = row.createCell(4);
+			cell.setCellValue(bookingDetails.getB().getBid());
+			cell.setCellStyle(style);
+
+			cell = row.createCell(5);
 			cell.setCellValue(bookingDetails.getBookingForMonth().toString());
 			cell.setCellStyle(style);
 
@@ -426,7 +439,7 @@ public class AdminService {
 		Route mostWaitlistedRoute = null;
 		long count = 0;
 		for (Route route : routes) {
-			long freq = getCountWaitingListByRoute(route.getRid());
+			long freq = getCountWaitingListByRoute(route);
 			routeCount.put(route, freq);
 		}
 		try {
@@ -468,8 +481,142 @@ public class AdminService {
 		return waitingListRepo.findAll().size();
 	}
 
-	private long getCountWaitingListByRoute(long rid) {
-		return 0;
+	private long getCountWaitingListByRoute(Route route) {
+		int count = 0;
+		List<Bus> busList = busRepo.findAllByR(route);
+		for(Bus bus: busList){
+			List<WaitingList> waitingLists = waitingListRepo.findAllByB(bus);
+			count += waitingLists.size();
+		}
+
+		return count;
 	}
+
+    public List<Attendance> getAttendanceAnalytics(LocalDate startDate, LocalDate endDate) {
+		System.out.println(startDate);
+		System.out.println(endDate);
+		List<Attendance> attendanceList = attendanceRepo.findAllByAttendanceDateGreaterThanEqualAndAttendanceDateLessThanEqualOrderByEmployeeId(startDate, endDate);
+		return attendanceList;
+    }
+
+    public ResponseEntity<Resource> generateAttendanceReport() {
+        LocalDate today = LocalDate.now();
+		LocalDate startDate = today.withDayOfMonth(1);
+		LocalDate endDate = today.withDayOfMonth(today.lengthOfMonth());
+		
+		List<Attendance> attendanceList = attendanceRepo.findAllByAttendanceDateGreaterThanEqualAndAttendanceDateLessThanEqualOrderByEmployeeId(startDate, endDate);
+
+
+		Workbook workbook = new XSSFWorkbook();
+
+		Sheet sheet = workbook.createSheet("Attendance_for_" + today.getMonth().name());
+		sheet.setColumnWidth(0, 5000);
+		sheet.setColumnWidth(1, 4000);
+		sheet.setColumnWidth(2, 4000);
+		sheet.setColumnWidth(3, 10000);
+		sheet.setColumnWidth(4, 9000);
+		sheet.setColumnWidth(5, 5000);
+		sheet.setColumnWidth(6, 8000);
+
+		// =================================== Header Creation
+		// =======================================
+
+		{
+			Row header = sheet.createRow(0);
+
+			CellStyle headerStyle = workbook.createCellStyle();
+			// headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+			// headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+			headerStyle.setWrapText(true);
+
+			XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+			font.setFontName("Arial");
+			font.setFontHeightInPoints((short) 12);
+			font.setBold(true);
+			headerStyle.setFont(font);
+
+			Cell headerCell = header.createCell(0);
+			headerCell.setCellValue("ATTENDANCE ID");
+			headerCell.setCellStyle(headerStyle);
+
+			headerCell = header.createCell(1);
+			headerCell.setCellValue("BUS ID");
+			headerCell.setCellStyle(headerStyle);
+
+			headerCell = header.createCell(2);
+			headerCell.setCellValue("EMPLOYEE ID");
+			headerCell.setCellStyle(headerStyle);
+			
+			headerCell = header.createCell(3);
+			headerCell.setCellValue("EMPLOYEE NAME");
+			headerCell.setCellStyle(headerStyle);
+			
+			headerCell = header.createCell(4);
+			headerCell.setCellValue("STOP NAME");
+			headerCell.setCellStyle(headerStyle);
+			
+			headerCell = header.createCell(5);
+			headerCell.setCellValue("SHIFT");
+			headerCell.setCellStyle(headerStyle);
+			
+			headerCell = header.createCell(6);
+			headerCell.setCellValue("DATE");
+			headerCell.setCellStyle(headerStyle);
+
+		}
+
+		// ======================= TABLE CREATION ================================
+
+		int rowNum = 1;
+		for (Attendance attendance : attendanceList) {
+
+			Row row = sheet.createRow(rowNum);
+
+			Cell cell = row.createCell(0);
+			cell.setCellValue(attendance.getAttendanceId());
+
+			if(attendance.getBusId()!=null){
+				cell = row.createCell(1);
+				cell.setCellValue(attendance.getBusId());
+			}
+
+			cell = row.createCell(2);
+			cell.setCellValue(attendance.getEmployeeId());
+
+			cell = row.createCell(3);
+			cell.setCellValue(attendance.getEmployeeName());
+
+			cell = row.createCell(4);
+			cell.setCellValue(attendance.getStopName());
+
+			cell = row.createCell(5);
+			cell.setCellValue(attendance.getShift());
+
+			cell = row.createCell(6);
+			cell.setCellValue(attendance.getAttendanceDate().toString());
+
+			rowNum += 1;
+		}
+
+		String fileName = "Attendance_For_" + today.getMonth().name() + ".xlsx";
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		try {
+			workbook.write(outputStream);
+			workbook.close();
+		} catch (IOException e) {
+			System.out.println("IO EXCEPTION");
+		}
+
+		ByteArrayInputStream inputStream = new ByteArrayInputStream(outputStream.toByteArray());
+
+		InputStreamResource file = new InputStreamResource(inputStream);
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+				// .contentLength(file.length())
+				.contentType(MediaType.APPLICATION_OCTET_STREAM)
+				.body(file);
+    }
 
 }
