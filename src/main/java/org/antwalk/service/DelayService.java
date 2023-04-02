@@ -73,6 +73,16 @@ public class DelayService {
 		return retVal;
 	}
 
+	public List<Delay> getLatestList(long bid){
+		List<Delay> retVal = new ArrayList<Delay>();
+		for(Delay d: delayRepo.findAll()){
+			if(d.getBus().getBid() == bid) {
+					retVal.add(d);
+				}
+			}
+		return retVal;
+	}
+	
 	public ArrivalTimeTable getNextStop(long bid,Delay lastStop,int slotIdx){
 		LocalTime stopTime ;
 		Delay d = lastStop;

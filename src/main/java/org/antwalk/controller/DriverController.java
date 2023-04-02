@@ -131,7 +131,7 @@ public class DriverController {
 			modelAndView = new ModelAndView("error-track-bus");
 			return modelAndView;
 		}
-
+		
 		Long rid = driver.getBus().getR().getRid();
 		
 		LocalTime currentTime = LocalTime.now(); // get the current time
@@ -154,6 +154,8 @@ public class DriverController {
 		// 	modelAndView.addObject("start", "NRIFINTECH");
 		// 	modelAndView.addObject("allStops", stops);
 		// }
+		
+	
 		modelAndView.addObject("allStops", stops);
 		return modelAndView;
 	}
@@ -189,7 +191,17 @@ public class DriverController {
 		}
 		return retVal;
 	}
-
+	@GetMapping("/current/{bid}")
+	public List<Delay> currentStop(@PathVariable long bid) {
+		int slotIdx = 1;
+		if (LocalTime.now().compareTo(LocalTime.parse("12:00:00")) < 0) {
+			slotIdx = 0;
+		}
+		System.out.println("time = " + LocalTime.now() + " is after 12'o clock : "
+				+ LocalTime.now().compareTo(LocalTime.parse("12:00:00")) + " slotIdx = " + slotIdx);
+		List<Delay> d = delayServices.getLatestList(bid);
+		return d;
+	}
 	@PostMapping("/addDelay/{bid}")
 	public ResponseEntity<String> addDelay(@PathVariable long bid) {
 		Stop stop;

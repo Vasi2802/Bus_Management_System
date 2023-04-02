@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Step Progress Bar</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- UniIcon CDN Link  -->
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+
+    <style>
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+@font-face {
+    font-family: pop;
+    src: url(./Fonts/Poppins-Medium.ttf);
+}
+
+.main{
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: pop;
+    flex-direction: column;
+}
+.head{
+    text-align: center;
+}
+.head_1{
+    font-size: 30px;
+    font-weight: 600;
+    color: #333;
+}
+.head_1 span{
+    color: #ff4732;
+}
+.head_2{
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-top: 3px;
+}
+ul{
+    display: flex;
+    margin-top: 80px;
+}
+ul li{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: right;
+    width: 150px;
+    
+}
+ul li .icon{
+    font-size: 35px;
+    color: #ff4732;
+    margin: 0 60px;
+}
+ul li .text{
+    font-size: 14px;
+    font-weight: 600;
+    color: #ff4732;
+}
+
+/* Progress Div Css  */
+
+ul li .progress{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(68, 68, 68, 0.781);
+    margin: 14px 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    position: relative;
+    cursor: pointer;
+}
+.progress::after{
+    content: " ";
+    position: absolute;
+    width: 125px;
+    height: 5px;
+    background-color: rgba(68, 68, 68, 0.781);
+    right: 30px;
+}
+.one::after{
+    width: 0;
+    height: 0;
+}
+ul li .progress .uil{
+    display: none;
+}
+ul li .progress p{
+    font-size: 13px;
+}
+
+/* Active Css  */
+
+ul li .active{
+    background-color: green;
+    display: grid;
+    place-items: center;
+}
+li .active::after{
+    background-color: green;
+}
+ul li .active p{
+    display: none;
+}
+ul li .active .uil{
+    font-size: 20px;
+    display: flex;
+}
+@media (max-width: 980px) {
+    ul{
+        flex-direction: column;
+    }
+    ul li{
+        flex-direction: row;
+        height:60px;
+    }
+    ul li .progress{
+        margin: 0 30px;
+    }
+    .progress::after{
+        width: 5px;
+        height: 55px;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: -1;
+    }
+    .one::after{
+        height: 0;
+    }
+    ul li .icon{
+        margin: 15px 0;
+    }
+}
+
+@media (max-width:600px) {
+    .head .head_1{
+        font-size: 24px;
+    
+    }
+    .head .head_2{
+        font-size: 16px;
+    }
+}
+    </style>
+</head>
+<body>
+ <div class="main">
+  <ul class="uub">
+  <li th:each="i, index : ${allStops}">
+    <p class="text" th:text="${i.name}"></p>
+    
+    <div th:switch="${index.index}">
+    
+      <div th:case="0" class="progress one"><p th:text="${index.index+1}"></p></div>
+      <div th:case="1" class="progress two"><p th:text="${index.index+1}"></p></div>
+      <div th:case="2" class="progress three"><p th:text="${index.index+1}"></p></div>
+      <div th:case="3" class="progress four"><p th:text="${index.index+1}"></p></div>
+      <div th:case="4" class="progress five"><p th:text="${index.index+1}"></p></div>
+      <div th:case="5" class="progress six"><p th:text="${index.index+1}"></p></div>
+      <div th:case="6" class="progress seven"><p th:text="${index.index+1}"></p></div>
+      <div th:case="7" class="progress eight"><p th:text="${index.index+1}"></p></div>
+      <div th:case="8" class="progress nine"><p th:text="${index.index+1}"></p></div>
+      <div th:case="9" class="progress ten"><p th:text="${index.index+1}"></p></div>
+      <div th:case="10" class="progress eleven"><p th:text="${index.index+1}"></p></div>
+      <div th:case="11" class="progress twelve"><p th:text="${index.index+1}"></p></div>
+      <div th:case="12" class="progress thirteen"><p th:text="${index.index+1}"></p></div>
+      <div th:case="13" class="progress fourteen"><p th:text="${index.index+1}"></p></div>
+      <div th:case="14" class="progress fifthteen"><p th:text="${index.index+1}"></p></div>
+      <div th:case="15" class="progress sixteen"><p th:text="${index.index+1}"></p></div>
+      <div th:case="16" class="progress seventeen"><p th:text="${index.index+1}"></p></div>
+      <!-- add more cases as needed -->
+    </div>
+    
+    <p class="text" th:text="${i.time}"></p>
+  </li>
+</ul>
+</div>
+</body>
+</html>
+
+
+<script>
+    const one = document.querySelector(".one");
+const two = document.querySelector(".two");
+const three = document.querySelector(".three");
+const four = document.querySelector(".four");
+const five = document.querySelector(".five");
+const six = document.querySelector(".six");
+const seven = document.querySelector(".seven");
+const eight = document.querySelector(".eight");
+const nine = document.querySelector(".nine");
+const ten = document.querySelector(".ten");
+const eleven = document.querySelector(".eleven");
+const twelve = document.querySelector(".twelve");
+const thirteen = document.querySelector(".thirteen");
+const fourteen = document.querySelector(".fourteen");
+const fifthteen = document.querySelector(".fifthteen");
+const sixthteen = document.querySelector(".sixthteen");
+const seventeen = document.querySelector(".seventeen");
+
+one.onclick = function() {
+	 one.classList.add("active");
+    two.classList.remove("active");
+    three.classList.remove("active");
+    four.classList.remove("active");
+    five.classList.remove("active");
+}
+
+two.onclick = function() {
+    one.classList.add("active");
+    two.classList.add("active");
+    three.classList.remove("active");
+    four.classList.remove("active");
+    five.classList.remove("active");
+}
+three.onclick = function() {
+    one.classList.add("active");
+    two.classList.add("active");
+    three.classList.add("active");
+    four.classList.remove("active");
+    five.classList.remove("active");
+}
+four.onclick = function() {
+    one.classList.add("active");
+    two.classList.add("active");
+    three.classList.add("active");
+    four.classList.add("active");
+    five.classList.remove("active");
+}
+five.onclick = function() {
+    one.classList.add("active");
+    two.classList.add("active");
+    three.classList.add("active");
+    four.classList.add("active");
+    five.classList.add("active");
+}
+
+</script>
