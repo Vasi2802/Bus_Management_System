@@ -523,6 +523,10 @@ public class AdminController {
 		return mv;
 	}
 
+	@GetMapping("/stop")
+	public List<Stop> manageSt(){
+		return stopRepo.findAll();
+	}
 
 	@GetMapping("/employees")
 	public List<Employee> manageEmploye(){
