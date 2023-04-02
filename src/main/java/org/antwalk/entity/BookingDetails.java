@@ -44,6 +44,7 @@ public class BookingDetails implements Comparable<BookingDetails>{
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name="stop_id", referencedColumnName = "sid")
+	@NotNull
 	private Stop stop;
 	
 	public BookingDetails() {
