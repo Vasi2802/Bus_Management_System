@@ -12,8 +12,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface EmployeeRepo extends JpaRepository<Employee, Long>{
 
 
-    List<Employee> findAllByB(Bus bus);
+    public List<Employee> findAllByB(Bus bus);
 
-    Optional<Employee> findByEid(long employeeId);
+    public Optional<Employee> findByEid(long employeeId);
 
 }
