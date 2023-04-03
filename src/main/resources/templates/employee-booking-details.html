@@ -186,36 +186,8 @@
            $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
        });
 
-
-        const removeBooking = () => {
-            console.log("the eid Id selected = ", eid);
-            // $(function () {
-            //     var token = $("meta[name='_csrf']").attr("content");
-            //     var header = $("meta[name='_csrf_header']").attr("content");
-            //     $(document).ajaxSend(function (e, xhr, options) {
-            //         xhr.setRequestHeader(header, token);
-            //     });
-            // });
-            $.ajax({
-                headers: {
-                    Accept: 'application/json', //imp
-                },
-                type: "POST",
-                url: "/employee/removebooking",
-                data: JSON.stringify(eid), // imp
-                dataType: "json",
-                contentType: "application/json", //imp
-                async: false,
-                success: function (response) {
-                    alert("hello");
-                },
-                error: function (response) {
-                    // console.log(response.getResponseHeader(""));
-                    // alert('Error occured in cancelling booking ', response);
-                }
-            });
+     
             // window.location.href = "/employee/dashboard";
-        }
     </script>
     <title>Employee Dashboard </title>
 </head>
@@ -314,7 +286,7 @@
        <div class="text-white ">
 
             <div class="table-responsive">
-                <table class="table text-black">
+                <table class="table text-black table-light table-striped table-hover border-primary">
 
                     <tbody>
 
