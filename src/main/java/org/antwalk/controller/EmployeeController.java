@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
+import org.antwalk.entity.Delay;
 import org.antwalk.entity.Driver;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.History;
@@ -553,7 +554,6 @@ public class EmployeeController {
 		return employeeBookingDetails;
 	}
 
-
 	// @GetMapping("/trackbus/getAdjustedTime/{bid}")
 	public List<HashMap<String,String>> getAdjustedStopTimes( long bid) {
 		// System.out.println("called this function");
@@ -562,5 +562,16 @@ public class EmployeeController {
 		System.out.println("in controller from service : " +  delayServices.getAdjustedTimes(bid,slotIdx));
 		return delayServices.getAdjustedTimes(bid,slotIdx);
 	}
-
+	
+	@GetMapping("/current/{bid}")
+	public List<Delay> currentStop(@PathVariable long bid) {
+		int slotIdx = 1;
+		if (LocalTime.now().compareTo(LocalTime.parse("12:00:00")) < 0) {
+			slotIdx = 0;
+		}
+		System.out.println("time = " + LocalTime.now() + " is after 12'o clock : "
+				+ LocalTime.now().compareTo(LocalTime.parse("12:00:00")) + " slotIdx = " + slotIdx);
+		List<Delay> d = delayServices.getLatestList(bid);
+		return d;
+	}
 }
