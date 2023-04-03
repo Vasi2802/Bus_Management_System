@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class DemoController {
+public class WebController {
 
 	@Autowired
 	private UserService userService;

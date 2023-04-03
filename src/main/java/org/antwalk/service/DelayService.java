@@ -1,13 +1,17 @@
 package org.antwalk.service;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import org.antwalk.entity.ArrivalTimeTable;
+import org.antwalk.entity.Bus;
 import org.antwalk.entity.Delay;
+import org.antwalk.repository.ArrivalTimeRepo;
 import org.antwalk.repository.BusRepo;
 import org.antwalk.repository.DelayRepo;
 
@@ -23,6 +27,12 @@ public class DelayService {
 
 	@Autowired
 	private DelayRepo delayRepo;
+
+	@Autowired
+	private ArrivalTimeRepo arrivalTimeRepo;
+
+	@Autowired
+	private ArrivalTimeService arrivalTimeService;
 
     @Autowired
 	private BusService busServices;
@@ -63,6 +73,16 @@ public class DelayService {
 		return retVal;
 	}
 
+	public List<Delay> getLatestList(long bid){
+		List<Delay> retVal = new ArrayList<Delay>();
+		for(Delay d: delayRepo.findAll()){
+			if(d.getBus().getBid() == bid) {
+					retVal.add(d);
+				}
+			}
+		return retVal;
+	}
+	
 	public ArrivalTimeTable getNextStop(long bid,Delay lastStop,int slotIdx){
 		LocalTime stopTime ;
 		Delay d = lastStop;
@@ -123,6 +143,162 @@ public class DelayService {
 		return "on time";
 		// return "started by driver at " + String.valueOf(delays.get(0).getActualTime()) ;
 	}
+
+	public LocalTime addTime(LocalTime time1, LocalTime time2){
+		LocalTime retVal = time1.plusSeconds(time2.getSecond());
+		retVal = retVal.plusMinutes(time2.getMinute());
+		retVal = retVal.plusHours(time2.getHour());
+		return retVal;
+	}
+
+	public LocalTime substractTime(LocalTime time1 , LocalTime time2){
+		LocalTime retVal = time1.minusSeconds(time2.getSecond());
+		retVal = retVal.minusMinutes(time2.getMinute());
+		retVal = retVal.minusHours(time2.getHour());
+		return retVal;
+	}
+
+	// public List<HashMap<String,String>> getAdjustedTimes(long bid,int slotIdx) {
+	// 	List<HashMap<String,String>> retVal = new ArrayList<>();
+	// 	// List<LocalTime> retVal = new ArrayList<LocalTime>() ;
+	// 	Bus bus = busServices.getBusById(bid);
+	// 	List<ArrivalTimeTable> ats ;
+	// 	if(slotIdx == 0){ ats = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(bus.getR());}
+	// 	else{ats = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(bus.getR());}
+	// 	List<Delay> delays = delayRepo.findByBusOrderByActualTime(bus);
+	// 	LocalTime delta = LocalTime.parse("00:00:00");
+	// 	LocalTime temp;
+	// 	if(delays.size() > 0 ) {
+	// 		temp = delays.get(0).getActualTime();
+	// 		if(slotIdx == 0 ) {
+	// 			delta = substractTime(temp, bus.getStartTime());
+	// 		}
+	// 		else{
+	// 			delta = substractTime(temp, LocalTime.parse("17:30:00"));
+	// 		}
+	// 	}
+	// 	int idx = 0;
+	// 	int delaysSize = delays.size();
+	// 	while(true){
+	// 		// System.out.println("delta  = " +  delta);
+	// 		if(idx >= delaysSize){
+	// 			if(idx >= delays.size() + ats.size()){
+	// 				break;
+	// 			}
+	// 			else{
+	// 				ArrivalTimeTable at =ats.get(idx - delays.size());
+	// 				if(slotIdx == 0){temp = at.getMorningArrivalTime();}
+	// 				else{temp = at.getEveningArrivalTime();}
+	// 				temp = addTime(delta,temp);
+	// 				String stopName = at.getRouteStopId().getStop().getName();
+	// 				System.out.println("index= " + (idx - delaysSize ) + "from delay table= " + retVal.get(idx - delaysSize ).get("name") + "current= " + stopName);
+	// 				if(retVal.size() > idx - delaysSize  && !retVal.get(idx - delaysSize ).get("name").equals(stopName)){ 
+	// 					HashMap<String,String> val = new HashMap<>();
+	// 					val.put("name",stopName);
+	// 					val.put("time",String.valueOf(temp));
+	// 					retVal.add(val);
+	// 				}
+	// 			}
+ 	// 		}
+	// 		else {
+	// 			if(idx > 0){
+	// 				Delay d = delays.get(idx);
+	// 				temp = d.getActualTime();
+	// 				delta = substractTime(delta,temp);
+	// 				HashMap<String,String> val = new HashMap<>();
+	// 				val.put("name", d.getStop().getName());
+	// 				val.put("time",String.valueOf(temp));
+	// 				retVal.add(val);
+	// 			}
+	// 		}
+	// 		idx += 1;
+	// 	}
+	// 	// System.out.println(retVal);
+	// 	return retVal;
+	// }
+
+
+	public List<HashMap<String,String>> getAdjustedTimes(long bid,int slotIdx) {
+		List<HashMap<String,String>> retVal = new ArrayList<>();
+		// List<LocalTime> retVal = new ArrayList<LocalTime>() ;
+		Bus bus = busServices.getBusById(bid);
+		List<ArrivalTimeTable> ats ;
+		if(slotIdx == 0){ ats = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByMorningArrivalTime(bus.getR());}
+		else{ats = arrivalTimeRepo.findAllByRouteStopId_RouteOrderByEveningArrivalTime(bus.getR());}
+		List<Delay> delays = delayRepo.findByBusOrderByActualTime(bus);
+		LocalTime delta = LocalTime.parse("00:00:00");
+		LocalTime temp;
+		if(delays.size() > 0 ) {
+			temp = delays.get(0).getActualTime();
+			if(slotIdx == 0 ) {
+				delta = substractTime(temp, bus.getStartTime());
+			}
+			else{
+				delta = substractTime(temp, LocalTime.parse("17:30:00"));
+			}
+		} 
+		LocalTime actTime, expTime;
+		for(int i = 0; i < delays.size();i++){
+			Delay d = delays.get(i) ; 
+			if(d.getStop()!= null) {
+				if(i == delays.size() - 1){
+					actTime = d.getActualTime();
+					if(slotIdx == 0 ){
+						expTime = arrivalTimeService.getArrivalTimeById(bus.getR().getRid(),d.getStop().getSid()).getMorningArrivalTime();
+					}
+					else{
+						expTime = arrivalTimeService.getArrivalTimeById(bus.getR().getRid(),d.getStop().getSid()).getEveningArrivalTime();
+					}
+					delta = substractTime(actTime, expTime);
+				}
+				HashMap<String,String> val = new HashMap<>() ;
+				val.put("name",d.getStop().getName());
+				val.put("time",String.valueOf(d.getActualTime()));
+				retVal.add(val);
+			}
+		}
+		int idx = 0;
+		LocalTime temp1;
+		Boolean toAdd;
+		System.out.println(ats);
+		for(ArrivalTimeTable at: ats) {
+			if(idx < retVal.size()) {
+				System.out.println("from delay = " + retVal.get(idx).get("name") + " from arrival = " +at.getRouteStopId().getStop().getName());
+			}
+			toAdd = true;
+			if(retVal.size() > idx  && retVal.get(idx).get("name").equals(at.getRouteStopId().getStop().getName())){toAdd = false;}
+			if(toAdd) {
+				if(slotIdx == 0 ){
+					temp1 = at.getMorningArrivalTime();
+				}
+				else{
+					temp1 = at.getEveningArrivalTime();
+				}
+				actTime = addTime(delta,temp1);
+				HashMap<String,String> val = new HashMap<>() ;
+				val.put("name",at.getRouteStopId().getStop().getName());
+				// if(actTime.isBefore(LocalTime.now())) {val.put("time","--:--:--");}
+				// else{val.put("time",String.valueOf(actTime));}
+				val.put("time",String.valueOf(actTime));
+				retVal.add(val);
+			}
+			idx  += 1;
+		}
+		// System.out.println(retVal);
+		return retVal;
+	}
+
+
+
+	public List<Delay> getNullStopDelays()
+	{
+		System.out.println(delayRepo.findByStop(null));
+		return delayRepo.findByStop(null) ;
+
+	}
+
+
+
 
 	
 

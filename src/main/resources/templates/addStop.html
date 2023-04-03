@@ -131,7 +131,7 @@
 					<tr>
                         <td>
                             <label for="stopname" >Stop Name</label>
-                            <input type="text" id="stopname" name="name" placeholder="Stop Name">
+                            <input type="text" required="true" id="stopname" name="name" placeholder="Stop Name">
                         </td>
                         <td>
                             <button type="button"  onclick="addStop()">Add Stop</button>
@@ -187,31 +187,35 @@
         function addStop() {
             var url = '/admin/stop/insert';
             var stop = {
-				"name" : document.getElementById("mainArea").getElementsByTagName("input")[0].value,
+				"name" : document.getElementById("stopname").value,
 			};
             console.log(stop);
             // alert('Click ok to add this Stop')
-            $.ajax({
-                headers: {
-                    Accept: 'application/json', //imp
-                },
-                type: "POST",
-                url: url,
-                data: JSON.stringify(stop), // imp
-                dataType: "json",
-                contentType: "application/json", //imp
-                success: function (response) {
-                    console.log("added",response);
-                    alert('Stop Added'); 
-                    window.location.href = "/admin/manageStop";
-                },
-                error: function () {
-                    alert('Error occured');
-                    // window.location.href="/stop/stopform";
-                }
-                
-            });
-            //window.location.href = "/stop/managing";
+			if(name==""){
+				alert("Stop name cannot be empty");
+				location.reload();
+			}
+			else{
+				$.ajax({
+					headers: {
+						Accept: 'application/json', //imp
+					},
+					type: "POST",
+					url: url,
+					data: JSON.stringify(stop), // imp
+					dataType: "json",
+					contentType: "application/json", //imp
+					success: function (response) {
+						console.log("added",response);
+						alert('Stop Added'); 
+						window.location.href = "/admin/manageStop";
+					},
+					error: function () {
+						alert('Error occured');
+					}
+					
+				});
+			}
         }
     </script>
 	<!--    <script src="/script/navigation.js"></script> -->

@@ -36,7 +36,11 @@ public interface BookingDetailsRepo extends JpaRepository<BookingDetails, Long>{
 
     public List<BookingDetails> findAllByB(Bus bus);
 
+
 	public List<BookingDetails> findAllByE(Employee employee);
+
+
+    public BookingDetails findByE(Employee employee);
 
  
 }

@@ -43,62 +43,62 @@
 	</style>
 
 	<script>
-	$(document).ready(() => {
-		var drivers;
-		$.ajax({
-			type: "GET",
-			url: "/admin/get-available-drivers",
-			data: null,
-			async: false,
-			success: function (response) {
-				drivers = response;
-				console.log(response);
-				var driverList = document.getElementById('select-driver-list');
-				driverList.innerHTML = `<option value="" disabled="" selected="">Select driver</option>`;
-				drivers?.forEach((driver) => {
-					driverList.innerHTML += `<option did=${driver.did} >
+		$(document).ready(() => {
+			var drivers;
+			$.ajax({
+				type: "GET",
+				url: "/admin/get-available-drivers",
+				data: null,
+				async: false,
+				success: function (response) {
+					drivers = response;
+					// console.log(response);
+					var driverList = document.getElementById('select-driver-list');
+					driverList.innerHTML = `<option value="" disabled="" selected="">Select driver</option>`;
+					drivers?.forEach((driver) => {
+						driverList.innerHTML += `<option did=${driver.did} >
                                                 <p>${driver.driverName}</p>
                                             </option>`;
-				});
-			},
-			error: function () {
-				alert('Error occured in fetching drivers');
-			}
-		});
-		var routesMap;
-		$.ajax({
-			type: "GET",
-			url: "/admin/getallroutesasstopslist",
-			data: null,
-			async: false,
-			success: function (response) {
-				routesMap = response;
-			},
-			error: function () {
-				alert('Error occured in fetching routes');
-			}
-		});
-		// console.log("routes fetched = ", routesMap);
-		var routesList = document.getElementById('select-route-list');
-		routesList.innerHTML = `<option value="" disabled="" selected="">Select route</option>`;
-		Object.keys(routesMap).forEach((routeId) => {
-			let stops = routesMap[routeId];
-			// console.log(routeId, routeObj, stops );
-			routesList.innerHTML += `<option rid=${routeId}>
+					});
+				},
+				error: function () {
+					alert('Error occured in fetching drivers');
+				}
+			});
+			var routesMap;
+			$.ajax({
+				type: "GET",
+				url: "/admin/getallroutesasstopslist",
+				data: null,
+				async: false,
+				success: function (response) {
+					routesMap = response;
+				},
+				error: function () {
+					alert('Error occured in fetching routes');
+				}
+			});
+			// console.log("routes fetched = ", routesMap);
+			var routesList = document.getElementById('select-route-list');
+			routesList.innerHTML = `<option value="" disabled="" selected="">Select route</option>`;
+			Object.keys(routesMap).forEach((routeId) => {
+				let stops = routesMap[routeId];
+				// console.log(routeId, routeObj, stops );
+				routesList.innerHTML += `<option rid=${routeId}>
                                                 <p>${stops[0].name} -> ${stops[stops.length - 1].name}</p>
                                             </option>`;
+			});
+
 		});
 
-	});
-	
 		deleteBus = async (event) => {
 			busId = event.target.value;
 			console.log(busId)
-			 await $.ajax({
+			await $.ajax({
 				type: "GET",
 				url: "/admin/delete/bus/" + busId,
-				data:null,
-				async:false,
+				data: null,
+				async: false,
 				success: function (response) {
 					alert("Bus Deleted");
 				},
@@ -107,88 +107,88 @@
 				}
 			});
 
-			 window.location.href = "/admin/manageBus";
+			window.location.href = "/admin/manageBus";
 
 		}
-		
+
 		deletedata = (event) => {
 			$('#stops-detail tbody').text('');
 		}
-		 showModal = async (event) => {
-			 busid = event.target.value;
-			 url = "delay/getStatus/" + busid ;
-			 
-			 await $.ajax({
-	                headers: {
-	                    Accept: 'application/json', //imp
-	                },
-	                type: "GET",
-	                url: url,   
-	                dataType:"text",
-	                async: false,
-	                success: function (response) {
-	                    console.log(response)
-	                    $("#value1").text("Status: "+response);
-	                },
-	                error: function (response) {}
-	            });
+		showModal = async (event) => {
+			busid = event.target.value;
+			url = "delay/getStatus/" + busid;
 
-			 
-		      $("#exampleModal").modal("toggle");
-		       $.ajax({
-		        type: "GET",
-		        url: "/admin/bus/getallEmployees",
-		        data: {
-		          bid: busid,
-		        },
-		        dataType: "json",
-		        success: function (response) {
-		          console.log(response);
-		           $.each(response, function (i, item) {
+			await $.ajax({
+				headers: {
+					Accept: 'application/json', //imp
+				},
+				type: "GET",
+				url: url,
+				dataType: "text",
+				async: false,
+				success: function (response) {
+					console.log(response)
+					$("#value1").text("Status: " + response);
+				},
+				error: function (response) { }
+			});
 
-		        	   
-		            $('#stops-detail tbody').append('<tr><td>' + item.e.eid +
-		              '</td><td>' + item.e.name +
-		              '</td><td>' + item.stop.name +
-		              '</td></tr>');
-		          }); 
 
-		        },
-		        error: function (xhr, status, error) {
-		          console.log("False");
-		        }
-		      }); 
-		    }
+			$("#exampleModal").modal("toggle");
+			$.ajax({
+				type: "GET",
+				url: "/admin/bus/getallEmployees",
+				data: {
+					bid: busid,
+				},
+				dataType: "json",
+				success: function (response) {
+					console.log(response);
+					$.each(response, function (i, item) {
+
+
+						$('#stops-detail tbody').append('<tr><td>' + item.eid +
+							'</td><td>' + item.name +
+							'</td><td>' + item.stopname +
+							'</td></tr>');
+					});
+
+				},
+				error: function (xhr, status, error) {
+					console.log("False");
+				}
+			});
+		}
 	</script>
 
-<script>
-	getStatus = async (event) => {
-		busId = event.target.value;
-		var retVal= "Error while fetching data";
-		url = "delay/getStatus/" + busId ;
-            console.log(url);
+	<script>
+		getStatus = async (event) => {
+			busId = event.target.value;
+			var retVal = "Error while fetching data";
+			url = "delay/getStatus/" + busId;
+			console.log(url);
 
-            await $.ajax({
-                headers: {
-                    Accept: 'application/json', //imp
-                },
-                type: "GET",
-                url: url,   
-                dataType:"text",
-                async: false,
-                success: function (response) {
-                    console.log(response)
+			await $.ajax({
+				headers: {
+					Accept: 'application/json', //imp
+				},
+				type: "GET",
+				url: url,
+				dataType: "text",
+				async: false,
+				success: function (response) {
+					console.log(response)
 					retVal = response;
-                },
-                error: function (response) {}
-            });
-		return retVal;
+				},
+				error: function (response) { }
+			});
+			return retVal;
 
-		// window.location.href = "/admin/manageBus";
+			// window.location.href = "/admin/manageBus";
 
-	}
-</script>
-<script>
+		}
+	</script>
+	<script>
 		async function addBus() {
 			var routeId = $("#select-route-list option:selected").attr("rid");
 			var driverId = $("#select-driver-list option:selected").attr("did");
@@ -205,7 +205,7 @@
 					"routeId": routeId,
 					"driverId": driverId,
 					"totalSeats": totalSeats,
-					"startTime" : startTime
+					"startTime": startTime
 				},
 				dataType: "json",
 				contentType: "application/json", //imp
@@ -225,58 +225,56 @@
 
 
 
-
 	</script>
 
 </head>
 
 <body class="container-fluid">
-<div class="modal fade" id="mainArea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-				aria-hidden="true">
-				<div class="modal-dialog modal-dialog-centered" role="document">
-					<div class="modal-content">
-						<div class="modal-header text-center bg-primary">
-							<h4 class="modal-title w-100 font-weight-bold">ENTER BUS DETAILS</h4>
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-								<span aria-hidden="true">&times;</span>
-							</button>
-						</div>
-						<div class="modal-body" style="background: linear-gradient(180deg, rgba(0,123,255,1) 0%, rgba(153,227,255,0.8743872549019608) 28%, rgba(153,227,255,1) 73%, rgba(0,123,255,1) 100%);">
-							<div class="md-form">
-								<i class="fas fa-user prefix black-text"></i>
-								<label data-error="wrong" data-success="right" for="orangeForm-name">TOTAL SEATS
-								</label>
-								<input type="number" class="form-control" min=0 id="totalSeats" name="totalSeats"
-									placeholder="Total Seats in bus">
-								<br>
-
-								
-								<label data-error="wrong" data-success="right" for="orangeForm-name">START TIME
-								</label>
-								<input type="time" class="form-control" min=0 id="time" name="time"
-									placeholder="Start Time of the Bus">
-								<br>
-								<label for="select-driver-list" class="text-dark display-5">Driver</label>
-								<select id="select-driver-list" class="browser-default custom-select mb-4">
-								</select>
-
-								<label for="select-route-list" class="text-dark display-5">Route</label>
-								<select id="select-route-list" class="browser-default custom-select mb-4">
-								</select>
-
-							</div>
-						</div>
+	<div class="modal fade" id="mainArea" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header text-center bg-primary">
+					<h4 class="modal-title w-100 font-weight-bold text-light">ENTER BUS DETAILS</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="md-form">
+						<i class="fas fa-user prefix black-text"></i>
+						<label data-error="wrong" data-success="right" for="orangeForm-name">TOTAL SEATS
+						</label>
+						<input type="number" class="form-control" min=0 id="totalSeats" name="totalSeats"
+							placeholder="Total Seats in bus">
+						<br>
 
 
-						<div class="modal-footer bg-primary">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-							<button class="btn btn-success" onclick="addBus()">ADD</button>
+						<label data-error="wrong" data-success="right" for="orangeForm-name">START TIME
+						</label>
+						<input type="time" class="form-control" min=0 id="time" name="time"
+							placeholder="Start Time of the Bus">
+						<br>
+						<label for="select-driver-list" class="text-dark display-5">Driver</label>
+						<select id="select-driver-list" class="browser-default custom-select mb-4">
+						</select>
 
-						</div>
+						<label for="select-route-list" class="text-dark display-5">Route</label>
+						<select id="select-route-list" class="browser-default custom-select mb-4">
+						</select>
 
 					</div>
 				</div>
+
+
+				<div class="modal-footer bg-light">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button class="btn btn-success" onclick="addBus()">ADD</button>
+
+				</div>
+
 			</div>
+		</div>
+	</div>
 
 	<form th:action="@{/logout}" id="log" method="POST">
 
@@ -284,67 +282,57 @@
 
 	<!-- SIDEBAR -->
 	<nav>
-		<img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
+		<img src="/images/logo.png"
+			style="width: 100%; height: auto; max-width: 300px;" />
 
 		<div class="menu-items">
 			<ul class="nav-links">
-				<li>
-					<a href="/admin" id="home">
-						<i class="uil uil-estate"></i>
+				<li><a href="/admin" id="home"> <i class="uil uil-estate"></i>
 						<span class="link-name">Dashboard</span>
-					</a>
-				</li>
-				<li>
-					<a href="/admin/manageBus" id="manageBus">
-						<i class="uil uil-chart"></i>
-						<span class="link-name">Manage Buses</span>
-					</a>
-				</li>
-				<li>
-					<a href="/admin/manageDriver" id="manageDriver">
-						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage Drivers</span>
-					</a>
-				</li>
+				</a></li>
+				<li><a href="/admin/manageBus" id="manageBus"> <i
+						class="uil uil-chart"></i> <span class="link-name">Manage
+							Buses</span>
+				</a></li>
+				<li><a href="/admin/manageDriver" id="manageDriver"> <i
+						class="uil uil-thumbs-up"></i> <span class="link-name">Manage
+							Drivers</span>
+				</a></li>
 
-				<li>
-					<a href="/admin/manageEmployee" id="manageEmployee">
-						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage Employees</span>
-					</a>
-				</li>
+				<li><a href="/admin/manageEmployee" id="manageEmployee"> <i
+						class="uil uil-thumbs-up"></i> <span class="link-name">Manage
+							Employees</span>
+				</a></li>
+				<li><a href="/admin/attendance" id="attendance"> <i
+						class="uil uil-thumbs-up"></i> <span class="link-name">Attendance</span>
+				</a></li>
+				<li><a href="/admin/manageRoute" id="manageRoute"> <i
+						class="uil uil-thumbs-up"></i> <span class="link-name">Manage
+							Routes</span>
+				</a></li>
 
-				<li>
-					<a href="/admin/manageRoute" id="manageRoute">
-						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage Routes</span>
-					</a>
-				</li>
+				<li><a href="/admin/manageStop" id="manageStop"> <i
+						class="uil uil-thumbs-up"></i> <span class="link-name">Manage
+							Stops</span>
+				</a></li>
 
-				<li>
-					<a href="/admin/manageStop" id="manageStop">
-						<i class="uil uil-thumbs-up"></i>
-						<span class="link-name">Manage Stops</span>
-					</a>
-				</li>
 
 				<ul class="logout-mode">
-					<li><a href="#" onclick="document.getElementById('log').submit()">
-							<i class="uil uil-signout"></i>
+					<li><a href="#"
+						onclick="document.getElementById('log').submit()"> <i
+							class="uil uil-signout"></i> <span class="link-name">Logout</span>
+					</a></li>
 
-							<span class="link-name">Logout</span>
-						</a></li>
+					<!--   <li class="mode">
+                        <a href="#">
+                            <i class="uil uil-moon"></i>
+                            <span class="link-name">Dark Mode</span>
+                        </a>
 
-					<!-- <li class="mode">
-						<a href="#">
-							<i class="uil uil-moon"></i>
-							<span class="link-name">Dark Mode</span>
-						</a>
-
-						<div class="mode-toggle">
-							<span class="switch"></span>
-						</div>
-					</li> -->
+                        <div class="mode-toggle">
+                            <span class="switch"></span>
+                        </div>
+                    </li> -->
 				</ul>
 		</div>
 	</nav>
@@ -395,10 +383,10 @@
 									th:value="${bus.bid}">Delete</button>
 							</td>
 							<td class="col-sm-auto">
-                    	<!-- <a href="#" onclick="showModal(event)" th:value="${bus.bid}"><img src="/images/info.png" width="40" height="40"></a> -->
-                    	<button class="btn btn-dark" onclick="showModal(event)"
+								<!-- <a href="#" onclick="showModal(event)" th:value="${bus.bid}"><img src="/images/info.png" width="40" height="40"></a> -->
+								<button class="btn btn-dark" onclick="showModal(event)"
 									th:value="${bus.bid}">Info</button>
-                        </td>
+							</td>
 						</tr>
 					</tbody>
 				</table>
@@ -406,45 +394,39 @@
 
 
 
-    <!-- MOdal-->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header float-right">
-            <h5>Employee Details</h5>
-            <div class="text-right">
-              <i data-dismiss="modal" aria-label="Close" class="fa fa-close"></i>
-            </div>
-          </div>
-          <div class="modal-body">
-
-
-
-            <div>
-
-              <table class="table table-bordered" id="stops-detail">
-                <thead>
-                  <tr>
-                    <th scope="col">Employee Id</th>
-                    <th scope="col">Employee Name</th>
-                    <th scope="col">Stop Name</th>
-                    
-                  </tr>
-                </thead>
-                <tbody>
-                </tbody>
-              </table>
-<span id="value1"></span>
-            </div>
-
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" onclick="deletedata()" data-dismiss="modal">Close</button>
-          </div>
-        </div>
-      </div>
-    </div>
+			<!-- MOdal-->
+			<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+				aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header float-right bg-primary justify-content-center">
+							<h5 class="text-light">Employee Details</h5>
+							<div class="text-right">
+								<i data-dismiss="modal" aria-label="Close" class="fa fa-close"></i>
+							</div>
+						</div>
+						<div class="modal-body">
+							<div>
+								<table class="table table-bordered" id="stops-detail">
+									<thead class="thead-dark">
+										<tr>
+											<th scope="col">Employee Id</th>
+											<th scope="col">Employee Name</th>
+											<th scope="col">Stop Name</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+								<span id="value1"></span>
+							</div>
+						</div>
+						<div class="modal-footer bg-light">
+							<button type="button" class="btn btn-secondary" onclick="deletedata()" data-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
 
 
 		</div>

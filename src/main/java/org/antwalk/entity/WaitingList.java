@@ -33,6 +33,7 @@ public class WaitingList {
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "stop_id", referencedColumnName="sid")
+	@NotNull
 	private Stop stop;
 
 	public long getWid() {

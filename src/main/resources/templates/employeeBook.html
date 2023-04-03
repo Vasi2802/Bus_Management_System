@@ -411,12 +411,12 @@
         }
       });
     }
-    const bookBus = (busId) => {
+    const bookBus = async (busId) => {
       var stopId = $('#list-select-stop option:selected').attr("value");
       url = "/employee/bookABusByBusId/" + busId + "/" + stopId;
       console.log("the bus Id selected = ", busId);
       console.log("the eid Id selected = ", eid);
-      $.ajax({
+      await $.ajax({
         headers: {
           Accept: 'application/json', //imp
         },
@@ -431,6 +431,7 @@
             delay: 2000, // 10 seconds
           });
           $('#toast').toast('show');
+          window.location.href = "/employee";
         },
         error: function (response) {
           $('#toasta').toast({
@@ -708,7 +709,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header float-right">
-            <h5>Stop details</h5>
+            <h5>Route details</h5>
             <div class="text-right">
               <i data-dismiss="modal" aria-label="Close" class="fa fa-close"></i>
             </div>

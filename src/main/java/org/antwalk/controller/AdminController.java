@@ -1,5 +1,7 @@
 package org.antwalk.controller;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,13 +25,18 @@ import org.antwalk.entity.WaitingList;
 import org.antwalk.repository.AdminRepo;
 import org.antwalk.repository.BookingDetailsRepo;
 import org.antwalk.repository.BusRepo;
-import org.antwalk.repository.DriverRepo;
 import org.antwalk.repository.EmployeeRepo;
-import org.antwalk.repository.RouteRepo;
 import org.antwalk.repository.StopRepo;
 import org.antwalk.repository.UserRepo;
-import org.antwalk.repository.WaitingListRepo;
 import org.antwalk.service.AdminService;
+import org.antwalk.service.ArrivalTimeService;
+import org.antwalk.service.BookingDetailsService;
+import org.antwalk.service.BusService;
+import org.antwalk.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
@@ -49,6 +56,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.validation.BindingResult;
+import org.antwalk.user.CrmUser;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.antwalk.entity.ArrivalTimeTable;
+import org.antwalk.entity.Attendance;
+import org.springframework.ui.Model;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -506,6 +523,10 @@ public class AdminController {
 		return mv;
 	}
 
+	@GetMapping("/stop")
+	public List<Stop> manageSt(){
+		return stopRepo.findAll();
+	}
 
 	@GetMapping("/employees")
 	public List<Employee> manageEmploye(){
@@ -633,8 +654,8 @@ public class AdminController {
 	}
 
 	@GetMapping("/bus/insert")
-	public Bus insert(@RequestParam int totalSeats, @RequestParam long routeId, @RequestParam long driverId) {
-		return busService.addBus(totalSeats, routeId, driverId);
+	public Bus insert(@RequestParam int totalSeats, @RequestParam long routeId, @RequestParam long driverId, @RequestParam String startTime) {
+		return busService.addBus(totalSeats, routeId, driverId,LocalTime.parse(startTime));
 	}
 
 	@GetMapping("/route/getbyid/{id}")
@@ -668,18 +689,75 @@ public class AdminController {
 		busService.deleteBusById(id);
 		return manageBus();
 	}
+
+	@GetMapping("/analytics/attendance")
+	public ResponseEntity<List<Attendance>> getAttendanceAnalytics(@RequestParam String startDate, String endDate){
+		LocalDate startLocalDate = LocalDate.parse(startDate);
+		LocalDate endLocalDate = LocalDate.parse(endDate);
+		List<Attendance> attendanceList = adminService.getAttendanceAnalytics(startLocalDate, endLocalDate);
+
+		return ResponseEntity.status(HttpStatus.ACCEPTED).body(attendanceList);
+	}
+
+	@GetMapping("/attendance")
+	public ModelAndView attendancView(){
+		return new ModelAndView("attendance");
+	}
+
+	// GENERATE REPORT FOR ROUTE STATISTICS
+	@GetMapping("/analytics/download-attendance-report")
+	public ResponseEntity<Resource> downloadAttendanceReport() {
+		return adminService.generateAttendanceReport();
+	}
 	
 	@GetMapping("/bus/getallEmployees")
-	public List<BookingDetails> getAllEmp(@RequestParam Long bid){
+	public List<HashMap<String, String>> getAllEmp(@RequestParam Long bid){
 		
+		List<BookingDetails> bookingDetails =  busService.getAllpassinBus(bid);
+		List<HashMap<String, String>> bookingDetailsList = new ArrayList<>();
 		
-		return busService.getAllpassinBus(bid);
+		for(BookingDetails bd : bookingDetails) {
+			HashMap<String, String> entry = new HashMap<>();
+			entry.put("eid",""+bd.getE().getEid());
+			entry.put("name",""+bd.getE().getName());
+			entry.put("stopname",""+bd.getStop().getName());
+			
+			bookingDetailsList.add(entry);
+		}
+		
+		return bookingDetailsList;
+		
 	}
 	
 	@GetMapping("/delay/getStatus/{bid}")
 	public String getBusStatus(@PathVariable long bid) {
 		System.out.println(bid);
 		return delayService.getDelayStatus(bid);
+	}
+
+
+	@GetMapping("/delay/getLateBusDetails")
+	public List<HashMap<String,String>> getBusStatus1() {
+		List<HashMap<String,String>> retVal = new ArrayList<>();
+		LocalTime expectedTime, actualTime;
+		for(Delay d : delayService.getNullStopDelays()){
+			expectedTime = LocalTime.parse("17:30:00");
+			if(LocalTime.now().isBefore(LocalTime.NOON)){
+				expectedTime = d.getBus().getStartTime();
+			}
+			actualTime = d.getActualTime();
+			// actualTime = LocalTime.parse("20:00:00");
+			if(actualTime.isAfter(expectedTime)){
+				HashMap<String,String> val = new HashMap<>();
+				val.put("id",String.valueOf(d.getBus().getBid()));
+				val.put("name",d.getBus().getD().getDriverName());	
+				val.put("eTime",String.valueOf(expectedTime));
+				val.put("aTime",String.valueOf(actualTime));
+				retVal.add(val);
+			}
+		}
+		System.out.println(retVal); 
+		return retVal;
 	}
 
 }

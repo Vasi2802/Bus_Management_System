@@ -35,53 +35,148 @@
 
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js">
   </script>
+
+
   <script th:inline="javascript">
     /*<![CDATA[*/
     var cutoffTimes = /*[[${arrTime}]]*/[];
+    var did = /*[[${session.driver.getDriver().getDid()}]]*/ 'default';
+    var bus = /*[[${session.driver.getDriver().getBus().getBid()}]]*/ 'default';
+    var time;
+    var buttonText;
     /*]]>*/
 
     var passengersPerStop;
-    var nextStop = {
+    var nextPassengers = [];
+
+
+  </script>
+
+
+  <script>
+    var passengersPerStop;
+    var nextStopObject = {
       sid: -1,
       name: "Dunlop Bridge",
     };
     var nextPassengers = [];
 
-    // get passengers
-    $(document).ready( () => {
-       $.ajax({
+
+
+    // get all passengers
+    $(document).ready(() => {
+    	
+    	
+      url = "/driver/getbyid/" + did;
+      // console.log("document ready");
+      $.ajax({
+        type: "GET",
+        url: url,
+        success: function (response) {
+          // console.log(response);
+          employee = response;
+          bus = employee?.bus;
+          time = employee?.bus?.active;
+          getAllPassengers();
+          // $("#timedata").text(time?time:"Not Started");
+          // $("#togglebtn").text(time?"End Journey":"Start the Journey");
+          // console.log(time);
+          if (time == "NO") {
+            // $("#timedata").text(time?time:"Not Started");
+            // console.log("calling flush");
+            flushDelays();
+            buttonText = "Start Journey";
+            $("#togglebtn").text(buttonText);
+            $('#next-passenger-row').addClass("d-none");
+          }
+          else {
+            // console.log("calling next stop()");
+            nextStop();
+          }
+        },
+        error: function (response) {
+
+        }
+      });
+      // $("#bus-id-display").append(`${bus ? bus.bid : "NA"}`);
+      console.log("BusId:" +bus)
+      url = "/driver/current/" + bus;
+      // console.log("document ready");
+      $.ajax({
+        type: "GET",
+        url: url,
+        success: function (response) {
+        	var words = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
+        	var x=0;
+        	console.log(response);
+        	$.each(response, function(index, responsei) {
+        		  // Do something with each response object here
+        		  console.log(responsei);
+        		  var className = words[x];
+					
+      		    // Add the 'active' class to each element with the current class name
+      		    if(index<response.length-1){
+      		    	$('.' + className).addClass('active');
+      		    	
+      		    }
+      		  x+=1;	
+      		  
+      		 
+      		
+        		});
+        },
+        error: function (response) {
+        }
+      });
+      
+
+    });
+
+    // GET ALL PASSENGERS
+    getAllPassengers = async () => {
+      // console.log("in get all passengers");
+      await $.ajax({
         type: "GET",
         url: "/driver/get-all-passengers",
         data: null,
         dataType: "json",
         success: function (response) {
-          console.log(response);
-          passengersPerStop = response;
+          // console.log(response);
+          passengersPerStopList = response;
           const tableBody = $('#passenger-table-body');
           var html = "";
-          passengersPerStop.forEach((map) => {
-            stopName = Object.keys(map)[0];
-            html += `<tr>
-                      <td>${stopName}</td>
-                      <td>
-                        <table class="table table-striped justify-content-between">`;
-            html += `<thead>
-                        <th>EmployeeId</td>
-                        <th>Name</td>
-                        <th>ContactNo</td>
-                      </thead>`;
+          passengersPerStopList.forEach((map) => {
+            stop = map?.stop;
+            stopName = stop?.name;
+            employees = map?.employees;
 
-            employees = map[stopName];
-            employees.forEach(({ eid, name, contactNo }) => {
-              html += `<tr ">
-                        <td>${eid}</td>
-                        <td>${name}</td>
-                        <td>${contactNo}</td>
-                      </tr>`;
+            html += `<tr>
+                        <td>${stopName}</td>
+                        <td>
+                          <table class="table table-striped table-hover table-fixed">`;
+            html += `<thead>              
+                          <th class="col-3">EmployeeId</th>
+                          <th class="col-3">Name</th>
+                          <th class="col-3">ContactNo</th>
+                          <th class="col-3">Onboard</th>  
+                        </thead>`;
+
+            employees.forEach(({ eid, name, contactNo, boardingStatus }) => {
+              html += `<tr >
+                          <td>${eid}</td>
+                          <td>${name}</td>
+                          <td>${contactNo}</td>
+                          <td>
+                            <button class="btn btn-success" ${(boardingStatus==="true" || bus.active==="NO" )? "disabled=true" : ""}
+                            onclick="onBoardPassenger(${eid}, ${stop.sid})" id="list-boarding-button-${eid}" >
+                              ${bus.active==="NO"? "BUS NOT STARTED": (boardingStatus==="false"? "Onboard passenger" : "Onboarded")}
+                              </button>
+                          </td>      
+                        </tr>`;
             });
             html += `</td>
-                    </table>
-                  </tr>` ;
+                      </table>
+                    </tr>` ;
           });
           tableBody.html(html);
         },
@@ -89,149 +184,333 @@
           console.log("Error occured in get all passengers");
         }
       });
-    });
+    }
 
-    // function to get passengers of next stop
-    getNextPassengers = () => {
-      console.log("passengers = ");
-      console.log(passengersPerStop);
-      passengersPerStop.forEach((map)=>{
-        stopName = Object.keys(map)[0];
-        employees = Object.values(map)[0]
-        if(stopName==nextStop.name){
-          nextPassengers = employees;
+
+    //  ONBOARD PASSENGER FUNCTION
+    onBoardPassenger = (employeeId, stopId) => {
+      $.ajax({
+        type: "GET",
+        url: "/driver/onboard-passenger/" + employeeId + "/" + stopId,
+        data: null,
+        dataType: "text",
+        success: function (response) {
+          $(`#boarding-button-${employeeId}`).text("Onboarded");
+          $(`#boarding-button-${employeeId}`).prop('disabled', true);
+          $(`#list-boarding-button-${employeeId}`).text("Onboarded");
+          $(`#list-boarding-button-${employeeId}`).prop('disabled', true);
+          popUpToast("Onbaording Sucessful!!", `Employee with ID ${employeeId} onboarded`)
+        },
+        error: function () {
+          alert("Error occured in onboarding passenger");
+          console.log("Error occured in onboarding");
         }
       });
-      // nextPassengers = passengersPerStop?.nextStop?.stopName || [];
-      html = "";
-      nextPassengersTable = $('#next-passengers-table')
-      nextPassengers.forEach(({ eid, name, contactNo }) => {
-        html += `<tr ">
-                    <td>${eid}</td>
-                    <td>${name}</td>
-                    <td>${contactNo}</td>
-                  </tr>`;
+    }
+
+    popUpToast = (header, body) => {
+      // console.log("pop called");
+      $("#toast-header-text").text(header);
+      $("#toast-body-text").text(body);
+      $("#onboardingToast").toast("show");
+      // alert("popup done");
+    }
+
+    // function to get passengers of next stop
+    getNextPassengers = async (nextStopName) => {
+      await getAllPassengers();
+      nextPassengers = [];
+      passengersPerStopList.forEach((map) => {
+        stop = map?.stop;
+        employees = map?.employees;
+        stopName = stop?.name;
+        if (stopName === (nextStopName?.substring(8))) {
+          html = "";
+          nextPassengersTable = $('#next-passengers-table-body');
+          employees.forEach(({ eid, name, contactNo,boardingStatus }) => {
+            html += `<tr >  
+                      <td>${eid}</td>
+                      <td>${name}</td>
+                      <td>${contactNo}</td>
+                      <td>
+                          <button class="btn btn-success "  ${(boardingStatus==="true" || bus.active==="NO" )? "disabled=true" : ""}
+                          onclick="onBoardPassenger(${eid}, ${stop.sid})" id="boarding-button-${eid}">
+                            ${boardingStatus === "false" ? "Onboard passenger" : "Onboarded"}
+                            </button>
+                      </td>    
+                    </tr>`;
+          });
+          nextPassengersTable.html(html);
+          $('#next-passengers-table').removeAttr("hidden");
+          $('#next-passengers-heading').text("Passengers Waiting There are");
+          $('#next-passengers-heading').addClass("text-primary");
+        }
       });
-      nextPassengersTable.html(html)
     };
 
+    const nextStop = async () => {
+      url = "/driver/nextStop/" + bus.bid;
+      // console.log(url);
+
+      await $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "GET",
+        url: url,
+        dataType: "text",
+        async: false,
+        success: function (response) {
+          // console.log(response)
+          buttonText = response;
+          $("#togglebtn").text(buttonText);
+          if(response.startsWith("Reached")){
+            stopName = response.substring(8);
+            $('#nextStopName').text(stopName);
+          }
+          getNextPassengers(response);
+        },
+        error: function (response) { }
+      });
+      // location.reload();
+
+    }
+
+    const changeActiveStatus = async () => {
+      url = "/driver/changeActiveStatus/" + bus.bid;
+      console.log(url);
+      await $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "POST",
+        url: url,
+        dataType: "text",
+        async: false,
+        success: function (response) { },
+        error: function (response) { }
+      });
+    }
+
+
+    const addDelay = async () => {
+      url = "/driver/addDelay/" + bus.bid;
+      console.log(url);
+      await $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "POST",
+        url: url,
+        dataType: "text",
+        async: false,
+        success: function (response) { },
+        error: function (response) { }
+      });
+    }
+
+
+    const reachedStop = async () => {
+      if (buttonText == "Start Journey" || buttonText == "End Journey") {
+        changeActiveStatus();
+        await $.ajax({
+          headers: {
+            Accept: 'application/json', //imp
+          },
+          type: "GET",
+          url: "/driver/clear-onboarding/" + did,
+          dataType: "text",
+          async: false,
+          success: function (response) {
+            console.log("boarding status cleared")
+          },
+          error: function (response) {
+            alert("error occured in clearing boarding status");
+          }
+        });
+
+      }
+      // buttonText = "End Journey";
+      if (buttonText != "End Journey") {
+        addDelay();
+      }
+      // else{
+      //     flushDelays();
+      // }
+      location.reload();
+    }
+
+
+
+
+
+    const flushDelays = async () => {
+      url = "/driver/flushDelays/" + bus.bid;
+      console.log(url);
+
+      await $.ajax({
+        headers: {
+          Accept: 'application/json', //imp
+        },
+        type: "DELETE",
+        url: url,
+        dataType: "text",
+        async: false,
+        success: function (response) {
+        },
+        error: function (response) { }
+      });
+      // location.reload();
+
+    }
+
   </script>
-  <style>
-    #map {
-      margin: auto;
-      ;
-      width: 50%;
-      border: 2px solid black;
-      padding: 10px;
-      height: 500px;
+
+    <style>
+
+
+
+.main{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: pop;
+    flex-direction: column;
+}
+
+.progress{
+	overflow:visible;
+	
+}
+p{
+margin-bottom:0px;
+}
+.uub{
+    display: flex;
+    margin-top: 80px;
+}
+.uub li{
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: right;
+    width: 100px;
+    height:20px;
+    
+}
+.uub li .icon{
+    font-size: 35px;
+    color: #ff4732;
+    margin: 0 60px;
+}
+.uub li .text{
+    font-size: 14px;
+    font-weight: 600;
+    color: #ff4732;
+    height:50px;
+    text-align:center;
+}
+
+/* Progress Div Css  */
+
+.uub li .progress{
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(68, 68, 68, 0.781);
+    margin: 14px 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    position: relative;
+    cursor: pointer;
+}
+.progress::after{
+    content: " ";
+    position: absolute;
+    width: 125px;
+    height: 5px;
+    background-color: rgba(68, 68, 68, 0.781);
+    right: 30px;
+    width:71px;
+}
+.one::after{
+    width: 0;
+    height: 0;
+}
+.uub li .progress .uil{
+    display: none;
+}
+.uub li .progress p{
+    font-size: 13px;
+}
+
+/* Active Css  */
+
+.uub li .active{
+    background-color: green;
+    display: grid;
+    place-items: center;
+}
+li .active::after{
+    background-color: green;
+}
+.uub li .active p{
+    display: none;
+}
+.uub li .active .uil{
+    font-size: 20px;
+    display: flex;
+}
+@media (max-width: 980px) {
+    .uub{
+        flex-direction: column;
     }
-
-    .hellotrack {
-      height: 2px !important;
-      background-color: #488978;
-      opacity: 1;
+    .uub li{
+        flex-direction: row;
+        height:60px;
     }
-
-    .dot {
-      height: 10px;
-      width: 10px;
-      margin-left: 3px;
-      margin-right: 3px;
-      margin-top: 0px;
-      background-color: #488978;
-      border-radius: 50%;
-      display: inline-block
+    .progress{
+    	overflow:visible;
     }
-
-    .big-dot {
-      height: 25px;
-      width: 25px;
-      margin-left: 0px;
-      margin-right: 0px;
-      margin-top: 0px;
-      background-color: #488978;
-      border-radius: 100%;
-      display: inline-block;
+    .uub li .progress{
+        margin: 0 30px;
     }
-
-    .big-dot i {
-      font-size: 12px;
+    .progress::after{
+        width: 5px;
+        height: 55px;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: -1;
     }
-
-    .card-stepper {
-      z-index: 0
+    .one::after{
+        height: 0;
     }
-
-    #clock {
-      font-size: 30px;
-      color: lightgreen;
+    .uub li .icon{
+        margin: 15px 0;
     }
+}
 
-    @media (max-width: 767px) {
-      span {
-        font-size: 10px;
-      }
-
-      #clock {
-        font-size: 25px;
-      }
-
-      #map {
-        width: 100%;
-        height: 300px;
-      }
+@media (max-width:600px) {
+    .head .head_1{
+        font-size: 24px;
+    
     }
-
-    @media (max-width: 427px) {
-      span {
-        font-size: 5px;
-      }
+    .head .head_2{
+        font-size: 16px;
     }
-
-    @font-face {
-      font-family: 'Digital-7';
-      src: url('fonts/digital-7.ttf') format('woff2'), b, g, mdrx url('digital-7.woff') format('woff');
-    }
-
-    .clockdate-wrapper {
-      background: #141E30;
-      /* fallback for old browsers */
-      background: -webkit-linear-gradient(to right, #243B55, #141E30);
-      /* Chrome 10-25, Safari 5.1-6 */
-      background: linear-gradient(to right, #243B55, #141E30);
-      /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-      padding: 3px;
-      padding-left: 50px;
-      padding-right: 50px;
-      width: 100%;
-      text-align: center;
-      border-radius: 5px;
-      margin: 0 auto;
-
-    }
-
-    #clock {
-      font-family: Digital-7, 'sans-serif';
-      text-shadow: 0px 0px 1px #fff;
-      color: #fff;
-    }
-
-    #clock span {
-      color: rgba(255, 255, 255, 0.8);
-      text-shadow: 0px 0px 1px #333;
-      font-size: 15px;
-      position: relative;
-    }
-  </style>
-
-
+}
+    </style>
   <script>
 
 
 
     //getroutebylistofstops
     var bus;
-    setInterval(() => {
+    /* setInterval(() => {
       // Get the current time
       const now = new Date();
 
@@ -244,51 +523,7 @@
       $('#clock').text(time);
 
 
-      var ids = ["#pipe1", "#pipe2", "#pipe3", "#pipe4", "#pipe5", "#pipe6", "#pipe7", "#pipe8", "#pipe9", "#pipe10", "#pipe11", "#pipefinal"]; // list of IDs
-      var threshold = new Date(); // create a new Date object for the cutoff time
-      threshold.setHours(12);
-
-      var currentTime = new Date(); // get the current time
-      for (var i = 0; i < cutoffTimes.length; i++) {
-        var cutoffTime = new Date(); // create a new Date object for the cutoff time
-
-        if (currentTime.getTime() <= threshold.getTime()) {
-          var cutoffTimeParts = cutoffTimes[i].morningArrivalTime
-            .split(':');
-          var hours1 = parseInt(cutoffTimeParts[0]);
-          var minutes1 = parseInt(cutoffTimeParts[1]);
-          cutoffTime.setHours(hours1);
-          cutoffTime.setMinutes(minutes1);
-          cutoffTime.setSeconds(0);
-          cutoffTime.setMilliseconds(0);
-          if (currentTime.getTime() >= cutoffTime.getTime()) {
-            // console.log(currentTime.getTime() + " " + cutoffTime.getTime());
-            $(ids[i]).addClass('hellotrack');  // add 'after-cutoff' class if current time is after the cutoff time
-          } else if (currentTime.getTime() > threshold.getTime()) {
-            console.log("Remove past time");
-            $(ids[i]).removeClass('hellotrack'); // add 'before-cutoff' class if current time is before the cutoff time
-          }
-        } else {
-          var cutoffTimeParts = cutoffTimes[i].eveningArrivalTime
-            .split(':');
-          var hours1 = parseInt(cutoffTimeParts[0]);
-          var minutes1 = parseInt(cutoffTimeParts[1]);
-          cutoffTime.setHours(hours1 - 12);
-          cutoffTime.setMinutes(minutes1);
-          cutoffTime.setSeconds(0);
-          cutoffTime.setMilliseconds(0);
-          cutoffTime.setTime(cutoffTime.getTime() + 12 * 60 * 60 * 1000); // add 12 hours for PM time
-          if (currentTime.getTime() >= cutoffTime.getTime()) {
-            // console.log("Way past time 2 " + ids[i]);
-            $(ids[i]).addClass('track-line'); // add 'after-cutoff' class if current time is after the cutoff time
-          }
-          else if (currentTime.getTime() > threshold.getTime()) {
-            // console.log("Remove past time");
-            $(ids[i]).removeClass('track-line'); // add 'before-cutoff' class if current time is before the cutoff time
-          }
-        }
-      }
-    }, 1000);
+    }, 1000); */
 
   </script>
 
@@ -296,49 +531,50 @@
 </head>
 
 <body>
-  <form th:action="@{/logout}" id="log" method="POST">
+   <form th:action="@{/logout}" id="log" method="POST">
+						
+</form>
+    <nav>
+        <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;"/>
 
-  </form>
-  <nav>
-    <img src="/images/logo.png" style="width:100%; height:auto; max-width:300px;" />
+        <div class="menu-items ">
+            <ul class="nav-links">
+                <li><a href="/driver" id="home">
+                    <i class="uil uil-estate"></i>
+                    <span class="link-name">Dashboard</span>
+                </a></li>
+                <li><a href="/driver/routedetails">
+                    <i class="uil uil-chart"></i>
+                    <span class="link-name">Route Details</span>
+                </a></li>
 
-    <div class="menu-items ">
-      <ul class="nav-links">
-        <li><a href="/driver" id="home">
-            <i class="uil uil-estate"></i>
-            <span class="link-name">Dashboard</span>
-          </a></li>
-        <li><a href="/driver/routedetails">
-            <i class="uil uil-chart"></i>
-            <span class="link-name">Route Details</span>
-          </a></li>
-
-        <!--                <li><a href="#">
+ <!--                <li><a href="#">
                     <i class="uil uil-share"></i>
                     <span class="link-name">Share</span>
                 </a></li> -->
-      </ul>
+            </ul>
+            
+            <ul class="logout-mode">
+                <li><a href="#" onclick="document.getElementById('log').submit()">
+                    <i class="uil uil-signout"></i>
+    
+                     <span class="link-name">Logout</span> 
+                </a></li>
 
-      <ul class="logout-mode">
-        <li><a href="#" onclick="document.getElementById('log').submit()">
-            <i class="uil uil-signout"></i>
+              <!--   <li class="mode">
+                    <a href="#">
+                        <i class="uil uil-moon"></i>
+                    <span class="link-name">Dark Mode</span>
+                </a>
 
-            <span class="link-name">Logout</span>
-          </a></li>
-
-        <li class="mode">
-          <a href="#">
-            <i class="uil uil-moon"></i>
-            <span class="link-name">Dark Mode</span>
-          </a>
-
-          <div class="mode-toggle">
-            <span class="switch"></span>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </nav>
+                <div class="mode-toggle">
+                  <span class="switch"></span>
+                </div>
+            </li> -->
+            </ul>
+        </div>
+    </nav>
+  
 
 
 
@@ -346,267 +582,144 @@
   <!-- Employee Dashboard-->
   <div class="dashboard" id="homeContent">
     <div class="top">
-
       <i class="uil uil-bars sidebar-toggle"></i>
-
-
-
-
-
-      <img src="/images/profile.jpg" alt="">
-
     </div>
 
     <div style="margin-top:5%;">
       <span style="color:grey;" class="logout-mode">>route</span>
       <hr>
-
-
     </div>
     <Br />
 
-    <div>
-      <!-- <div class="progress-bar">
-  <ul id="progress-bar-points">
-    <li id="point-1" class="active"></li>
-    <li id="point-2"></li>
-    <li id="point-3"></li>
-    <li id="point-4"></li>
-    <li id="point-5"></li>
-  </ul>
-  <div class="lines"></div>
+    <div class="main">
+  <ul class="uub">
+  <li th:each="i, index : ${allStops}" >
+  <div>
+    <p class="text" th:text="${i.name}"></p>
+    </div>
+    <div th:switch="${index.index}">
+      <div th:case="0" class="progress one"><p th:text="${index.index+1}"></p></div>
+      <div th:case="1" class="progress two"><p th:text="${index.index+1}"></p></div>
+      <div th:case="2" class="progress three"><p th:text="${index.index+1}"></p></div>
+      <div th:case="3" class="progress four"><p th:text="${index.index+1}"></p></div>
+      <div th:case="4" class="progress five"><p th:text="${index.index+1}"></p></div>
+      <div th:case="5" class="progress six"><p th:text="${index.index+1}"></p></div>
+      <div th:case="6" class="progress seven"><p th:text="${index.index+1}"></p></div>
+      <div th:case="7" class="progress eight"><p th:text="${index.index+1}"></p></div>
+      <div th:case="8" class="progress nine"><p th:text="${index.index+1}"></p></div>
+      <div th:case="9" class="progress ten"><p th:text="${index.index+1}"></p></div>
+      <div th:case="10" class="progress eleven"><p th:text="${index.index+1}"></p></div>
+      <div th:case="11" class="progress twelve"><p th:text="${index.index+1}"></p></div>
+      <div th:case="12" class="progress thirteen"><p th:text="${index.index+1}"></p></div>
+      <div th:case="13" class="progress fourteen"><p th:text="${index.index+1}"></p></div>
+      <div th:case="14" class="progress fifthteen"><p th:text="${index.index+1}"></p></div>
+      <div th:case="15" class="progress sixteen"><p th:text="${index.index+1}"></p></div>
+      <div th:case="16" class="progress seventeen"><p th:text="${index.index+1}"></p></div>
+      <!-- add more cases as needed -->
+    </div>
+    
+    <p class="text" th:text="${i.time}"></p>
+  </li>
+</ul>
 </div>
-            </div> -->
-      <div class="container py-5 h-100">
-        <div class="row d-flex justify-content-center align-items-center h-100">
-          <div class="col">
-            <div class="card card-stepper" style="border-radius: 10px;">
-              <div class="card-body p-4">
-
-                <div class="d-flex justify-content-between align-items-center ">
-                  <div class="d-flex flex-column">
-                    <span class="lead fw-normal">Bus Route</span>
-
-                  </div>
-
-                </div>
-                <hr class="my-4">
+               <br/><Br/><Br/><br/><Br><Br/>       
 
 
-                <div
-                  class="d-flex flex-row justify-content-between align-items-center overflow-auto align-content-center">
-
-
-
-                  <!-- Stop 2 -->
-
-
-                  <span th:if="${#lists.size(allStops) > 1}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 1}" id="pipe2" class="flex-fill">
-
-                  <!-- Stop 3 -->
-                  <span th:if="${#lists.size(allStops) > 2}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 2}" id="pipe3" class="flex-fill ">
-
-                  <!-- Stop 4 -->
-                  <span th:if="${#lists.size(allStops) > 3}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 3}" id="pipe4" class="flex-fill ">
-
-
-                  <!-- Extra -->
-                  <span th:if="${#lists.size(allStops) > 4}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 4}" id="pipe5" class="flex-fill ">
-
-                  <!-- Extra -->
-                  <span th:if="${#lists.size(allStops) > 5}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 5}" id="pipe6" class="flex-fill ">
-
-                  <!-- Extra -->
-                  <span th:if="${#lists.size(allStops) > 6}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 6}" id="pipe7" class="flex-fill ">
-
-                  <!-- Extra -->
-                  <span th:if="${#lists.size(allStops) > 7}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 7}" id="pipe8" class="flex-fill ">
-
-                  <span th:if="${#lists.size(allStops) > 7}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 7}" id="pipe8" class="flex-fill ">
-
-
-                  <span th:if="${#lists.size(allStops) > 8}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 8}" id="pipe9" class="flex-fill ">
-
-                  <span th:if="${#lists.size(allStops) > 9}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) >9}" id="pipe10" class="flex-fill ">
-
-                  <span th:if="${#lists.size(allStops) > 10}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 10}" id="pipe11" class="flex-fill ">
-
-
-                  <span th:if="${#lists.size(allStops) > 11}" class="dot"></span>
-                  <hr th:if="${#lists.size(allStops) > 11}" id="pipe11" class="flex-fill ">
-
-                  <!-- Final -->
-                  <span id="pipefinal" class="d-flex justify-content-center align-items-center big-dot dot">
-
-
-                    <i class="fa fa-check text-white"></i></span>
-
-                </div>
-
-
-
-                <div class="d-flex flex-row justify-content-between align-items-center">
-
-                  <!-- Start -->
-                  <!--   <div th:if="${start}" class="d-flex flex-column align-items-start">
-              <span th:text="${start}"></span>
-              </div> -->
-
-                  <!-- Stop 1 -->
-                  <div th:if="${#lists.size(allStops) > 0}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[0].name}"></span><span th:text="${arrTime[0].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-                  <!-- Stop 2 -->
-                  <div th:if="${#lists.size(allStops) > 1}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[1].name}"></span><span th:text="${arrTime[1].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-                  <!-- Stop 3 -->
-                  <div th:if="${#lists.size(allStops) > 2}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[2].name}"></span><span th:text="${arrTime[2].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-                  <!-- Stop 4 -->
-                  <div th:if="${#lists.size(allStops) > 3}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[3].name}"></span><span th:text="${arrTime[3].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-                  <!-- Extra -->
-                  <div th:if="${#lists.size(allStops) > 4}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[4].name}"></span><span th:text="${arrTime[4].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-                  <!-- Extra -->
-                  <div th:if="${#lists.size(allStops) > 5}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[5].name}"></span><span th:text="${arrTime[5].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-                  <!-- Extra -->
-                  <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[6].name}"></span><span th:text="${arrTime[6].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-                  <div th:if="${#lists.size(allStops) > 6}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[6].name}"></span><span th:text="${arrTime[6].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-
-                  <div th:if="${#lists.size(allStops) > 7}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[7].name}"></span><span th:text="${arrTime[7].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-                  <div th:if="${#lists.size(allStops) > 8}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[8].name}"></span><span th:text="${arrTime[8].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-
-                  <div th:if="${#lists.size(allStops) > 9}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[9].name}"></span><span th:text="${arrTime[9].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-
-                  <div th:if="${#lists.size(allStops) > 10}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[10].name}"></span><span th:text="${arrTime[10].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-
-                  <div th:if="${#lists.size(allStops) > 11}" class="d-flex flex-column align-items-start">
-                    <span th:text="${allStops[11].name}"></span><span th:text="${arrTime[11].getEveningArrivalTime()}">
-                    </span>
-                  </div>
-                  <!-- Final -->
-                  <!--   <div class="d-flex flex-column align-items-end">
-               <span th:text="${end}"></span>
-              </div>
-               -->
-
-                </div>
-
-              </div>
-            </div>
-          </div>
-
+        <div class="row m-3">
+          <button onclick="reachedStop()" id="togglebtn" class="btn btn-success"></button>
         </div>
 
         <!-- PASSENGERS OF NEXT STOP -->
 
-        <div class="row  d-flex justify-content-center align-items-center h-100">
-          <div class="card container mt-5 mx-2 " style="border-radius: 20px;">
-            <div class="card-header mt-2" style="background-color: white;">
-              <span class="small">Next Stop</span>
-              <h3 id="nextStopName"></h3>
+        <div class="row  justify-content-center align-items-center h-100" id="next-passenger-row">
+          <div class="card container mt-5 mx-3 " style="border-radius: 20px;">
+            <div class="card-header mt-2 align-items-center d-flex" style="background-color: white;">
+              <span class="text-secondary ">Next Stop : </span>
+              <span id="nextStopName" class="h2 text-primary"></span>
             </div>
             <div class="card-header mt-2" style="background-color: white;">
-              <h4>Passengers Waiting in this Stop</h4>
-              <button onclick="getNextPassengers()">Get Passengers in next Stop</button>
+              <h4 id="next-passengers-heading">No Passenger is Waiting There</h4>
             </div>
             <div class="card-body">
-              <table class="table table-responsive-lg rounded-lg" style="border: 1px solid #141E30;">
+              <table class="table table-responsive-lg rounded-lg" id="next-passengers-table" hidden style="border: 1px solid #141E30;">
                 <thead class="thead-dark">
                   <tr>
-                    <th>Passenger ID</th>
-                    <th>Passenger Name</th>
-                    <th>Contact No</th>
+                    <th class="col-3">Passenger ID</th>
+                    <th class="col-3">Passenger Name</th>
+                    <th class="col-3">Contact No</th>
+                    <th class="col-3">Onboard Passenger</th>
                   </tr>
                 </thead>
-                <tbody id="next-passengers-table">
+                <tbody id="next-passengers-table-body">
                 </tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- ALL PASSENGERS -->
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary mx-3 mt-5 " data-toggle="modal" data-target="#allPassengersModal">
+          View All Passengers
+        </button>
 
-        <div class="row  d-flex justify-content-center align-items-center h-100">
-          <div class="card container mt-5 mx-2 " style="border-radius: 20px;">
-            <div class="card-header mt-2" style="background-color: white;">
-              <h3>Passengers Of Your Bus</h3>
-              <span class="small">shows stops with passengers only</span>
-            </div>
-            <div class="card-body ">
-              <table class="table table-responsive-lg rounded-lg" style="border: 1px solid #141E30;">
-                <thead class="thead-dark">
-                  <tr>
-                    <th>Stops</td>
-                    <th>Passengers in Each Stop</td>
-                  </tr>
-                </thead>
-                <tbody id="passenger-table-body">
+        <!-- Modal -->
+        <div class="modal fade " id="allPassengersModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content ">
 
+              <!-- MODAL HEADER -->
+              <div class="modal-header flex-column">
+                <h5 class="modal-title" id="exampleModalLabel">All Passengers of Your Bus</h5>
+                <span class="small">shows stops with passengers only</span>
+              </div>
 
-                </tbody>
-              </table>
+              <!-- MOFDAL BODY -->
+              <div class="modal-body ">
+                <table class="table" style="border: 1px solid #141E30;">
+                  <thead class="thead-dark">
+                    <tr>
+                      <th>Stops</td>
+                      <th>Passengers in Each Stop</td>
+                    </tr>
+                  </thead>
+                  <tbody id="passenger-table-body">
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- MODAL FOOTER -->
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+
             </div>
           </div>
+          <!-- ALL PASSENGERS MODAL ENDS -->
+
+          <!-- TOAST AREA-->
+          <div style="position: absolute; top: 0; right: 0;">
+
+            <!-- TOAST -->
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" id="onboardingToast"
+              data-delay="3000">
+              <div class="toast-header bg-success">
+                <strong class="mr-auto" id="toast-header-text"></strong>
+                <!-- <small class="text-muted">just now</small> -->
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="toast-body" id="toast-body-text">
+              </div>
+            </div>
+          </div>
+
         </div>
+
       </div>
 
-    </div>
 
-  </div>
   <!-- Book Bus -->
 
 

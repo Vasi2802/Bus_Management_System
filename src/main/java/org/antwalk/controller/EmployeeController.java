@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.antwalk.entity.ArrivalTimeTable;
 import org.antwalk.entity.BookingDetails;
 import org.antwalk.entity.Bus;
+import org.antwalk.entity.Delay;
 import org.antwalk.entity.Driver;
 import org.antwalk.entity.Employee;
 import org.antwalk.entity.History;
@@ -31,6 +32,7 @@ import org.antwalk.repository.WaitingListRepo;
 import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
+import org.antwalk.service.DelayService;
 import org.antwalk.service.EmployeeService;
 import org.antwalk.service.HistoryService;
 import org.antwalk.service.RouteService;
@@ -93,6 +95,9 @@ public class EmployeeController {
 
 	@Autowired
 	ArrivalTimeService arrivalTimeService;
+
+	@Autowired
+	DelayService delayServices;
 
 
 	@PostMapping("/insert")
@@ -182,23 +187,26 @@ public class EmployeeController {
 		LocalTime currentTime = LocalTime.now(); // get the current time
 		LocalTime noon = LocalTime.of(12, 0); // set noon time to 12:00 PM
 
+
+		List<HashMap<String,String>> stops = getAdjustedStopTimes(employee.getB().getBid());
+
 		if (currentTime.isBefore(noon)) {
-			List<Stop> stops = timeserv.getStopsByRouteId(rid, "morning");
+			// List<Stop> stops = timeserv.getStopsByRouteId(rid, "morning");
 			List<ArrivalTimeTable> aAndS = timeserv.getAllStopsWithTimeByRouteId(rid, "morning");
 
-			modelAndView.addObject("arrTime", aAndS);
+			// modelAndView.addObject("arrTime", aAndS);
 
 			modelAndView.addObject("end", "NRIFINTECH");
-			modelAndView.addObject("allStops", stops);
+			// modelAndView.addObject("allStops", stops);
 		} else {
 
-			List<Stop> stops = timeserv.getStopsByRouteId(rid, "evening");
+			// List<Stop> stops = timeserv.getStopsByRouteId(rid, "evening");
 			List<ArrivalTimeTable> aAndS = timeserv.getAllStopsWithTimeByRouteId(rid, "evening");
 
-			modelAndView.addObject("arrTime", aAndS);
+			// modelAndView.addObject("arrTime", aAndS);
 			modelAndView.addObject("start", "NRIFINTECH");
-			modelAndView.addObject("allStops", stops);
 		}
+		modelAndView.addObject("allStops", stops);
 
 		return modelAndView;
 	}
@@ -394,7 +402,7 @@ public class EmployeeController {
 	 */
 	@PostMapping("/removebooking")
 
-	public String removeBooking(@RequestBody Long employeeId) {
+	public ResponseEntity<String> removeBooking(@RequestBody Long employeeId) {
 		String message = "";
 		Employee employee = employeeService.getEmployeeById(employeeId);
 
@@ -482,7 +490,7 @@ public class EmployeeController {
 			// -------------------------------------------
 		}
 
-		return message;
+		return ResponseEntity.ok(message);
 
 	}
 
@@ -546,4 +554,24 @@ public class EmployeeController {
 		return employeeBookingDetails;
 	}
 
+	// @GetMapping("/trackbus/getAdjustedTime/{bid}")
+	public List<HashMap<String,String>> getAdjustedStopTimes( long bid) {
+		// System.out.println("called this function");
+		int slotIdx = 1;
+		if(LocalTime.now().isBefore(LocalTime.parse("12:00:00"))){slotIdx = 0;}
+		System.out.println("in controller from service : " +  delayServices.getAdjustedTimes(bid,slotIdx));
+		return delayServices.getAdjustedTimes(bid,slotIdx);
+	}
+	
+	@GetMapping("/current/{bid}")
+	public List<Delay> currentStop(@PathVariable long bid) {
+		int slotIdx = 1;
+		if (LocalTime.now().compareTo(LocalTime.parse("12:00:00")) < 0) {
+			slotIdx = 0;
+		}
+		System.out.println("time = " + LocalTime.now() + " is after 12'o clock : "
+				+ LocalTime.now().compareTo(LocalTime.parse("12:00:00")) + " slotIdx = " + slotIdx);
+		List<Delay> d = delayServices.getLatestList(bid);
+		return d;
+	}
 }

@@ -11,6 +11,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.http.ResponseEntity;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
@@ -115,8 +117,9 @@ public class User {
 		return password;
 	}
 
-	public void setPassword(String password) {
+	public ResponseEntity<String> setPassword(String password) {
 		this.password = password;
+		return ResponseEntity.ok("Updated Successfully");
 	}
 
 	public Employee getEmployee() {
@@ -166,8 +169,20 @@ public class User {
 	}
 
 
-	public User(Long id, @NotNull String userName, @NotNull String password, @NotNull String role, Employee employee) {
 
+//	public User(Long id, @NotNull String userName, @NotNull String password, @NotNull String role, Employee employee) {
+
+
+
+	// public User(Long id, String userName, String password, String role,Employee emp) {
+	// 	super();
+	// 	this.id = id;
+	// 	this.userName = userName;
+	// 	this.password = password;
+	// 	this.role = role;
+	// 	this.employee = emp;
+	// }
+	public User(Long id, @NotNull String userName, @NotNull String password, @NotNull String role, Employee employee) {
 
 		super();
 		this.id = id;
@@ -175,16 +190,9 @@ public class User {
 		this.password = password;
 		this.role = role;
 
+
 		this.employee = employee;
 	}
-
-	
-
-
-	
-	
-	
-
 	
 
 }
