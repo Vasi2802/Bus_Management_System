@@ -94,8 +94,10 @@ public class EmployeeService {
 					employee.getName());
 			employee.setB(null);
 			empRepo.save(employee);
-			bus.setAvailableSeats(bus.getAvailableSeats() + 1);
+			bus.setAvailableSeats(bus.getAvailableSeats() + 1);;
 			busRepo.save(bus);
+			BookingDetails bookingDetails = bookingDetailsRepo.findByE(employee);
+			bookingDetailsRepo.delete(bookingDetails);
 
 			// ---------- Add entry to history table
 			Route route = bus.getR();
@@ -174,7 +176,7 @@ public class EmployeeService {
 		return message;
 	}
 
-	public String bookABusByBusId(long eid, long busId, long stopId) {
+	public synchronized String bookABusByBusId(long eid, long busId, long stopId) {
 
 		System.out.println("Booking Bus For ==============");
 		System.out.println("bus id =" + busId + "  empId = " + eid + "=============");
@@ -246,7 +248,6 @@ public class EmployeeService {
 		// -------------------------------------------
 
 		return String.format("Hi %s!\nYou have successfully booked Bus with id=%d", employee.getName(), bus.getBid());
-
 	}
 
 	@Transactional

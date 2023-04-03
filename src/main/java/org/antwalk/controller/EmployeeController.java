@@ -98,6 +98,9 @@ public class EmployeeController {
 
 	@Autowired
 	DelayService delayServices;
+	
+	@Autowired
+	private BookingDetailsRepo bookingDetailsRepo;
 
 
 	@PostMapping("/insert")
@@ -312,7 +315,6 @@ public class EmployeeController {
 			return null;
 		}
 	}
-
 	@PostMapping(value = "/bookABusByBusId/{busId}/{stopId}")
 	public ResponseEntity<String> bookABusByBusId(@RequestBody Long eid, @PathVariable long busId,
 			@PathVariable long stopId,
@@ -342,7 +344,6 @@ public class EmployeeController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You can only book 1 seat");
 
 		}
-
 		// employee tries to book a filled bus
 		if (bus.getAvailableSeats() <= 0) {
 			WaitingList waitingList = new WaitingList(0, employee, bus, stop);
@@ -386,7 +387,6 @@ public class EmployeeController {
 				routeDescription,
 				"Booking Add"));
 		// -------------------------------------------
-
 		return ResponseEntity.ok("Successfully Booked");
 
 	}
@@ -414,6 +414,10 @@ public class EmployeeController {
 			employeeService.insertEmployee(employee);
 			bus.setAvailableSeats(bus.getAvailableSeats() + 1);
 			busService.insertBus(bus);
+			
+			// booking details remove
+			BookingDetails bookingDetails = bookingDetailsRepo.findByE(employee);
+			bookingDetailsRepo.delete(bookingDetails);
 
 			// ---------- Add entry to history table
 			Route route = bus.getR();

@@ -114,7 +114,6 @@
 
 
         });
-
         const removeBooking = () => {
             console.log("the eid Id selected = ", eid);
             $.ajax({
@@ -124,17 +123,17 @@
                 type: "POST",
                 url: "/employee/removebooking",
                 data: JSON.stringify(eid), // imp
-                dataType: "json",
+                dataType: "text",
                 contentType: "application/json", //imp
                 async: false,
                 success: function (response) {
-
+						alert("Removed Booking")
                 },
                 error: function (response) {
-
+                	//alert("Error")
                 }
             });
-            window.location.href = "/employee";
+            //window.location.href = "/employee";
         }
     </script>
 
