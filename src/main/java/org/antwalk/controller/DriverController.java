@@ -157,6 +157,7 @@ public class DriverController {
 		
 	
 		modelAndView.addObject("allStops", stops);
+		System.out.println("STOPS: "+stops.size());
 		return modelAndView;
 	}
 

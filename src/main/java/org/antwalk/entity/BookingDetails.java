@@ -19,6 +19,12 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Table(name="booking_details")
 public class BookingDetails implements Comparable<BookingDetails>{
 	
+	@Override
+	public String toString() {
+		return "BookingDetails [bookingId=" + bookingId + ", e=" + e + ", b=" + b + ", bookingForMonth="
+				+ bookingForMonth + ", isBoarded=" + isBoarded + ", stop=" + stop + "]";
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="booking_id")

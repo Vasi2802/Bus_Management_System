@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 
 @Entity
@@ -47,6 +48,8 @@ public class Bus {
 	@JoinColumn(name = "bus_route", referencedColumnName = "rid")
 	@JsonBackReference
 	private Route r;
+
+
 
 	@Column(name="active")
 	private String active;

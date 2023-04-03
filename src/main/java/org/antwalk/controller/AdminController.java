@@ -711,10 +711,22 @@ public class AdminController {
 	}
 	
 	@GetMapping("/bus/getallEmployees")
-	public List<BookingDetails> getAllEmp(@RequestParam Long bid){
+	public List<HashMap<String, String>> getAllEmp(@RequestParam Long bid){
 		
+		List<BookingDetails> bookingDetails =  busService.getAllpassinBus(bid);
+		List<HashMap<String, String>> bookingDetailsList = new ArrayList<>();
 		
-		return busService.getAllpassinBus(bid);
+		for(BookingDetails bd : bookingDetails) {
+			HashMap<String, String> entry = new HashMap<>();
+			entry.put("eid",""+bd.getE().getEid());
+			entry.put("name",""+bd.getE().getName());
+			entry.put("stopname",""+bd.getStop().getName());
+			
+			bookingDetailsList.add(entry);
+		}
+		
+		return bookingDetailsList;
+		
 	}
 	
 	@GetMapping("/delay/getStatus/{bid}")
