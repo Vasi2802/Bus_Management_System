@@ -36,4 +36,41 @@ public class HistoryService {
         return historyList;
     }
 
+    public List<List<Object>> getBookingsPerMonthForCurrentYear() {
+		LocalDate januaryFirst = LocalDate.now().withDayOfYear(1);
+        List<History> historyList = historyRepo.findAllByReceiptDateGreaterThanEqualOrderByReceiptDate(januaryFirst);
+		LocalDate curMonth;
+		List<List<Object>> monthFreq = new ArrayList<>();
+		int j = 0;
+		
+		for (int i = 1; i < 13; i++) {
+			curMonth = LocalDate.now().withMonth(i);
+			String monthName = curMonth.getMonth().name().substring(0, 3);
+			int freq = 0;
+			while(j<historyList.size()){
+				History history = historyList.get(j);
+                String transactionType = history.getTransactionType();
+				if (history.getReceiptDate().getMonthValue()<=i) {
+                    if(transactionType.equalsIgnoreCase("Booking remove") || transactionType.equalsIgnoreCase("Waitlist Remove")){
+                        freq -= 1;
+                    }
+                    else{
+                        freq += 1;
+
+                    }
+                        j += 1;
+				}
+				else{
+					break;
+				}
+			}
+			List<Object> nameAndFreq = new ArrayList<>();
+			nameAndFreq.add(monthName);
+			nameAndFreq.add(freq);
+			monthFreq.add(nameAndFreq);
+		}
+		// System.out.println(monthFreq.toString());
+
+		return monthFreq;
+	}
 }

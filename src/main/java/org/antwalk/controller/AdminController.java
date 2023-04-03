@@ -33,6 +33,7 @@ import org.antwalk.service.ArrivalTimeService;
 import org.antwalk.service.BookingDetailsService;
 import org.antwalk.service.BusService;
 import org.antwalk.service.EmployeeService;
+import org.antwalk.service.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
@@ -118,6 +119,9 @@ public class AdminController {
 	
 	@Autowired
 	private RouteService routeService;
+
+	@Autowired
+	private HistoryService historyService;
 	
 
 	@Autowired
@@ -262,7 +266,7 @@ public class AdminController {
 
 	@GetMapping("/analytics/booking-per-month")
 	public List<List<Object>> bookingPerMonth() {
-		return bookingDetailsService.getBookingPerMonth();
+		return historyService.getBookingsPerMonthForCurrentYear();
 	}
 	// GET NUMBER STATISTICS
 	/*

@@ -260,7 +260,7 @@ public class DelayService {
 		int idx = 0;
 		LocalTime temp1;
 		Boolean toAdd;
-		System.out.println(ats);
+		// System.out.println(ats);
 		for(ArrivalTimeTable at: ats) {
 			if(idx < retVal.size()) {
 				System.out.println("from delay = " + retVal.get(idx).get("name") + " from arrival = " +at.getRouteStopId().getStop().getName());
@@ -292,7 +292,7 @@ public class DelayService {
 
 	public List<Delay> getNullStopDelays()
 	{
-		System.out.println(delayRepo.findByStop(null));
+		// System.out.println(delayRepo.findByStop(null));
 		return delayRepo.findByStop(null) ;
 
 	}

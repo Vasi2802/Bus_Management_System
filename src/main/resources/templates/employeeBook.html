@@ -452,7 +452,9 @@
       console.log("on change function added to select");
       $('#list-select-stop').on('change', function () {
         var stopId = $('#list-select-stop option:selected').attr("value");
+        var stopName = $('#list-select-stop option:selected').text();
         console.log("select stop id = " + stopId);
+        console.log(stopName);
 
         var routesMap;
         $.ajax({
@@ -475,8 +477,8 @@
         // // var officeStop = endWithTime?.routeStop?.stop.name;
         document.getElementById('routes-table').innerHTML = `<tr>
                                                                         <th class="col-sm-auto" style="text-align:center;">Route Info</th>
-                                                                        <th class="col-sm-auto" style="text-align:center;">Home Stop</th>
-                                                                        <th class="col-sm-auto" style="text-align:center;">Office Stop</th>
+                                                                        <th class="col-sm-auto" style="text-align:center;">${stopName}</th>
+                                                                        <th class="col-sm-auto" style="text-align:center;">NRI FinTech</th>
                                                                         <th class="col-sm-auto" style="text-align:center;"></th>
                                                                     </tr>`;
         document.getElementById('bus-table').innerHTML = "";

@@ -292,14 +292,14 @@ insert into employee(name, contact_no, bus_id, auth_id) values
 -- select * from booking_details;
 
 insert into booking_details(emp_id, bus_id, booking_for_month, stop_id) values
-(1, 1, '2023-03-25', 3),
-(2, 3, '2023-03-25', 17),
-(3, 7, '2023-03-26', 26),
-(4, 9, '2023-03-27', 35),
-(5, 9, '2023-03-25', 36),
-(6, 3, '2023-03-26', 13),
-(7, 4, '2023-03-27', 15),
-(8, 1, '2023-03-28', 6);
+(1, 1, '2023-04-01', 3),
+(2, 3, '2023-04-01', 17),
+(3, 7, '2023-04-01', 26),
+(4, 9, '2023-04-01', 35),
+(5, 9, '2023-04-01', 36),
+(6, 3, '2023-04-02', 13),
+(7, 4, '2023-04-03', 15),
+(8, 1, '2023-04-01', 6);
 
 -- data for waiting list table
 
@@ -308,3 +308,7 @@ insert into booking_details(emp_id, bus_id, booking_for_month, stop_id) values
 insert into waiting_list(emp_id, bus_id, stop_id) values
 (9,4, 7),
 (10,4, 7);
+
+-- insert into history table
+-- insert into history ('bus_id', 'employee_id', 'receipt_date', 'route_description', 'route_id', 'transaction_type') values
+-- (1, 1, '2023-04-01', 'RouteID-1'
