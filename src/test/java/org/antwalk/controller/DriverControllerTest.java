@@ -75,7 +75,7 @@ public class DriverControllerTest {
     @Test	
     public void flushDelay() throws Exception {
        
-        mockMvc.perform(MockMvcRequestBuilders.get("/driver/flushDelays/"+1L))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/driver/flushDelays/"+1L))
                 .andExpect(MockMvcResultMatchers.status().isOk());
 
     }
